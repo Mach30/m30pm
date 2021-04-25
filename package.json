@@ -1,0 +1,18 @@
+{
+    "name": "m30mltools",
+    "version": "0.2.0",
+    "description": "Mach 30 Modeling Language Tools",
+    "keywords": [],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/Mach30/m30mlTools.git"
+    },
+    "homepage": "https://github.com/Mach30/m30mlTools",
+    "author": "J. Simmons <simmons@j-dot.org>",
+    "license": "Apache-2.0",
+    "dependencies": {
+        "js-yaml": "4.1.0",
+        "liquidjs": "9.23.4",
+        "minimist": "1.2.5"
+    }
+}

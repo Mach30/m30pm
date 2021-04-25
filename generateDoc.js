@@ -1,7 +1,7 @@
 var yaml = require('js-yaml');
 var fs   = require('fs');
-var Liquid = require('liquidjs');
-var engine = Liquid();
+var { Liquid } = require('liquidjs');
+var engine = new Liquid();
 
 var argv = require('minimist')(process.argv.slice(2));
 
@@ -34,7 +34,7 @@ if (argv['h'] || argv['help']) {  // if asked for help, print it and exit
         process.exit(1);
 }
 
-var architecture = yaml.safeLoad(fs.readFileSync(unifiedModel, 'utf8'));
+var architecture = yaml.load(fs.readFileSync(unifiedModel, 'utf8'));
 
 var templateFile = fs.readFileSync(template, 'utf8');
 engine

@@ -53,7 +53,7 @@ try {
 
         var architectureFiles = fs.readdirSync(architecturePath + '/' + architectureContents[section]).sort();
         for (file in architectureFiles) {
-            var doc = yaml.safeLoad(fs.readFileSync(architecturePath + '/' + architectureContents[section] + '/' + architectureFiles[file], 'utf8'));
+            var doc = yaml.load(fs.readFileSync(architecturePath + '/' + architectureContents[section] + '/' + architectureFiles[file], 'utf8'));
 
             architecture.elements[architectureContents[section] + '/' + architectureFiles[file]] = doc;
             architecture[architectureContents[section]].push(doc);
@@ -64,6 +64,6 @@ try {
 }
 
 var unifiedModelFileName = projectPath + '/' + outputDirName + '/' + unifiedModel;
-fs.writeFileSync(unifiedModelFileName, yaml.safeDump(architecture));
+fs.writeFileSync(unifiedModelFileName, yaml.dump(architecture));
 
 console.log('Unified Model ' + unifiedModelFileName + ' built');
