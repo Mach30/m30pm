@@ -40,6 +40,7 @@ USAGE
 * [`m30pm plugins:uninstall PLUGIN...`](#m30pm-pluginsuninstall-plugin-1)
 * [`m30pm plugins:uninstall PLUGIN...`](#m30pm-pluginsuninstall-plugin-2)
 * [`m30pm plugins update`](#m30pm-plugins-update)
+* [`m30pm project create [FILE]`](#m30pm-project-create-file)
 
 ## `m30pm hello PERSON`
 
@@ -381,4 +382,28 @@ DESCRIPTION
 ```
 
 _See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v4.2.1/src/commands/plugins/update.ts)_
+
+## `m30pm project create [FILE]`
+
+describe the command here
+
+```
+USAGE
+  $ m30pm project create [FILE] [-n <value>] [-f]
+
+ARGUMENTS
+  FILE  file to read
+
+FLAGS
+  -f, --force
+  -n, --name=<value>  name to print
+
+DESCRIPTION
+  describe the command here
+
+EXAMPLES
+  $ m30pm project create
+```
+
+_See code: [src/commands/project/create.ts](https://github.com/Mach30/m30pm/m30pm/blob/v0.0.0/src/commands/project/create.ts)_
 <!-- commandsstop -->
