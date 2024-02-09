@@ -72,5 +72,5 @@ EXAMPLES
   $ m30pm project create
 ```
 
-_See code: [src/commands/project/create.ts](https://github.com/Mach30/m30pm/m30pm/blob/v0.0.0/src/commands/project/create.ts)_
+_See code: [src/commands/project/create.ts](https://github.com/Mach30/m30pm/blob/v0.0.0/src/commands/project/create.ts)_
 <!-- commandsstop -->

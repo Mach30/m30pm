@@ -34,7 +34,7 @@
     "/dist",
     "/oclif.manifest.json"
   ],
-  "homepage": "https://github.com/https://github.com/Mach30/m30pm/m30pm",
+  "homepage": "https://github.com/Mach30/m30pm",
   "license": "Apache-2.0",
   "main": "dist/index.js",
   "name": "m30pm",
@@ -52,7 +52,7 @@
       }
     }
   },
-  "repository": "https://github.com/Mach30/m30pm/m30pm",
+  "repository": "https://github.com/Mach30/m30pm",
   "scripts": {
     "build": "shx rm -rf dist && tsc -b",
     "lint": "eslint . --ext .ts",
@@ -64,7 +64,7 @@
     "version": "oclif readme && git add README.md"
   },
   "version": "0.0.0",
-  "bugs": "https://github.com/https://github.com/Mach30/m30pm/m30pm/issues",
+  "bugs": "https://github.com/Mach30/m30pm/issues",
   "keywords": [
     "oclif"
   ],
