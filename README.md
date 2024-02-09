@@ -54,20 +54,33 @@ Create a new m30ml project
 
 ```
 USAGE
-  $ m30pm project create PROJECTNAME [-n <value>] [-f]
+  $ m30pm project create PROJECTNAME -l <value> -p npm|yarn [-d <value>]
 
 ARGUMENTS
   PROJECTNAME  Name of new m30ml project to create (must conform to npm package naming convention)
 
 FLAGS
-  -f, --force
-  -n, --name=<value>  name to print
+  -d, --description=<value>      Description of new m30ml project
+  -l, --license=<value>          (required) [default: CC0-1.0] Project license specified as an SPDX license identifier
+                                 (https://spdx.org/licenses/)
+  -p, --packageManager=<option>  (required) [default: npm] Node-based package manager for new m30ml project
+                                 <options: npm|yarn>
 
 DESCRIPTION
   Create a new m30ml project
 
 EXAMPLES
-  $ m30pm project create
+  Display command help
+
+    $ m30pm project create --help
+
+  Create myProject and be prompted for remaining inputs
+
+    $ m30pm project create myProject
+
+  Create myProject entirely from command line
+
+    $ m30pm project create myProject -d "My New m30ml Project" -l "CC-BY-4.0" -p "npm"
 ```
 
 _See code: [src/commands/project/create.ts](https://github.com/Mach30/m30pm/blob/v0.0.0/src/commands/project/create.ts)_
