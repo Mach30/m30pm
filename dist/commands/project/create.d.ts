@@ -7,7 +7,7 @@ export default class ProjectCreate extends Command {
         force: import("@oclif/core/lib/interfaces").BooleanFlag<boolean>;
     };
     static args: {
-        file: import("@oclif/core/lib/interfaces").Arg<string | undefined, Record<string, unknown>>;
+        projectName: import("@oclif/core/lib/interfaces").Arg<string, Record<string, unknown>>;
     };
     run(): Promise<void>;
 }

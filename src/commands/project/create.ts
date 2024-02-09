@@ -1,7 +1,7 @@
 import {Args, Command, Flags} from '@oclif/core'
 
 export default class ProjectCreate extends Command {
-  static description = 'describe the command here'
+  static description = 'Create a new m30ml project'
 
   static examples = [
     '<%= config.bin %> <%= command.id %>',
@@ -15,16 +15,16 @@ export default class ProjectCreate extends Command {
   }
 
   static args = {
-    file: Args.string({description: 'file to read'}),
+    projectName: Args.string(
+      {
+        required: true,
+        description: 'Name of new m30ml project to create (must conform to npm package naming convention)'
+      }
+    ),
   }
 
   public async run(): Promise<void> {
     const {args, flags} = await this.parse(ProjectCreate)
 
-    const name = flags.name ?? 'world'
-    this.log(`hello ${name} from /home/kasm-user/repos/m30pm/src/commands/project/create.ts`)
-    if (args.file && flags.force) {
-      this.log(`you input --force and --file: ${args.file}`)
-    }
   }
 }

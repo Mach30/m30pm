@@ -26,7 +26,7 @@ USAGE
 # Commands
 <!-- commands -->
 * [`m30pm help [COMMANDS]`](#m30pm-help-commands)
-* [`m30pm project create [FILE]`](#m30pm-project-create-file)
+* [`m30pm project create PROJECTNAME`](#m30pm-project-create-projectname)
 
 ## `m30pm help [COMMANDS]`
 
@@ -48,23 +48,23 @@ DESCRIPTION
 
 _See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v6.0.12/src/commands/help.ts)_
 
-## `m30pm project create [FILE]`
+## `m30pm project create PROJECTNAME`
 
-describe the command here
+Create a new m30ml project
 
 ```
 USAGE
-  $ m30pm project create [FILE] [-n <value>] [-f]
+  $ m30pm project create PROJECTNAME [-n <value>] [-f]
 
 ARGUMENTS
-  FILE  file to read
+  PROJECTNAME  Name of new m30ml project to create (must conform to npm package naming convention)
 
 FLAGS
   -f, --force
   -n, --name=<value>  name to print
 
 DESCRIPTION
-  describe the command here
+  Create a new m30ml project
 
 EXAMPLES
   $ m30pm project create

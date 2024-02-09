@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const core_1 = require("@oclif/core");
 class ProjectCreate extends core_1.Command {
-    static description = 'describe the command here';
+    static description = 'Create a new m30ml project';
     static examples = [
         '<%= config.bin %> <%= command.id %>',
     ];
@@ -13,15 +13,14 @@ class ProjectCreate extends core_1.Command {
         force: core_1.Flags.boolean({ char: 'f' }),
     };
     static args = {
-        file: core_1.Args.string({ description: 'file to read' }),
+        projectName: core_1.Args.string({
+            name: 'Project Name',
+            required: true,
+            description: 'Name of new m30ml project to create (must conform to npm package naming convention)'
+        }),
     };
     async run() {
         const { args, flags } = await this.parse(ProjectCreate);
-        const name = flags.name ?? 'world';
-        this.log(`hello ${name} from /home/kasm-user/repos/m30pm/src/commands/project/create.ts`);
-        if (args.file && flags.force) {
-            this.log(`you input --force and --file: ${args.file}`);
-        }
     }
 }
 exports.default = ProjectCreate;
