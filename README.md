@@ -27,52 +27,8 @@ USAGE
 <!-- usagestop -->
 # Commands
 <!-- commands -->
-* [`m30pm hello PERSON`](#m30pm-hello-person)
-* [`m30pm hello world`](#m30pm-hello-world)
 * [`m30pm help [COMMANDS]`](#m30pm-help-commands)
 * [`m30pm project create [FILE]`](#m30pm-project-create-file)
-
-## `m30pm hello PERSON`
-
-Say hello
-
-```
-USAGE
-  $ m30pm hello PERSON -f <value>
-
-ARGUMENTS
-  PERSON  Person to say hello to
-
-FLAGS
-  -f, --from=<value>  (required) Who is saying hello
-
-DESCRIPTION
-  Say hello
-
-EXAMPLES
-  $ oex hello friend --from oclif
-  hello friend from oclif! (./src/commands/hello/index.ts)
-```
-
-_See code: [src/commands/hello/index.ts](https://github.com/Mach30/m30pm/m30pm/blob/v0.0.0/src/commands/hello/index.ts)_
-
-## `m30pm hello world`
-
-Say hello world
-
-```
-USAGE
-  $ m30pm hello world
-
-DESCRIPTION
-  Say hello world
-
-EXAMPLES
-  $ m30pm hello world
-  hello world! (./src/commands/hello/world.ts)
-```
-
-_See code: [src/commands/hello/world.ts](https://github.com/Mach30/m30pm/m30pm/blob/v0.0.0/src/commands/hello/world.ts)_
 
 ## `m30pm help [COMMANDS]`
 
