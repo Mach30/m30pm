@@ -38,6 +38,7 @@
   "license": "Apache-2.0",
   "main": "dist/index.js",
   "name": "m30pm",
+  "workspaces": [ "./packages/*" ],
   "oclif": {
     "bin": "m30pm",
     "dirname": "m30pm",
