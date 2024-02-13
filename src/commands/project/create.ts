@@ -1,4 +1,5 @@
 import {Args, Command, Flags} from '@oclif/core'
+import {PackageManagers} from 'm30pm-lib-common'
 
 export default class ProjectCreate extends Command {
   static description = 'Create a new m30ml project'
@@ -38,8 +39,8 @@ export default class ProjectCreate extends Command {
       {
         char: 'p',
         required: true,
-        default: 'npm',
-        options: ['npm', 'yarn'],
+        default: PackageManagers.NPM,
+        options: Object.values(PackageManagers),
         description: 'Node-based package manager for new m30ml project'
       }
     )

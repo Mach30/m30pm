@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const core_1 = require("@oclif/core");
+const m30pm_lib_common_1 = require("m30pm-lib-common");
 class ProjectCreate extends core_1.Command {
     static description = 'Create a new m30ml project';
     static examples = [
@@ -32,8 +33,8 @@ class ProjectCreate extends core_1.Command {
         packageManager: core_1.Flags.string({
             char: 'p',
             required: true,
-            default: 'npm',
-            options: ['npm', 'yarn'],
+            default: m30pm_lib_common_1.PackageManagers.NPM,
+            options: Object.values(m30pm_lib_common_1.PackageManagers),
             description: 'Node-based package manager for new m30ml project'
         })
     };

@@ -1,0 +1,15 @@
+{
+  "name": "m30pm-lib-common",
+  "version": "0.0.2",
+  "description": "Mach 30 PM common functions library",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "/dist"
+  ],
+    "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Mach 30",
+  "license": "Apache-2.0"
+}
