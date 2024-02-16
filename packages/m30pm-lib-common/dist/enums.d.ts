@@ -1,3 +1,4 @@
+export declare const stringToEnumValue: <T>(enumObj: Object, value: string) => T | undefined;
 export declare enum PackageManagers {
     NPM = "npm",
     YARN = "yarn"
