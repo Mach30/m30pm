@@ -76,11 +76,11 @@ EXAMPLES
 
   Create myProject and be prompted for remaining inputs
 
-    $ m30pm project create myProject
+    $ m30pm project create my-project
 
   Create myProject entirely from command line
 
-    $ m30pm project create myProject -d "My New m30ml Project" -l "CC-BY-4.0" -p "npm"
+    $ m30pm project create my-project -d "My New m30ml Project" -l "CC-BY-4.0" -p "npm"
 ```
 
 _See code: [src/commands/project/create.ts](https://github.com/Mach30/m30pm/blob/v0.0.0/src/commands/project/create.ts)_

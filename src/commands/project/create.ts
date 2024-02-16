@@ -1,5 +1,5 @@
 import {Args, Command, Flags} from '@oclif/core'
-import {PackageManagers} from 'm30pm-lib-common'
+import {PackageManagers, ProjectConfiguration} from 'm30pm-lib-common'
 
 export default class ProjectCreate extends Command {
   static description = 'Create a new m30ml project'
@@ -11,11 +11,11 @@ export default class ProjectCreate extends Command {
     },
     {
       description: 'Create myProject and be prompted for remaining inputs',
-      command: '<%= config.bin %> <%= command.id %> myProject'
+      command: '<%= config.bin %> <%= command.id %> my-project'
     },
     {
       description: 'Create myProject entirely from command line',
-      command: '<%= config.bin %> <%= command.id %> myProject -d "My New m30ml Project" -l "CC-BY-4.0" -p "npm"'
+      command: '<%= config.bin %> <%= command.id %> my-project -d "My New m30ml Project" -l "CC-BY-4.0" -p "npm"'
     }
   ]
 
@@ -57,6 +57,20 @@ export default class ProjectCreate extends Command {
 
   public async run(): Promise<void> {
     const {args, flags} = await this.parse(ProjectCreate)
-
+    const projectName = args.projectName
+    const description = flags.description ? flags.description : ""
+    const license = flags.license
+    const packageManager = flags.packageManager
+    const versionControlTool = "git"
+    const buildTool = "gradle"
+    const projectConfiguration = new ProjectConfiguration(
+      projectName,
+      description,
+      license,
+      packageManager,
+      versionControlTool,
+      buildTool
+      )
+    console.log(projectConfiguration)
   }
 }

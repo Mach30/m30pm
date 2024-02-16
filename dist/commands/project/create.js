@@ -11,11 +11,11 @@ class ProjectCreate extends core_1.Command {
         },
         {
             description: 'Create myProject and be prompted for remaining inputs',
-            command: '<%= config.bin %> <%= command.id %> myProject'
+            command: '<%= config.bin %> <%= command.id %> my-project'
         },
         {
             description: 'Create myProject entirely from command line',
-            command: '<%= config.bin %> <%= command.id %> myProject -d "My New m30ml Project" -l "CC-BY-4.0" -p "npm"'
+            command: '<%= config.bin %> <%= command.id %> my-project -d "My New m30ml Project" -l "CC-BY-4.0" -p "npm"'
         }
     ];
     static flags = {
@@ -46,6 +46,14 @@ class ProjectCreate extends core_1.Command {
     };
     async run() {
         const { args, flags } = await this.parse(ProjectCreate);
+        const projectName = args.projectName;
+        const description = flags.description ? flags.description : "";
+        const license = flags.license;
+        const packageManager = flags.packageManager;
+        const versionControlTool = "git";
+        const buildTool = "gradle";
+        const projectConfiguration = new m30pm_lib_common_1.ProjectConfiguration(projectName, description, license, packageManager, versionControlTool, buildTool);
+        console.log(projectConfiguration.isValid());
     }
 }
 exports.default = ProjectCreate;
