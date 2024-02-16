@@ -6,7 +6,7 @@ export declare class ProjectConfiguration {
     private _packageManager;
     private _versionControlTool;
     private _buildTool;
-    constructor(name: string, description: string, license: string, packageManager: string, versionControlTool: string, buildTool: string);
+    constructor(name: string, description: string | undefined, license: string, packageManager: string, versionControlTool: string, buildTool: string);
     isValid(): boolean;
     get name(): string | undefined;
     get description(): string;

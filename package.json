@@ -4,9 +4,12 @@
     "m30pm": "./bin/run.js"
   },
   "dependencies": {
+    "@inquirer/input": "^2.0.0",
     "@oclif/core": "^3",
     "@oclif/plugin-help": "^6",
     "@oclif/plugin-plugins": "^4",
+    "@types/inquirer": "^9.0.7",
+    "inquirer": "^9.2.14",
     "m30pm-lib-common": "^0.0.2"
   },
   "description": "Mach 30 package manager for m30ml projects",

@@ -10,7 +10,7 @@ export class ProjectConfiguration {
     
     constructor(
         name: string,
-        description: string,
+        description: string | undefined,
         license: string,
         packageManager: string,
         versionControlTool: string,
@@ -20,7 +20,7 @@ export class ProjectConfiguration {
         if(npmPackageNameRegEx.test(name)) {
             this._name = name;
         }
-        this._description = description;
+        this._description = description ? description : "";
         this._license = license;
         this._packageManager = Enums.stringToEnumValue(Enums.PackageManagers, packageManager);
         this._versionControlTool = Enums.stringToEnumValue(Enums.VersionControlTools, versionControlTool);
@@ -28,7 +28,7 @@ export class ProjectConfiguration {
     }
 
     public isValid(): boolean {
-        return this._name !== undefined && this._packageManager !== undefined && this._versionControlTool !== undefined && this._buildTool !== undefined;
+        return this._name !== undefined && this._license !== '' && this._packageManager !== undefined && this._versionControlTool !== undefined && this._buildTool !== undefined;
     }
 
     public get name() {
