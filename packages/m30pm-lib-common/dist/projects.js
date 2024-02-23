@@ -23,8 +23,9 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ProjectConfiguration = void 0;
+exports.ProjectConfiguration = exports.DefaultLicense = void 0;
 const Enums = __importStar(require("./enums"));
+exports.DefaultLicense = 'CC0-1.0';
 class ProjectConfiguration {
     constructor(name, description, license, packageManager, versionControlTool, buildTool) {
         let npmPackageNameRegEx = new RegExp('^(@[a-z0-9-~][a-z0-9-._~]*\/)?[a-z0-9-~][a-z0-9-._~]*$');

@@ -6,12 +6,12 @@ export default class ProjectCreate extends Command {
         command: string;
     }[];
     static flags: {
-        description: import("@oclif/core/lib/interfaces").OptionFlag<string | undefined, import("@oclif/core/lib/interfaces").CustomOptions>;
-        license: import("@oclif/core/lib/interfaces").OptionFlag<string, import("@oclif/core/lib/interfaces").CustomOptions>;
-        packageManager: import("@oclif/core/lib/interfaces").OptionFlag<string, import("@oclif/core/lib/interfaces").CustomOptions>;
+        description: import("@oclif/core/lib/interfaces/parser").OptionFlag<string | undefined, import("@oclif/core/lib/interfaces/parser").CustomOptions>;
+        license: import("@oclif/core/lib/interfaces/parser").OptionFlag<string, import("@oclif/core/lib/interfaces/parser").CustomOptions>;
+        packageManager: import("@oclif/core/lib/interfaces/parser").OptionFlag<string, import("@oclif/core/lib/interfaces/parser").CustomOptions>;
     };
     static args: {
-        projectName: import("@oclif/core/lib/interfaces").Arg<string, Record<string, unknown>>;
+        projectName: import("@oclif/core/lib/interfaces/parser").Arg<string, Record<string, unknown>>;
     };
     run(): Promise<void>;
 }

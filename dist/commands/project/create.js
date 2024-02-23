@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const core_1 = require("@oclif/core");
 const m30pm_lib_common_1 = require("m30pm-lib-common");
+const input_1 = require("@inquirer/input");
 class ProjectCreate extends core_1.Command {
     static description = 'Create a new m30ml project';
     static examples = [
@@ -27,7 +28,7 @@ class ProjectCreate extends core_1.Command {
         license: core_1.Flags.string({
             char: 'l',
             required: true,
-            default: 'CC0-1.0',
+            default: m30pm_lib_common_1.DefaultLicense,
             description: 'Project license specified as an SPDX license identifier (https://spdx.org/licenses/)'
         }),
         packageManager: core_1.Flags.string({
@@ -45,15 +46,30 @@ class ProjectCreate extends core_1.Command {
         }),
     };
     async run() {
-        const { args, flags } = await this.parse(ProjectCreate);
+        const { args, flags, metadata } = await this.parse(ProjectCreate);
         const projectName = args.projectName;
-        const description = flags.description ? flags.description : "";
-        const license = flags.license;
-        const packageManager = flags.packageManager;
+        let description = flags.description;
+        if (!description) {
+            let response = await (0, input_1.default)({
+                message: 'Provide a project description: ',
+                default: ''
+            });
+            description = response;
+        }
+        let license = flags.license;
+        if (metadata.flags["license"] && metadata.flags["license"].setFromDefault) {
+            let response = await (0, input_1.default)({
+                message: 'Provide a SPDX-formatted project license: ',
+                default: m30pm_lib_common_1.DefaultLicense
+            });
+            license = response;
+        }
+        let packageManager = flags.packageManager;
         const versionControlTool = "git";
         const buildTool = "gradle";
         const projectConfiguration = new m30pm_lib_common_1.ProjectConfiguration(projectName, description, license, packageManager, versionControlTool, buildTool);
         console.log(projectConfiguration.isValid());
+        console.log(projectConfiguration);
     }
 }
 exports.default = ProjectCreate;

@@ -1,4 +1,5 @@
 import * as Enums from './enums';
+export declare const DefaultLicense = "CC0-1.0";
 export declare class ProjectConfiguration {
     private _name;
     private _description;
