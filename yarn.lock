@@ -1060,6 +1060,14 @@
   "resolved" "https://registry.npmjs.org/@humanwhocodes/object-schema/-/object-schema-2.0.1.tgz"
   "version" "2.0.1"
 
+"@inquirer/confirm@^3.0.0":
+  "integrity" "sha512-LHeuYP1D8NmQra1eR4UqvZMXwxEdDXyElJmmZfU44xdNLL6+GcQBS0uE16vyfZVjH8c22p9e+DStROfE/hyHrg=="
+  "resolved" "https://registry.npmjs.org/@inquirer/confirm/-/confirm-3.0.0.tgz"
+  "version" "3.0.0"
+  dependencies:
+    "@inquirer/core" "^7.0.0"
+    "@inquirer/type" "^1.2.0"
+
 "@inquirer/core@^7.0.0":
   "integrity" "sha512-g13W5yEt9r1sEVVriffJqQ8GWy94OnfxLCreNSOTw0HPVcszmc/If1KIf7YBmlwtX4klmvwpZHnQpl3N7VX2xA=="
   "resolved" "https://registry.npmjs.org/@inquirer/core/-/core-7.0.0.tgz"

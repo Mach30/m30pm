@@ -4,6 +4,7 @@
     "m30pm": "./bin/run.js"
   },
   "dependencies": {
+    "@inquirer/confirm": "^3.0.0",
     "@inquirer/input": "^2.0.0",
     "@inquirer/select": "^2.0.0",
     "@oclif/core": "^3",
