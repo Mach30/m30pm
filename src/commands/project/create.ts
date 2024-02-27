@@ -2,7 +2,8 @@ import {Args, Command, Flags} from '@oclif/core'
 import {Metadata, MetadataFlag} from '@oclif/core/lib/interfaces/parser'
 import {PackageManagers, ProjectConfiguration, DefaultLicense} from 'm30pm-lib-common'
 import input from '@inquirer/input'
-import select from '@inquirer/select';
+import select from '@inquirer/select'
+import confirm from '@inquirer/confirm'
 
 export default class ProjectCreate extends Command {
   static description = 'Create a new m30ml project'
@@ -104,7 +105,20 @@ export default class ProjectCreate extends Command {
       versionControlTool,
       buildTool
       )
-      console.log(projectConfiguration.isValid())
-      console.log(projectConfiguration)
+    console.log(projectConfiguration.isValid() ? 'Valid Project Configuration' : 'INVALID PROJECT CONFIGURATION')
+    console.log('-----------------------------')
+    console.log(`Project name: ${projectConfiguration.name}`)
+    console.log(`Project description: ${projectConfiguration.description}`)
+    console.log(`Project license: ${projectConfiguration.license}`)
+    console.log(`Project package manager: ${projectConfiguration.packageManager}`)
+    console.log(`Project version control tool: ${projectConfiguration.versionControlTool}`)
+    console.log(`Project build tool: ${projectConfiguration.buildTool}`)
+    if (!projectConfiguration.isValid()) {
+      this.exit(1)
     }
+    const createProject = await confirm({ message: 'Create project?' })
+    if (createProject) {
+      console.log(`Creating ${projectConfiguration.name}...`)
+    }
+  }
 }
