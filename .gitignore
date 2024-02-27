@@ -1,10 +1,10 @@
 *-error.log
-/.nyc_output
-/dist
-/lib
-/tmp
+.nyc_output/
+dist/
+lib/
+tmp/
 node_modules
 oclif.manifest.json
 oclif.lock
-**/.DS_Store
-/.idea
+**.DS_Store
+.idea
