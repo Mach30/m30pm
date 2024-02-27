@@ -1088,6 +1088,17 @@
     "@inquirer/core" "^7.0.0"
     "@inquirer/type" "^1.2.0"
 
+"@inquirer/select@^2.0.0":
+  "integrity" "sha512-ZxWP1gHbReAH6HdoNQRV/9W/UjgKSeiiQX2DxJ6w3GDiQeC3fRAL+lukuMM+QGteGqaTjWwIEWhPLvgbGIrRgg=="
+  "resolved" "https://registry.npmjs.org/@inquirer/select/-/select-2.0.0.tgz"
+  "version" "2.0.0"
+  dependencies:
+    "@inquirer/core" "^7.0.0"
+    "@inquirer/type" "^1.2.0"
+    "ansi-escapes" "^4.3.2"
+    "chalk" "^4.1.2"
+    "figures" "^3.2.0"
+
 "@inquirer/type@^1.2.0":
   "integrity" "sha512-/vvkUkYhrjbm+RolU7V1aUFDydZVKNKqKHR5TsE+j5DXgXFwrsOPcoGUJ02K0O7q7O53CU2DOTMYCHeGZ25WHA=="
   "resolved" "https://registry.npmjs.org/@inquirer/type/-/type-1.2.0.tgz"
