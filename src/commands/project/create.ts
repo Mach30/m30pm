@@ -2,6 +2,7 @@ import {Args, Command, Flags} from '@oclif/core'
 import {Metadata, MetadataFlag} from '@oclif/core/lib/interfaces/parser'
 import {PackageManagers, ProjectConfiguration, DefaultLicense} from 'm30pm-lib-common'
 import input from '@inquirer/input'
+import select from '@inquirer/select';
 
 export default class ProjectCreate extends Command {
   static description = 'Create a new m30ml project'
@@ -77,6 +78,22 @@ export default class ProjectCreate extends Command {
       license = response
     }
     let packageManager = flags.packageManager
+    if (metadata.flags["packageManager"] && metadata.flags["packageManager"].setFromDefault) {
+      let response = await select({
+        message: 'Select a package manager',
+        choices: [
+          {
+            name: PackageManagers.NPM,
+            value: PackageManagers.NPM
+          },
+          {
+            name: PackageManagers.YARN,
+            value: PackageManagers.YARN
+          }
+        ]
+      });
+      packageManager = response
+    }
     const versionControlTool = "git"
     const buildTool = "gradle"
     const projectConfiguration = new ProjectConfiguration(
