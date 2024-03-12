@@ -8,14 +8,20 @@
     "/dist"
   ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "shx rm -rf dist/ && tsc -b",
+    "test": "mocha --forbid-only"
   },
   "author": "Mach 30",
   "license": "Apache-2.0",
   "devDependencies": {
-    "@types/chai": "^4.3.12",
-    "@types/mocha": "^10.0.6",
-    "chai": "^5.1.0",
-    "mocha": "^10.3.0"
+    "@oclif/test": "^3",
+    "@types/chai": "^4",
+    "@types/mocha": "^9.0.0",
+    "@types/node": "^18",
+    "chai": "^4",
+    "mocha": "^10",
+    "shx": "^0.3.4",
+    "ts-node": "^10.9.2",
+    "typescript": "^5"
   }
 }

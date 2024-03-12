@@ -8,11 +8,15 @@
     "/dist"
   ],
   "scripts": {
+    "build": "shx rm -rf dist/ && tsc -b",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Mach 30",
   "license": "Apache-2.0",
   "dependencies": {
     "shelljs": "^0.8.5"
+  },
+  "devDependencies": {
+    "shx": "^0.3.4"
   }
 }
