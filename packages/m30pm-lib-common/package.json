@@ -24,5 +24,9 @@
     "shx": "^0.3.4",
     "ts-node": "^10.9.2",
     "typescript": "^5"
+  },
+  "dependencies": {
+    "@types/semver": "^7.5.8",
+    "semver": "^7.6.0"
   }
 }

@@ -1,10 +1,14 @@
 import * as Enums from './enums'
+import semver from 'semver';
 
+export const DefaultVersion = '0.0.0'
 export const DefaultLicense = 'CC0-1.0'
 
 export class ProjectConfiguration {
     private _name: string | undefined;
+    private _version: string | undefined;
     private _description: string;
+    private _author: string;
     private _license: string;
     private _packageManager: Enums.PackageManagers | undefined;
     private _versionControlTool: Enums.VersionControlTools | undefined;
@@ -12,7 +16,9 @@ export class ProjectConfiguration {
     
     constructor(
         name: string,
+        version: string,
         description: string | undefined,
+        author: string | undefined,
         license: string,
         packageManager: string,
         versionControlTool: string,
@@ -22,7 +28,11 @@ export class ProjectConfiguration {
         if(npmPackageNameRegEx.test(name)) {
             this._name = name;
         }
-        this._description = description ? description : "";
+        if(semver.valid(version)) {
+            this._version = version;
+        }
+         this._description = description ? description : "";
+        this._author = author ? author : "";
         this._license = license;
         this._packageManager = Enums.stringToEnumValue(Enums.PackageManagers, packageManager);
         this._versionControlTool = Enums.stringToEnumValue(Enums.VersionControlTools, versionControlTool);
