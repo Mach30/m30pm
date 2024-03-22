@@ -6,7 +6,20 @@ describe("Project Validation Tests", () => {
         const project = new ProjectConfiguration("my-project", "0.0.0", "My New m30ml Project", "Mach 30", "CC-BY-4.0", "npm", "git", "gradle")
         expect(project.isValid()).to.equal(true)
         project.description
+        project.author
         project.license
+    })
+
+    it('should return false and have undefined name for invalid project name', () => {
+        const project = new ProjectConfiguration("myProject", "0.0.0", "My New m30ml Project", "Mach 30", "CC-BY-4.0", "npm", "git", "gradle")
+        expect(project.isValid()).to.equal(false)
+        expect(project.name).to.be.undefined
+    })
+
+    it('should return false and have undefined version for invalid version', () => {
+        const project = new ProjectConfiguration("my-project", "bad version", "My New m30ml Project", "Mach 30", "CC-BY-4.0", "npm", "git", "gradle")
+        expect(project.isValid()).to.equal(false)
+        expect(project.version).to.be.undefined
     })
 
     it('should return true and have an empty description for and undefined description', () => {
@@ -15,10 +28,10 @@ describe("Project Validation Tests", () => {
         expect(project.description).to.equal("")
     })
 
-    it('should return false and have undefined name for invalid project name', () => {
-        const project = new ProjectConfiguration("myProject", "0.0.0", "My New m30ml Project", "Mach 30", "CC-BY-4.0", "npm", "git", "gradle")
-        expect(project.isValid()).to.equal(false)
-        expect(project.name).to.be.undefined
+    it('should return true and have an empty author for and undefined author', () => {
+        const project = new ProjectConfiguration("my-project", "0.0.0", "My New m30ml Project", undefined, "CC-BY-4.0", "npm", "git", "gradle")
+        expect(project.isValid()).to.equal(true)
+        expect(project.author).to.equal("")
     })
 
     it('should return false and have undefined package manager for invalid package manager', () => {

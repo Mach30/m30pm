@@ -31,7 +31,7 @@ export class ProjectConfiguration {
         if(semver.valid(version)) {
             this._version = version;
         }
-         this._description = description ? description : "";
+        this._description = description ? description : "";
         this._author = author ? author : "";
         this._license = license;
         this._packageManager = Enums.stringToEnumValue(Enums.PackageManagers, packageManager);
@@ -40,15 +40,23 @@ export class ProjectConfiguration {
     }
 
     public isValid(): boolean {
-        return this._name !== undefined && this._license !== '' && this._packageManager !== undefined && this._versionControlTool !== undefined && this._buildTool !== undefined;
+        return this._name !== undefined && this._version !== undefined && this._license !== '' && this._packageManager !== undefined && this._versionControlTool !== undefined && this._buildTool !== undefined;
     }
 
     public get name() {
         return this._name;
     }
 
+    public get version() {
+        return this._version;
+    }
+
     public get description() {
         return this._description;
+    }
+
+    public get author() {
+        return this._author;
     }
 
     public get license() {
