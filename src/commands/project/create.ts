@@ -1,6 +1,6 @@
 import {Args, Command, Flags} from '@oclif/core'
 import {Metadata, MetadataFlag} from '@oclif/core/lib/interfaces/parser'
-import {PackageManagers, ProjectConfiguration, DefaultLicense} from 'm30pm-lib-common'
+import {PackageManagers, ProjectConfiguration, DefaultVersion, DefaultLicense} from 'm30pm-lib-common'
 import input from '@inquirer/input'
 import select from '@inquirer/select'
 import confirm from '@inquirer/confirm'
@@ -19,16 +19,30 @@ export default class ProjectCreate extends Command {
     },
     {
       description: 'Create myProject entirely from command line',
-      command: '<%= config.bin %> <%= command.id %> my-project -d "My New m30ml Project" -l "CC-BY-4.0" -p "npm"'
+      command: '<%= config.bin %> <%= command.id %> my-project -V "0.0.0" -d "My New m30ml Project" -a "Mach 30" -l "CC-BY-4.0" -p "npm"'
     }
   ]
 
   static flags = {
     // flag with a value (-n, --name=VALUE)
+    versionString: Flags.string(
+      {
+        char: 'V',
+        required: true,
+        default: DefaultVersion,
+        description: 'Initial project version string as a semver version (https://semver.org/)'
+      }
+    ),
     description: Flags.string(
       {
         char: 'd',
         description: 'Description of new m30ml project'
+      }
+    ),
+    author: Flags.string(
+      {
+        char: 'a',
+        description: 'Author of new m30ml project'
       }
     ),
     license: Flags.string(
@@ -62,6 +76,14 @@ export default class ProjectCreate extends Command {
   public async run(): Promise<void> {
     const {args, flags, metadata} = await this.parse(ProjectCreate)
     const projectName = args.projectName
+    let versionString = flags.versionString
+    if (metadata.flags["versionString"] && metadata.flags["versionString"].setFromDefault) {
+      let response = await input({
+        message: 'Provide an initial semver-formatted project version: ',
+        default: DefaultVersion
+      })
+      versionString = response
+    }
     let description = flags.description
     if (!description) {
       let response = await input({
@@ -69,6 +91,14 @@ export default class ProjectCreate extends Command {
         default: ''
       })
       description = response
+    }
+    let author = flags.author
+    if (!author) {
+      let response = await input({
+        message: 'Provide a project author: ',
+        default: ''
+      })
+      author = response
     }
     let license = flags.license
     if (metadata.flags["license"] && metadata.flags["license"].setFromDefault) {
@@ -99,7 +129,9 @@ export default class ProjectCreate extends Command {
     const buildTool = "gradle"
     const projectConfiguration = new ProjectConfiguration(
       projectName,
+      versionString,
       description,
+      author,
       license,
       packageManager,
       versionControlTool,
@@ -108,7 +140,9 @@ export default class ProjectCreate extends Command {
     console.log(projectConfiguration.isValid() ? 'Valid Project Configuration' : 'INVALID PROJECT CONFIGURATION')
     console.log('-----------------------------')
     console.log(`Project name: ${projectConfiguration.name}`)
+    console.log(`Project version string: ${projectConfiguration.version}`)
     console.log(`Project description: ${projectConfiguration.description}`)
+    console.log(`Project author: ${projectConfiguration.author}`)
     console.log(`Project license: ${projectConfiguration.license}`)
     console.log(`Project package manager: ${projectConfiguration.packageManager}`)
     console.log(`Project version control tool: ${projectConfiguration.versionControlTool}`)
