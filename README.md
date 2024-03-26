@@ -16,7 +16,7 @@ $ npm install -g m30pm
 $ m30pm COMMAND
 running command...
 $ m30pm (--version)
-m30pm/0.0.0 linux-x64 node-v18.5.0
+m30pm/0.0.0 linux-x64 node-v20.11.1
 $ m30pm --help [COMMAND]
 USAGE
   $ m30pm COMMAND
@@ -34,10 +34,10 @@ Display help for m30pm.
 
 ```
 USAGE
-  $ m30pm help [COMMANDS] [-n]
+  $ m30pm help [COMMANDS...] [-n]
 
 ARGUMENTS
-  COMMANDS  Command to show help for.
+  COMMANDS...  Command to show help for.
 
 FLAGS
   -n, --nested-commands  Include all nested commands in the output.
@@ -54,12 +54,15 @@ Create a new m30ml project
 
 ```
 USAGE
-  $ m30pm project create PROJECTNAME -l <value> -p npm|yarn [-d <value>]
+  $ m30pm project create PROJECTNAME -V <value> -l <value> -p npm|yarn [-d <value>] [-a <value>]
 
 ARGUMENTS
   PROJECTNAME  Name of new m30ml project to create (must conform to npm package naming convention)
 
 FLAGS
+  -V, --versionString=<value>    (required) [default: 0.0.0] Initial project version string as a semver version
+                                 (https://semver.org/)
+  -a, --author=<value>           Author of new m30ml project
   -d, --description=<value>      Description of new m30ml project
   -l, --license=<value>          (required) [default: CC0-1.0] Project license specified as an SPDX license identifier
                                  (https://spdx.org/licenses/)
@@ -80,7 +83,7 @@ EXAMPLES
 
   Create myProject entirely from command line
 
-    $ m30pm project create my-project -d "My New m30ml Project" -l "CC-BY-4.0" -p "npm"
+    $ m30pm project create my-project -V "0.0.0" -d "My New m30ml Project" -a "Mach 30" -l "CC-BY-4.0" -p "npm"
 ```
 
 _See code: [src/commands/project/create.ts](https://github.com/Mach30/m30pm/blob/v0.0.0/src/commands/project/create.ts)_
