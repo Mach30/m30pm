@@ -12,12 +12,20 @@ export declare class ProjectConfiguration {
     private _buildTool;
     constructor(name: string, version: string, description: string | undefined, author: string | undefined, license: string, packageManager: string, versionControlTool: string, buildTool: string);
     isValid(): boolean;
-    get name(): string | undefined;
-    get version(): string | undefined;
+    get name(): string;
+    get version(): string;
     get description(): string;
     get author(): string;
     get license(): string;
-    get packageManager(): Enums.PackageManagers | undefined;
-    get versionControlTool(): Enums.VersionControlTools | undefined;
-    get buildTool(): Enums.BuildTools | undefined;
+    get packageManager(): Enums.PackageManagers;
+    get versionControlTool(): Enums.VersionControlTools;
+    get buildTool(): Enums.BuildTools;
+    private validateName;
+    private validateVersion;
+    private validateDescription;
+    private validateAuthor;
+    private validateLicense;
+    private validatePackageManager;
+    private validateVersionControlTool;
+    private validateBuildTool;
 }
