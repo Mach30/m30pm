@@ -17,7 +17,7 @@
     "@oclif/test": "^3",
     "@types/chai": "^4",
     "@types/mocha": "^9.0.0",
-    "@types/node": "^18",
+    "@types/node": "^18.19.26",
     "chai": "^4",
     "mocha": "^10",
     "nyc": "^15.1.0",
