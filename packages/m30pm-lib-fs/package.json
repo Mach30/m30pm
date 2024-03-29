@@ -9,7 +9,7 @@
   ],
   "scripts": {
     "build": "shx rm -rf dist/ && tsc -b",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "nyc mocha --forbid-only"
   },
   "author": "Mach 30",
   "license": "Apache-2.0",
@@ -17,6 +17,15 @@
     "shelljs": "^0.8.5"
   },
   "devDependencies": {
-    "shx": "^0.3.4"
+    "@oclif/test": "^3",
+    "@types/chai": "^4",
+    "@types/mocha": "^9.0.0",
+    "@types/node": "^18.19.26",
+    "chai": "^4",
+    "mocha": "^10",
+    "nyc": "^15.1.0",
+    "shx": "^0.3.4",
+    "ts-node": "^10.9.2",
+    "typescript": "^5"
   }
 }
