@@ -35,6 +35,35 @@ export class ProjectConfiguration {
         this._buildTool = this.validateBuildTool(buildTool);
     }
 
+    public static fromJsonString(
+        jsonString: string
+    ) {
+        const jsonObject = JSON.parse(jsonString)
+        try {
+            return new ProjectConfiguration(
+                jsonObject.name,
+                jsonObject.version,
+                jsonObject.description,
+                jsonObject.author,
+                jsonObject.license,
+                jsonObject.packageManager,
+                jsonObject.m30pm.versionControlTool,
+                jsonObject.m30pm.buildTool
+            )
+        } catch (error) {
+            return new ProjectConfiguration(
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                ""
+            )
+        }
+    }
+
     public isValid(): boolean {
         return this._name !== "" && this._version !== "" && this._license !== '' && this._packageManager !== Enums.PackageManagers.INVALID_PM && this._versionControlTool !== Enums.VersionControlTools.INVALID_VCT && this._buildTool !== Enums.BuildTools.INVALID_BT;
     }

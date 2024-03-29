@@ -75,21 +75,15 @@ describe("To JSON-string Tests", () => {
 describe("Project Validation Tests (json-based constructor)", () => {
     it('should return true for the example project from package.json string', () => {
         const project = new ProjectConfiguration("my-project", "0.0.0", "My New m30ml Project", "Mach 30", "CC-BY-4.0", "npm", "git", "gradle")
-        //TODO: implement ProjectConfiguration.toJsonString() method and ProjectConfiguration constructor that accepts a JSON-string
-        /* const project2 = new ProjectConfiguration(project.toJsonString())
+        const project2 = ProjectConfiguration.fromJsonString(project.getJsonString())
         expect(project2.isValid()).to.equal(true)
         project2.description
         project2.author
-        project2.license */
+        project2.license
     })
 
     it('should return false for malformed package.json string', () => {
-        const project = new ProjectConfiguration("my-project", "0.0.0", "My New m30ml Project", "Mach 30", "CC-BY-4.0", "npm", "git", "gradle")
-        //TODO: implement ProjectConfiguration.toJsonString() method and ProjectConfiguration constructor that accepts a JSON-string
-        /* const project2 = new ProjectConfiguration(project.toJsonString())
-        expect(project2.isValid()).to.equal(true)
-        project2.description
-        project2.author
-        project2.license */
+        const project2 = ProjectConfiguration.fromJsonString("{}")
+        expect(project2.isValid()).to.equal(false)
     })
 })
