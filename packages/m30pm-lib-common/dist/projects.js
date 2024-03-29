@@ -53,6 +53,19 @@ class ProjectConfiguration {
     isValid() {
         return this._name !== "" && this._version !== "" && this._license !== '' && this._packageManager !== Enums.PackageManagers.INVALID_PM && this._versionControlTool !== Enums.VersionControlTools.INVALID_VCT && this._buildTool !== Enums.BuildTools.INVALID_BT;
     }
+    getJsonString() {
+        let jsonObject = {};
+        jsonObject["name"] = this._name;
+        jsonObject["version"] = this._version;
+        jsonObject["description"] = this._description;
+        jsonObject["author"] = this._author;
+        jsonObject["license"] = this._license;
+        jsonObject["packageManager"] = this._packageManager;
+        jsonObject["m30pm"] = {};
+        jsonObject["m30pm"]["versionControlTool"] = this._versionControlTool;
+        jsonObject["m30pm"]["buildTool"] = this._buildTool;
+        return JSON.stringify(jsonObject, null, 2);
+    }
     get name() {
         return this._name;
     }

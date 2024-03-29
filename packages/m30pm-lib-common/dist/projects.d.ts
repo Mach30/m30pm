@@ -12,6 +12,7 @@ export declare class ProjectConfiguration {
     private _buildTool;
     constructor(name: string, version: string, description: string | undefined, author: string | undefined, license: string, packageManager: string, versionControlTool: string, buildTool: string);
     isValid(): boolean;
+    getJsonString(): string;
     get name(): string;
     get version(): string;
     get description(): string;
