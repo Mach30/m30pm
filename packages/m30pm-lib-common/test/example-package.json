@@ -1,0 +1,12 @@
+{
+  "name": "my-project",
+  "version": "0.0.0",
+  "description": "My New m30ml Project",
+  "author": "Mach 30",
+  "license": "CC-BY-4.0",
+  "packageManager": "npm",
+  "m30pm": {
+    "versionControlTool": "git",
+    "buildTool": "gradle"
+  }
+}

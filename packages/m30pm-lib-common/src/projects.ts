@@ -1,3 +1,4 @@
+import { json } from 'stream/consumers';
 import * as Enums from './enums'
 import semver from 'semver';
 
@@ -36,6 +37,20 @@ export class ProjectConfiguration {
 
     public isValid(): boolean {
         return this._name !== "" && this._version !== "" && this._license !== '' && this._packageManager !== Enums.PackageManagers.INVALID_PM && this._versionControlTool !== Enums.VersionControlTools.INVALID_VCT && this._buildTool !== Enums.BuildTools.INVALID_BT;
+    }
+
+    public getJsonString(): string {
+        let jsonObject: any = {}
+        jsonObject["name"] = this._name
+        jsonObject["version"] = this._version
+        jsonObject["description"] = this._description
+        jsonObject["author"] = this._author
+        jsonObject["license"] = this._license
+        jsonObject["packageManager"] = this._packageManager
+        jsonObject["m30pm"] = {}
+        jsonObject["m30pm"]["versionControlTool"] = this._versionControlTool
+        jsonObject["m30pm"]["buildTool"] = this._buildTool
+        return JSON.stringify(jsonObject, null, 2)
     }
 
     public get name() {

@@ -1,6 +1,8 @@
 import { expect } from "@oclif/test";
 import { ProjectConfiguration } from "../src/projects";
 import { PackageManagers, VersionControlTools, BuildTools } from "../src/enums";
+import * as fs from 'fs';
+import path from 'path';
 
 describe("Project Validation Tests (argument-based constructor)", () => {
     it('should return true for the example project', () => {
@@ -59,6 +61,14 @@ describe("Project Validation Tests (argument-based constructor)", () => {
         const project = new ProjectConfiguration("my-project", "0.0.0", "My New m30ml Project", "Mach 30", "CC-BY-4.0", "npm", "git", "not-gradle")
         expect(project.isValid()).to.equal(false)
         expect(project.buildTool).to.equal(BuildTools.INVALID_BT)
+    })
+})
+
+describe("To JSON-string Tests", () => {
+    it('should return example project package.json string for a given example project', () => {
+        const exampleProjectJson = fs.readFileSync(path.join(__dirname, 'example-package.json') , 'utf8');
+        const project = new ProjectConfiguration("my-project", "0.0.0", "My New m30ml Project", "Mach 30", "CC-BY-4.0", "npm", "git", "gradle")
+        expect(project.getJsonString()).to.equal(exampleProjectJson)
     })
 })
 
