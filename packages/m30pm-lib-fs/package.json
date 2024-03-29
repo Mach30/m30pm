@@ -15,6 +15,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@types/shelljs": "^0.8.15",
+    "m30pm-lib-common": "^0.0.2",
     "shelljs": "^0.8.5"
   },
   "devDependencies": {
