@@ -1,11 +1,40 @@
 import { ProjectConfiguration } from "m30pm-lib-common";
-import * as shell from 'shelljs'
+import * as sh from 'shelljs'
+
+sh.config.silent = true;
 
 export function createProject(project: ProjectConfiguration) {
     console.log(`Creating ${project.name}...`)
-    //verify package manager, build tool, and version control tool are installed using shell.which()
+    //verify package manager, build tool, and version control tool are installed using sh.which()
+    const pmPath = sh.which(project.packageManager.toString())
+    if (!pmPath) {
+        console.log(`Package manager (${project.packageManager.toString()}) not found`);
+        sh.exit(1);
+    }
+    else {
+        let pmVersion = sh.exec(`${pmPath.toString()} --version`).trim()
+        console.log(`Found package manager (${project.packageManager.toString()} v${pmVersion.toString()}) at ${pmPath}`)
+    }
+    const btPath = sh.which(project.buildTool.toString())
+    if (!btPath) {
+        console.log(`Build tool (${project.buildTool.toString()}) not found`);
+        sh.exit(1);
+    }
+    else {
+        let btVersion = sh.exec(`${btPath.toString()} --version`).grep("Gradle").trim().split(" ")[1]
+        console.log(`Found build tool (${project.buildTool.toString()} v${btVersion.toString()}) at ${btPath}`)
+    }
+    const vctPath = sh.which(project.versionControlTool.toString())
+    if (!vctPath) {
+        console.log(`Version control tool (${project.versionControlTool.toString()}) not found`);
+        sh.exit(1);
+    }
+    else {
+        let vctVersion = sh.exec(`${vctPath.toString()} --version`).trim().split(" ")[2]
+        console.log(`Found version control tool (${project.versionControlTool.toString()} v${vctVersion.toString()}) at ${vctPath}`)
+    }
     //create project directory using project name (should follow oclif pattern; if no directory exists, create directory; if directory exists and empty, continue project creation; if directory exists and is not empty, exit with error stating non-empty directory)
-    shell.mkdir(project.name)
+    sh.mkdir(project.name)
     //in project directory, generate selected tool scaffolding (a.k.a., for npm or yarn) (including .npmrc or .yarnrc) for a mono repo (a.k.a., npm/yarn workspaces) as per
     //in project directory, install linkml schema project (using npm install linkml-schema --save-dev) blocked on
     //add support for adding linkml-schema as package dependency #17
