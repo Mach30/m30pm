@@ -1,4 +1,4 @@
-import { ProjectConfiguration } from "m30pm-lib-common";
+import { ProjectConfiguration, PackageManagers } from "m30pm-lib-common";
 import * as sh from 'shelljs'
 
 sh.config.silent = true;
@@ -50,6 +50,17 @@ export function createProject(project: ProjectConfiguration) {
     let packageFile = new sh.ShellString(project.getJsonString())
     packageFile.to("package.json")
     sh.mkdir("packages")
+    let rcFile = new sh.ShellString(project.getRcContents())
+    if (project.packageManager == PackageManagers.NPM) {
+        rcFile.to(".npmrc")
+    }
+    else if (project.packageManager == PackageManagers.YARN) {
+        rcFile.to(".yarnrc.yml")
+    }
+    else {
+        console.log("Invalid package manager")
+        sh.exit(1)
+    }
     //in project directory, install linkml schema project (using npm install linkml-schema --save-dev) blocked on
     //add support for adding linkml-schema as package dependency #17
     //in project directory, generate scaffolding for build tool (a.k.a., gradle init with gradle file included - s.a., for base set of templates for generating documentation)

@@ -85,6 +85,18 @@ export class ProjectConfiguration {
         return JSON.stringify(jsonObject, null, 2)
     }
 
+    public getRcContents(): string {
+        if (this._packageManager == Enums.PackageManagers.NPM) {
+            return "registry=https://npm.cloudsmith.io/mach-30/m30ml/"
+        }
+        else if (this._packageManager == Enums.PackageManagers.YARN) {
+            return "npmRegistryServer: \"https://npm.cloudsmith.io/mach-30/m30ml/\""
+        }
+        else {
+            return ""
+        }
+    }
+
     public get name() {
         return this._name;
     }
