@@ -34,8 +34,22 @@ export function createProject(project: ProjectConfiguration) {
         console.log(`Found version control tool (${project.versionControlTool.toString()} v${vctVersion.toString()}) at ${vctPath}`)
     }
     //create project directory using project name (should follow oclif pattern; if no directory exists, create directory; if directory exists and empty, continue project creation; if directory exists and is not empty, exit with error stating non-empty directory)
-    sh.mkdir(project.name)
-    //in project directory, generate selected tool scaffolding (a.k.a., for npm or yarn) (including .npmrc or .yarnrc) for a mono repo (a.k.a., npm/yarn workspaces) as per
+    const projectPath = sh.ls("-d", project.name);
+    if (projectPath.length) {
+        const projectContents = sh.ls("-A", projectPath.toString())
+        if (projectContents.length) {
+            console.log(`Cannot create project, ${projectPath} is not empty`)
+            sh.exit(1)
+        }
+    }
+    else {
+        sh.mkdir(project.name)
+    }
+    //in project directory, generate selected tool scaffolding (a.k.a., for npm or yarn) (including .npmrc or .yarnrc) for a mono repo (a.k.a., npm/yarn workspaces)
+    sh.cd(project.name)
+    let packageFile = new sh.ShellString(project.getJsonString())
+    packageFile.to("package.json")
+    sh.mkdir("packages")
     //in project directory, install linkml schema project (using npm install linkml-schema --save-dev) blocked on
     //add support for adding linkml-schema as package dependency #17
     //in project directory, generate scaffolding for build tool (a.k.a., gradle init with gradle file included - s.a., for base set of templates for generating documentation)

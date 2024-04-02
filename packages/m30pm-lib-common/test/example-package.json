@@ -5,6 +5,9 @@
   "author": "Mach 30",
   "license": "CC-BY-4.0",
   "packageManager": "npm",
+  "workspaces": [
+    "./packages/*"
+  ],
   "m30pm": {
     "versionControlTool": "git",
     "buildTool": "gradle"

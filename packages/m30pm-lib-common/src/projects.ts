@@ -4,6 +4,7 @@ import semver from 'semver';
 
 export const DefaultVersion = '0.0.0'
 export const DefaultLicense = 'CC0-1.0'
+export const DefaultWorkspacePath = "packages"
 
 export class ProjectConfiguration {
     private _name: string;
@@ -76,6 +77,8 @@ export class ProjectConfiguration {
         jsonObject["author"] = this._author
         jsonObject["license"] = this._license
         jsonObject["packageManager"] = this._packageManager
+        jsonObject["workspaces"] = []
+        jsonObject["workspaces"][0] = `./${DefaultWorkspacePath}/*`
         jsonObject["m30pm"] = {}
         jsonObject["m30pm"]["versionControlTool"] = this._versionControlTool
         jsonObject["m30pm"]["buildTool"] = this._buildTool
