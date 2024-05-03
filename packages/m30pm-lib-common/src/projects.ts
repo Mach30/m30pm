@@ -87,10 +87,10 @@ export class ProjectConfiguration {
 
     public getRcContents(): string {
         if (this._packageManager == Enums.PackageManagers.NPM) {
-            return "registry=https://npm.cloudsmith.io/mach-30/m30ml/"
+            return "sign-git-tag=true"
         }
         else if (this._packageManager == Enums.PackageManagers.YARN) {
-            return "npmRegistryServer: \"https://npm.cloudsmith.io/mach-30/m30ml/\""
+            return ""
         }
         else {
             return ""
