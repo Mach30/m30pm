@@ -61,9 +61,9 @@ export function createProject(project: ProjectConfiguration) {
         console.log("Invalid package manager")
         sh.exit(1)
     }
-    //in project directory, install linkml schema project (using npm install linkml-schema --save-dev) blocked on
-    //add support for adding linkml-schema as package dependency #17
     //in project directory, generate scaffolding for build tool (a.k.a., gradle init with gradle file included - s.a., for base set of templates for generating documentation)
+    //`gradle init` prompts for project type (basic), dsl (Groovy), project name, Generate build using new API and behavior (--no-incubating)
+    let btInit = sh.exec(`${btPath.toString()} init --type basic --dsl groovy --project-name ${project.name} --no-incubating`)
     //in project directory, generate scaffolding for version control tool (a.k.a., git, s.a., .gitignore)
     //perform "best practice" git operations for newly generated project scaffolding git add . git commit -m "Initial commit" (with expanded commit description s.a., "project generated from...")
     //print out user git command for setting up remote origin (e.g., git remote add origin <git-url>)
