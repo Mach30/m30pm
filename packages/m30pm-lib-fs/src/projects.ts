@@ -65,8 +65,10 @@ export function createProject(project: ProjectConfiguration) {
     //`gradle init` prompts for project type (basic), dsl (Groovy), project name, Generate build using new API and behavior (--no-incubating)
     let btInit = sh.exec(`${btPath.toString()} init --type basic --dsl groovy --project-name ${project.name} --no-incubating`)
     //in project directory, generate scaffolding for version control tool (a.k.a., git, s.a., .gitignore)
+    let vctInit = sh.exec(`${vctPath.toString()} init --initial-branch=main`)
     //perform "best practice" git operations for newly generated project scaffolding git add . git commit -m "Initial commit" (with expanded commit description s.a., "project generated from...")
+    let vctAddDot = sh.exec(`${vctPath.toString()} add .`)
+    let vctCommitInitialCommit = sh.exec(`${vctPath.toString()} commit -m "Initial commit\n\nCreated by m30pm"`)
     //print out user git command for setting up remote origin (e.g., git remote add origin <git-url>)
-    
 }
 
