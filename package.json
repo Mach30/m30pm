@@ -65,7 +65,7 @@
   },
   "repository": "https://github.com/Mach30/m30pm",
   "scripts": {
-    "build": "npm run build -w packages/m30pm-lib-common && npm run build -w packages/m30pm-lib-fs && shx rm -rf dist && tsc -b",
+    "build": "npm run build -w packages/m30pm-lib-common && npm run build -w packages/m30pm-lib-fs && npm run build -w packages/m30pm-lib-cli && shx rm -rf dist && tsc -b",
     "lint": "eslint . --ext .ts",
     "postpack": "shx rm -f oclif.manifest.json",
     "posttest": "npm run lint",
