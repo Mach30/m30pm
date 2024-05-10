@@ -5349,6 +5349,9 @@ lru-cache@^7.7.1:
 "m30pm-lib-cli@file:/home/kasm-user/repos/m30pm/packages/m30pm-lib-cli":
   version "0.0.0"
   resolved "file:packages/m30pm-lib-cli"
+  dependencies:
+    marked "^12.0.2"
+    marked-terminal "^7.0.0"
 
 m30pm-lib-common@^0.0.2, "m30pm-lib-common@file:/home/kasm-user/repos/m30pm/packages/m30pm-lib-common":
   version "0.0.2"
