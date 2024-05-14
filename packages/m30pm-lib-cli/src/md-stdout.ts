@@ -2,7 +2,8 @@ import { marked } from 'marked';
 import { markedTerminal } from 'marked-terminal';
 import chalk from 'chalk';
 import { CardinalOptions } from 'cardinal';
-import { colors } from 'ansicolors';
+import colors from 'ansicolors';
+import TerminalRenderer from 'marked-terminal';
 
 const defaultMarkedTerminalOptions = {
     blockquote: chalk.visible,
@@ -38,7 +39,9 @@ const codeHighlightTheme: CardinalOptions = {
 export class mdStdout {
 
     public static log(mdString: string) {
-        marked.use({renderer: markedTerminal(defaultMarkedTerminalOptions, codeHighlightTheme)})
+        //marked.use({renderer: markedTerminal(defaultMarkedTerminalOptions, codeHighlightTheme)})
+        marked.use({renderer: markedTerminal()})
+        //marked.setOptions({renderer: new TerminalRenderer(defaultMarkedTerminalOptions, codeHighlightTheme)})
         console.log(marked.parse(mdString))
     }
 
