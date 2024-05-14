@@ -1,10 +1,11 @@
 import {Args, Command, Flags} from '@oclif/core'
-import {Metadata, MetadataFlag} from '@oclif/core/lib/interfaces/parser'
+//import {Metadata, MetadataFlag} from '@oclif/core/lib/interfaces/parser'
 import {PackageManagers, ProjectConfiguration, DefaultVersion, DefaultLicense} from 'm30pm-lib-common'
 import input from '@inquirer/input'
 import select from '@inquirer/select'
 import confirm from '@inquirer/confirm'
 import * as fsLib from 'm30pm-lib-fs'
+import { mdStdout } from 'm30pm-lib-cli'
 
 export default class ProjectCreate extends Command {
   static description = 'Create a new m30ml project'
@@ -75,6 +76,7 @@ export default class ProjectCreate extends Command {
   }
 
   public async run(): Promise<void> {
+//    const libCli = await import("m30pm-lib-cli");
     const {args, flags, metadata} = await this.parse(ProjectCreate)
     const projectName = args.projectName
     let versionString = flags.versionString
@@ -159,12 +161,16 @@ export default class ProjectCreate extends Command {
     console.log(`Project package manager: ${projectConfiguration.packageManager}`)
     console.log(`Project version control tool: ${projectConfiguration.versionControlTool}`)
     console.log(`Project build tool: ${projectConfiguration.buildTool}`)
+
+//    libCli.mdStdout.log("# Hello World")
+    mdStdout.log("# Hello World")
+
     if (!isValidProject) {
       this.exit(1)
     }
-    const createProject = await confirm({ message: 'Create project?' })
-    if (createProject) {
-      fsLib.createProject(projectConfiguration)
-    }
+ //   const createProject = await confirm({ message: 'Create project?' })
+ //   if (createProject) {
+ //     fsLib.createProject(projectConfiguration)
+ //   }
   }
 }

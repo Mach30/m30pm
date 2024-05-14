@@ -2,7 +2,8 @@
   "name": "m30pm-lib-cli",
   "version": "0.0.0",
   "description": "Common functions for m30pm CLI application",
-  "main": "dist/index.js",
+  "type": "module",
+  "exports": "./dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
     "/dist"
@@ -18,8 +19,8 @@
     "@types/ansicolors": "^0.0.37",
     "@types/chai": "^4",
     "@types/marked-terminal": "^6.1.1",
-    "@types/mocha": "^9.0.0",
-    "@types/node": "^18.19.26",
+    "@types/mocha": "^10",
+    "@types/node": "^18",
     "chai": "^4",
     "mocha": "^10",
     "nyc": "^15.1.0",

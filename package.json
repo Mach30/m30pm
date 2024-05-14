@@ -20,20 +20,21 @@
     "@oclif/prettier-config": "^0.2.1",
     "@oclif/test": "^3",
     "@types/chai": "^4",
-    "@types/mocha": "^9.0.0",
+    "@types/mocha": "^10",
     "@types/node": "^18",
     "chai": "^4",
-    "eslint": "^8.56.0",
+    "eslint": "^8",
     "eslint-config-oclif": "^5",
     "eslint-config-oclif-typescript": "^3",
     "eslint-config-prettier": "^9.1.0",
     "mocha": "^10",
     "nyc": "^15.1.0",
-    "oclif": "^4",
-    "shx": "^0.3.3",
+    "oclif": "^4.9.0",
+    "shx": "^0.3.4",
     "ts-node": "^10.9.2",
     "typescript": "^5"
   },
+  "type": "module",
   "engines": {
     "node": ">=18.0.0"
   },
@@ -44,7 +45,6 @@
   ],
   "homepage": "https://github.com/Mach30/m30pm",
   "license": "Apache-2.0",
-  "main": "dist/index.js",
   "name": "m30pm",
   "workspaces": [
     "./packages/*"
@@ -78,7 +78,9 @@
   "keywords": [
     "oclif"
   ],
+  "main": "",
   "types": "dist/index.d.ts",
+  "exports": "./lib/index.js",
   "nyc": {
     "exclude": [
       "packages/**",

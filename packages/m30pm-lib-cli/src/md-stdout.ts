@@ -1,8 +1,8 @@
-import marked from 'marked';
-import markedTerminal from 'marked-terminal';
+import { marked } from 'marked';
+import { markedTerminal } from 'marked-terminal';
 import chalk from 'chalk';
-import CardinalOptions from 'cardinal';
-import colors from 'ansicolors';
+import { CardinalOptions } from 'cardinal';
+import { colors } from 'ansicolors';
 
 const defaultMarkedTerminalOptions = {
     blockquote: chalk.visible,
@@ -26,7 +26,7 @@ const defaultMarkedTerminalOptions = {
     }
 };
 
-const codeHighlightTheme: CardinalOptions.CardinalOptions = {
+const codeHighlightTheme: CardinalOptions = {
     theme: {
         keyword: colors.brightBlue,
         string: colors.brightRed,
@@ -35,15 +35,19 @@ const codeHighlightTheme: CardinalOptions.CardinalOptions = {
     }
 }; 
 
-export function log(mdString: string) {
-    marked.use({renderer: new markedTerminal(defaultMarkedTerminalOptions, codeHighlightTheme)})
-    console.log(marked.parse(mdString))
-}
+export class mdStdout {
 
-export function logWarn(mdString: string) {
-    //
-}
+    public static log(mdString: string) {
+        marked.use({renderer: markedTerminal(defaultMarkedTerminalOptions, codeHighlightTheme)})
+        console.log(marked.parse(mdString))
+    }
 
-export function logError(mdString: string) {
-    //
+    public static logWarn(mdString: string) {
+        //
+    }
+
+    public static logError(mdString: string) {
+        //
+    }
+
 }
