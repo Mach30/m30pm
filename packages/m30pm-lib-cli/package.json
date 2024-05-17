@@ -19,7 +19,6 @@
     "@oclif/test": "^3",
     "@types/ansicolors": "^0.0.37",
     "@types/chai": "^4",
-    "@types/marked-terminal": "^6.1.1",
     "@types/mocha": "^10",
     "@types/node": "^18",
     "chai": "^4",
@@ -30,9 +29,9 @@
     "typescript": "^5"
   },
   "dependencies": {
+    "@types/marked-terminal": "^6.1.1",
     "ansicolors": "^0.3.2",
     "chalk": "^5.3.0",
-    "marked": "^10.0.0",
-    "marked-terminal": "^6.1.0"
+    "marked-terminal": "^6.2.0"
   }
 }
