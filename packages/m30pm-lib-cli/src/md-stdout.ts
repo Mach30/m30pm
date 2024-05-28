@@ -43,11 +43,20 @@ export class mdStdout {
     }
 
     public static logWarn(mdString: string) {
-        //
+        let warnOptions: any = defaultMarkedTerminalOptions
+        warnOptions["firstHeading"] = chalk.yellowBright.underline.bold
+        warnOptions["em"] = chalk.yellowBright.italic
+        marked.setOptions({renderer: new TerminalRenderer(warnOptions, codeHighlightTheme)})
+        console.log(marked.parse(mdString))
     }
 
     public static logError(mdString: string) {
-        //
+        let errorOptions: any = defaultMarkedTerminalOptions
+        errorOptions["firstHeading"] = chalk.redBright.underline.bold
+        errorOptions["em"] = chalk.yellowBright.italic
+        errorOptions["strong"] = chalk.redBright.bold
+        marked.setOptions({renderer: new TerminalRenderer(errorOptions, codeHighlightTheme)})
+        console.log(marked.parse(mdString))
     }
 
 }
