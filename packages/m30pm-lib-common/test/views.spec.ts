@@ -9,4 +9,7 @@ describe("ViewRenderer Tests", () => {
         const result = ViewRenderer.render(template, context)
         expect(result).to.equal('Hello World!')
     })
+    it('should return hello world for example template and typescript object', () => {
+        //TODO
+    })
 })
