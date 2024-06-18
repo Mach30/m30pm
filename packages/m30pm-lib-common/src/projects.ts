@@ -15,6 +15,7 @@ export class ProjectConfiguration {
     private _packageManager: Enums.PackageManagers;
     private _versionControlTool: Enums.VersionControlTools;
     private _buildTool: Enums.BuildTools;
+    private _packageJsonObject: Object;
     
     constructor(
         name: string,
@@ -24,7 +25,8 @@ export class ProjectConfiguration {
         license: string,
         packageManager: string,
         versionControlTool: string,
-        buildTool: string
+        buildTool: string,
+        packageJsonObject: string
     ) {
         this._name = this.validateName(name);
         this._version = this.validateVersion(version);
@@ -34,25 +36,25 @@ export class ProjectConfiguration {
         this._packageManager = this.validatePackageManager(packageManager);
         this._versionControlTool = this.validateVersionControlTool(versionControlTool);
         this._buildTool = this.validateBuildTool(buildTool);
+        this._packageJsonObject = this.validatePackageJsonObject(packageJsonObject);
     }
 
-    public static fromJsonString(
-        jsonString: string
-    ) {
-        const jsonObject = JSON.parse(jsonString)
+    public static fromJsObject(jsObject: any) {
         try {
             return new ProjectConfiguration(
-                jsonObject.name,
-                jsonObject.version,
-                jsonObject.description,
-                jsonObject.author,
-                jsonObject.license,
-                jsonObject.packageManager,
-                jsonObject.m30pm.versionControlTool,
-                jsonObject.m30pm.buildTool
+                jsObject.name,
+                jsObject.version,
+                jsObject.description,
+                jsObject.author,
+                jsObject.license,
+                jsObject.packageManager,
+                jsObject.m30pm.versionControlTool,
+                jsObject.m30pm.buildTool,
+                JSON.stringify(jsObject, null, 2)
             )
         } catch (error) {
             return new ProjectConfiguration(
+                "",
                 "",
                 "",
                 "",
@@ -65,24 +67,41 @@ export class ProjectConfiguration {
         }
     }
 
+    /**
+     * @deprecated conversion from string allocated to m30pm-lib-fs
+     */
+    public static fromJsonString(
+        jsonString: string
+    ) {
+        const jsObject = JSON.parse(jsonString)
+        return ProjectConfiguration.fromJsObject(jsObject)
+    }
+
     public isValid(): boolean {
         return this._name !== "" && this._version !== "" && this._license !== '' && this._packageManager !== Enums.PackageManagers.INVALID_PM && this._versionControlTool !== Enums.VersionControlTools.INVALID_VCT && this._buildTool !== Enums.BuildTools.INVALID_BT;
     }
 
+    public toJsObject(): Object {
+        let jsObject: any = {}
+        jsObject["name"] = this._name
+        jsObject["version"] = this._version
+        jsObject["description"] = this._description
+        jsObject["author"] = this._author
+        jsObject["license"] = this._license
+        jsObject["packageManager"] = this._packageManager
+        jsObject["workspaces"] = []
+        jsObject["workspaces"][0] = `./${DefaultWorkspacePath}/*`
+        jsObject["m30pm"] = {}
+        jsObject["m30pm"]["versionControlTool"] = this._versionControlTool
+        jsObject["m30pm"]["buildTool"] = this._buildTool
+        return jsObject
+    }
+
+    /**
+     * @deprecated conversion to string allocated to m30pm-lib-fs
+     */
     public getJsonString(): string {
-        let jsonObject: any = {}
-        jsonObject["name"] = this._name
-        jsonObject["version"] = this._version
-        jsonObject["description"] = this._description
-        jsonObject["author"] = this._author
-        jsonObject["license"] = this._license
-        jsonObject["packageManager"] = this._packageManager
-        jsonObject["workspaces"] = []
-        jsonObject["workspaces"][0] = `./${DefaultWorkspacePath}/*`
-        jsonObject["m30pm"] = {}
-        jsonObject["m30pm"]["versionControlTool"] = this._versionControlTool
-        jsonObject["m30pm"]["buildTool"] = this._buildTool
-        return JSON.stringify(jsonObject, null, 2)
+        return JSON.stringify(this.toJsObject(), null, 2)
     }
 
     public getRcContents(): string {
@@ -186,5 +205,19 @@ export class ProjectConfiguration {
             validatedBuildTool = Enums.BuildTools.GRADLE
         }
         return validatedBuildTool;
+    }
+
+    private validatePackageJsonObject(packageJsonObject: string) {
+        try {
+            let testPackageJsonObject = JSON.parse(packageJsonObject)
+            if (testPackageJsonObject.constructor === Object) {
+                return testPackageJsonObject;
+            }
+            else {
+                return {};
+            }
+        } catch {
+            return {};
+        }
     }
 }
