@@ -82,7 +82,7 @@ export class ProjectConfiguration {
     }
 
     public toJsObject(): Object {
-        let jsObject: any = {}
+        let jsObject: any = this._packageJsonObject
         jsObject["name"] = this._name
         jsObject["version"] = this._version
         jsObject["description"] = this._description

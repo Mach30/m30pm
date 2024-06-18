@@ -144,4 +144,15 @@ describe("Project Validation Tests for ProjectConfiguration.fromJsObject()", () 
         const project2 = ProjectConfiguration.fromJsObject({})
         expect(project2.isValid()).to.equal(false)
     })
+
+    //TODO: test where the package.json string is an empty array string
+
+    //TODO: test where the package.json string is an empty object string
+
+    //TODO: test where the package.json string has extra data
+    it('it should retain extra data in existing package.json ', () => {
+        const exampleProjectJsonWithExtraData = fs.readFileSync(path.join(__dirname, 'example-package-with-extra-data.json') , 'utf8');
+        const project = ProjectConfiguration.fromJsObject(JSON.parse(exampleProjectJsonWithExtraData));
+        expect(JSON.stringify(project.toJsObject(), null, 2)).to.equal(exampleProjectJsonWithExtraData)
+    })
 })
