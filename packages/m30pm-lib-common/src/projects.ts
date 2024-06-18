@@ -104,6 +104,9 @@ export class ProjectConfiguration {
         return JSON.stringify(this.toJsObject(), null, 2)
     }
 
+    /**
+     * @deprecated conversion to string allocated to m30pm-lib-fs
+     */
     public getRcContents(): string {
         if (this._packageManager == Enums.PackageManagers.NPM) {
             return "sign-git-tag=true"
