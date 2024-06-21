@@ -6,8 +6,11 @@ import path from 'path'
 
 export class BuiltinViews {
     public static getHello() : string {
-        const hello = fs.readFileSync(path.resolve(__dirname, "resources/hello.njk"), "utf8").toString();
-        return hello
+        return BuiltinViews.readResourceSync("hello.njk");
+    }
+
+    private static readResourceSync(resourceName: string) : string {
+        return fs.readFileSync(path.resolve(__dirname, "resources/", resourceName), "utf8").toString();
     }
 }
 
