@@ -30,7 +30,9 @@ export class ProjectConfiguration {
         buildTool: string,
         packageJsonObject: string
     ) {
+        this._providedName = "";
         this._name = this.validateName(name);
+        this._providedVersion = "";
         this._version = this.validateVersion(version);
         this._description = this.validateDescription(description);
         this._author = this.validateAuthor(author);
