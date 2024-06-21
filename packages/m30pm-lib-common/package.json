@@ -8,7 +8,7 @@
     "/dist"
   ],
   "scripts": {
-    "build": "shx rm -rf dist/ && tsc -b",
+    "build": "shx rm -rf dist/ && tsc -b && shx cp -r src/resources/ dist/",
     "test": "nyc mocha --forbid-only"
   },
   "author": "Mach 30",
@@ -21,7 +21,6 @@
     "chai": "^4",
     "mocha": "^10",
     "nyc": "^15.1.0",
-    "raw-loader": "^4.0.2",
     "shx": "^0.3.4",
     "ts-node": "^10.9.2",
     "typescript": "^5"

@@ -1,6 +1,6 @@
 import {Args, Command, Flags} from '@oclif/core'
 //import {Metadata, MetadataFlag} from '@oclif/core/lib/interfaces/parser'
-import {PackageManagers, ProjectConfiguration, DefaultVersion, DefaultLicense} from 'm30pm-lib-common'
+import {PackageManagers, ProjectConfiguration, DefaultVersion, DefaultLicense, ViewRenderer, BuiltinViews} from 'm30pm-lib-common'
 import input from '@inquirer/input'
 import select from '@inquirer/select'
 import confirm from '@inquirer/confirm'
@@ -138,7 +138,8 @@ export default class ProjectCreate extends Command {
       license,
       packageManager,
       versionControlTool,
-      buildTool
+      buildTool,
+      ""
       )
     const isValidProject = projectConfiguration.isValid()
     console.log(isValidProject ? 'Valid Project Configuration' : 'INVALID PROJECT CONFIGURATION')
@@ -163,7 +164,7 @@ export default class ProjectCreate extends Command {
     console.log(`Project build tool: ${projectConfiguration.buildTool}`)
 
 //    libCli.mdStdout.log("# Hello World")
-    mdStdout.log("# Hello World")
+    mdStdout.log(BuiltinViews.getHello())
 
     if (!isValidProject) {
       this.exit(1)
