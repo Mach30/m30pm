@@ -8,7 +8,9 @@ export const DefaultWorkspacePath = "packages"
 
 export class ProjectConfiguration {
     private _name: string;
+    private _providedName: string;
     private _version: string;
+    private _providedVersion: string;
     private _description: string;
     private _author: string;
     private _license: string;
@@ -97,6 +99,16 @@ export class ProjectConfiguration {
         return jsObject
     }
 
+    public getprojectStatus(): Object {
+        let statusObject: any = {};
+        statusObject["isValid"] = this.isValid();
+        statusObject["projectConfiguration"] = this.toJsObject();
+        statusObject["providedValues"] = {};
+        statusObject["providedValues"]["name"] = this._providedName;
+        statusObject["providedValues"]["version"] = this._providedVersion;
+        return statusObject
+    }
+
     /**
      * @deprecated conversion to string allocated to m30pm-lib-fs
      */
@@ -152,6 +164,7 @@ export class ProjectConfiguration {
     }
 
     private validateName(name: string): string {
+        this._providedName = name;
         let validatedName = "";
         let npmPackageNameRegEx = new RegExp('^(@[a-z0-9-~][a-z0-9-._~]*\/)?[a-z0-9-~][a-z0-9-._~]*$')
         if(npmPackageNameRegEx.test(name)) {
@@ -161,6 +174,7 @@ export class ProjectConfiguration {
     }
 
     private validateVersion(version: string): string {
+        this._providedVersion = version;
         let validatedVersion = "";
         if(semver.valid(version)) {
             validatedVersion = version;
