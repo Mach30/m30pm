@@ -5,8 +5,8 @@ import path from 'path'
 //run nunjucks.renderString()
 
 export class BuiltinViews {
-    public static getHello() : string {
-        return BuiltinViews.readResourceSync("hello.njk");
+    public static getProjectStatusView() : string {
+        return BuiltinViews.readResourceSync("projectStatusView.njk");
     }
 
     private static readResourceSync(resourceName: string) : string {
