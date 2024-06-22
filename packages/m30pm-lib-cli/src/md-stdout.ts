@@ -9,7 +9,7 @@ const defaultMarkedTerminalOptions = {
     html: chalk.visible,
     heading: chalk.whiteBright.bold,
     firstHeading: chalk.whiteBright.underline.bold,
-    codespan: chalk.bgGray,
+    codespan: chalk.bgHex('#3B3B3B').italic,
     del: chalk.gray.strikethrough,
     link: chalk.blueBright,
     href: chalk.blueBright.underline,
@@ -21,7 +21,7 @@ const defaultMarkedTerminalOptions = {
     tab: 4,
     tableOptions: {
         style: {
-            head: ['bold', 'bgGrey']
+            head: ['bold']
         }
     }
 };
