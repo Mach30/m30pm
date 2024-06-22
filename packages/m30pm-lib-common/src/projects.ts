@@ -101,7 +101,7 @@ export class ProjectConfiguration {
         return jsObject
     }
 
-    public getprojectStatus(): Object {
+    public getProjectStatus(): Object {
         let statusObject: any = {};
         statusObject["isValid"] = this.isValid();
         statusObject["projectConfiguration"] = this.toJsObject();
