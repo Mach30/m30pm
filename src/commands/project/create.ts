@@ -141,34 +141,18 @@ export default class ProjectCreate extends Command {
       buildTool,
       ""
       )
-    const isValidProject = projectConfiguration.isValid()
-    console.log(isValidProject ? 'Valid Project Configuration' : 'INVALID PROJECT CONFIGURATION')
-    console.log('-----------------------------')
-    if (projectConfiguration.name !== "") {
-      console.log(`Project name: ${projectConfiguration.name}`)
-    }
-    else {
-      console.log(`Project name: ${args.projectName} [INVALID FORMAT]`)
-    }
-    if (projectConfiguration.version !== "") {
-      console.log(`Project version string: ${projectConfiguration.version}`)
-    }
-    else {
-      console.log(`Project version string: ${flags.versionString} [INVALID FORMAT]`)
-    }
-    console.log(`Project description: ${projectConfiguration.description}`)
-    console.log(`Project author: ${projectConfiguration.author}`)
-    console.log(`Project license: ${projectConfiguration.license}`)
-    console.log(`Project package manager: ${projectConfiguration.packageManager}`)
-    console.log(`Project version control tool: ${projectConfiguration.versionControlTool}`)
-    console.log(`Project build tool: ${projectConfiguration.buildTool}`)
 
-//    libCli.mdStdout.log("# Hello World")
-    mdStdout.log(BuiltinViews.getHello())
-
-    if (!isValidProject) {
+    const projectStatus = projectConfiguration.getProjectStatus()
+    const projectStatusView = ViewRenderer.render(BuiltinViews.getProjectStatusView(), projectStatus)
+    
+    if (projectConfiguration.isValid()) {
+      mdStdout.log(projectStatusView)
+    }
+    else {  // invalid project
+      mdStdout.logError(projectStatusView)
       this.exit(1)
     }
+      
  //   const createProject = await confirm({ message: 'Create project?' })
  //   if (createProject) {
  //     fsLib.createProject(projectConfiguration)
