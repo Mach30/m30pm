@@ -3,8 +3,29 @@ import * as sh from 'shelljs'
 
 sh.config.silent = true;
 
+export function testTool(toolName: string) : any {
+    let results:any = {};
+    results["toolPath"] = "";
+    results["toolVersion"] = "";
+
+    const toolPath = sh.which(toolName);
+    results["toolFound"] = toolPath ? true : false;
+    if (results["toolFound"]) {
+        results["toolPath"] = toolPath?.toString()
+        //sh.sed does not honor "-re", replace with direct call to js regex engine
+        results["toolVersion"] = 
+            sh.exec(`${results["toolPath"]} --version`).grep("-E", 
+                "[0-9]+(\.[0-9]+)+").sed("-re",
+                /^[^0-9]*(([0-9]+\.)*[0-9]+).*/, '$1').toString();
+    }
+
+    return results;
+}
+
 export function createProject(project: ProjectConfiguration) {
-    console.log(`Creating ${project.name}...`)
+    let results : any = {};
+    results["projectToCreate"] = project.name;
+//REMOVE    console.log(`Creating ${project.name}...`)
     //verify package manager, build tool, and version control tool are installed using sh.which()
     const pmPath = sh.which(project.packageManager.toString())
     if (!pmPath) {
