@@ -16,7 +16,8 @@
   "dependencies": {
     "@types/shelljs": "^0.8.15",
     "m30pm-lib-common": "^0.0.2",
-    "shelljs": "^0.8.5"
+    "shelljs": "^0.8.5",
+    "semver": "^7.6.0"
   },
   "devDependencies": {
     "@oclif/test": "^3",
