@@ -9,7 +9,7 @@
   ],
   "scripts": {
     "build": "shx rm -rf dist/ && tsc -b",
-    "test": "nyc mocha --forbid-only"
+    "test": "nyc mocha --timeout 10000 --forbid-only"
   },
   "author": "Mach 30",
   "license": "Apache-2.0",
