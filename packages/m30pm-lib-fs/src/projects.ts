@@ -12,11 +12,9 @@ export function testTool(toolName: string) : any {
     results["toolFound"] = toolPath ? true : false;
     if (results["toolFound"]) {
         results["toolPath"] = toolPath?.toString()
-        //sh.sed does not honor "-re", replace with direct call to js regex engine
-        results["toolVersion"] = 
-            sh.exec(`${results["toolPath"]} --version`).grep("-E", 
-                "[0-9]+(\.[0-9]+)+").sed("-re",
-                /^[^0-9]*(([0-9]+\.)*[0-9]+).*/, '$1').toString();
+        const versionStringRegEx = /[0-9]+(\.[0-9]+)+/;
+        const versionSearch = sh.exec(`${results["toolPath"]} --version`).toString().match(versionStringRegEx);
+        results["toolVersion"] = versionSearch ? versionSearch[0] : "";
     }
 
     return results;
