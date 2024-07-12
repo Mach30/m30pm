@@ -3,7 +3,7 @@ import * as sh from 'shelljs'
 import semver from 'semver';
 
 sh.config.silent = true;
-const minGradleVersion = "8.2"
+const minGradleVersion = "8.2.0"
 
 export function testTool(toolName: string) : any {
     let results:any = {};
@@ -17,9 +17,25 @@ export function testTool(toolName: string) : any {
         results["toolPath"] = toolPath?.toString()
         const versionStringRegEx = /[0-9]+(\.[0-9]+)+/;
         const versionSearch = sh.exec(`${results["toolPath"]} --version`).toString().match(versionStringRegEx);
-        results["toolVersion"] = versionSearch ? versionSearch[0] : "";
+        const versionString = versionSearch ? versionSearch[0] : "";
+        results["toolVersion"] = semver.coerce(versionString)?.toString();
     }
 
+    return results;
+}
+
+export function verifyMinToolVersion(toolInfo: any, minVersion: string) : any {
+    let results : any = {};
+    const toolVersion = toolInfo.toolVersion;
+
+    results["toolName"] = toolInfo.toolName;
+    results["toolVersion"] = toolVersion;
+    results["minVersion"] = minVersion;
+    results["passedMinVersionCheck"] = false;
+
+    if (toolInfo.toolFound)
+        results["passedMinVersionCheck"] = semver.gte(toolVersion, minVersion);
+    
     return results;
 }
 
@@ -44,11 +60,12 @@ export function createProject(project: ProjectConfiguration) : any {
         return results
     } else if (results.buildTool.toolName === 'gradle') {
         // ensure min version of gradle is met
-        if (!semver.gte(results.buildTool.toolVersion, minGradleVersion)) {
+        results.buildTool["verifyMinToolVersion"] = verifyMinToolVersion(results.buildTool, minGradleVersion)
+        if (!results.buildTool.verifyMinToolVersion.passedMinVersionCheck) {
             results.success = false;
             results.message = `Gradle version must be >= v${minGradleVersion}`;
             return results;
-        }        
+        }
     }
 
     results["versionControlTool"] = testTool(project.versionControlTool.toString());
@@ -57,35 +74,6 @@ export function createProject(project: ProjectConfiguration) : any {
         results.message = `Cannot find version control tool ${results.versionControlTool.toolName}`;
         return results;
     }
-/*    
-    const pmPath = sh.which(project.packageManager.toString())
-    if (!pmPath) {
-        console.log(`Package manager (${project.packageManager.toString()}) not found`);
-        sh.exit(1);
-    }
-    else {
-        let pmVersion = sh.exec(`${pmPath.toString()} --version`).trim()
-        console.log(`Found package manager (${project.packageManager.toString()} v${pmVersion.toString()}) at ${pmPath}`)
-    }
-    const btPath = sh.which(project.buildTool.toString())
-    if (!btPath) {
-        console.log(`Build tool (${project.buildTool.toString()}) not found`);
-        sh.exit(1);
-    }
-    else {
-        let btVersion = sh.exec(`${btPath.toString()} --version`).grep("Gradle").trim().split(" ")[1]
-        console.log(`Found build tool (${project.buildTool.toString()} v${btVersion.toString()}) at ${btPath}`)
-    }
-    const vctPath = sh.which(project.versionControlTool.toString())
-    if (!vctPath) {
-        console.log(`Version control tool (${project.versionControlTool.toString()}) not found`);
-        sh.exit(1);
-    }
-    else {
-        let vctVersion = sh.exec(`${vctPath.toString()} --version`).trim().split(" ")[2]
-        console.log(`Found version control tool (${project.versionControlTool.toString()} v${vctVersion.toString()}) at ${vctPath}`)
-    }
- */  
 
     //create project directory using project name (should follow oclif pattern; if no directory exists, create directory; if directory exists and empty, continue project creation; if directory exists and is not empty, exit with error stating non-empty directory)
     // refactor
