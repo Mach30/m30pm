@@ -1,5 +1,5 @@
 import { expect } from "@oclif/test";
-import { testTool, verifyMinToolVersion } from "../src/projects"
+import { testTool, verifyMinToolVersion, getShell, createProjectDirectory } from "../src/projects"
 import exp from "constants";
 
 describe("m30pm-lib-fs testTool() tests", () => {
@@ -90,5 +90,17 @@ describe("m30pm-lib-fs verifyMinToolVersion() tests", () => {
         expect(results.toolVersion).to.equal("2.0.0")
         expect(results.minVersion).to.equal("2.0.0")
         expect(results.passedMinVersionCheck).to.equal(true)
+    })
+})
+
+describe("m30pm-lib-fs createProjectDirectory() tests", () => {
+    it('should return /tmp/my-project, true, and "" for my-project', () => {
+        getShell().cd('/tmp/')
+        const results = createProjectDirectory('my-project');
+        expect(results.path).to.equal('/tmp/my-project')
+        expect(results.empty).to.equal(true);
+        expect(results.contents).to.equal("");
+        expect(getShell().ls('/tmp/').toString().includes('my-project')).to.equal(true);
+        getShell().rm('-rf', '/tmp/my-project');
     })
 })

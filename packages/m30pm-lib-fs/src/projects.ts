@@ -5,6 +5,10 @@ import semver from 'semver';
 sh.config.silent = true;
 const minGradleVersion = "8.2.0"
 
+export function getShell() : any {
+    return sh;
+}
+
 export function testTool(toolName: string) : any {
     let results:any = {};
     results["toolName"] = toolName;
@@ -37,6 +41,27 @@ export function verifyMinToolVersion(toolInfo: any, minVersion: string) : any {
         results["passedMinVersionCheck"] = semver.gte(toolVersion, minVersion);
     
     return results;
+}
+
+export function createProjectDirectory(projectName: string) : any {
+    let results : any = {}
+    results["path"] = `${sh.pwd().toString()}/${projectName}`;  //TODO: use shelljs to return full path
+    results["empty"] = true;
+    results["contents"] = ""
+
+    const projectPath = sh.ls("-d", projectName);
+    if (projectPath.length) {
+        const projectContents = sh.ls("-A", projectPath.toString())
+        if (projectContents.length) {
+            results.empty = false;
+            results.contents = projectContents.toString();
+            return results;
+        }
+    }
+    else {
+        sh.mkdir(projectName)
+        return results;
+    }
 }
 
 export function createProject(project: ProjectConfiguration) : any {
@@ -77,17 +102,11 @@ export function createProject(project: ProjectConfiguration) : any {
 
     //create project directory using project name (should follow oclif pattern; if no directory exists, create directory; if directory exists and empty, continue project creation; if directory exists and is not empty, exit with error stating non-empty directory)
     // refactor
-    const projectPath = sh.ls("-d", project.name);
-    if (projectPath.length) {
-        const projectContents = sh.ls("-A", projectPath.toString())
-        if (projectContents.length) {
-            results.success = false;
-            results.message = `Cannot create project, ${projectPath} is not empty`;
-            return results;
-        }
-    }
-    else {
-        sh.mkdir(project.name)
+    results["projectPath"] = createProjectDirectory(project.name)
+    if (!results.projectPath.empty) {
+        results.success = false;
+        results.message = `Cannot create project, ${results.projectPath.path} is not empty`;
+        return results;
     }
 
     //in project directory, generate selected tool scaffolding (a.k.a., for npm or yarn) (including .npmrc or .yarnrc) for a mono repo (a.k.a., npm/yarn workspaces)
