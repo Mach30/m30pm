@@ -29,6 +29,7 @@
     "@types/nunjucks": "^3.2.6",
     "@types/semver": "^7.5.8",
     "nunjucks": "^3.2.4",
-    "semver": "^7.6.0"
+    "semver": "^7.6.0",
+    "uuid": "^10.0.0"
   }
 }
