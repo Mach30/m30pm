@@ -94,7 +94,7 @@ describe("m30pm-lib-fs verifyMinToolVersion() tests", () => {
 })
 
 describe("m30pm-lib-fs createProjectDirectory() tests", () => {
-    it('should return /tmp/my-project, true, and "" for my-project', () => {
+    it('should return /tmp/my-project, true, and "" for my-project when directory does not exist', () => {
         getShell().cd('/tmp/')
         const results = createProjectDirectory('my-project');
         expect(results.path).to.equal('/tmp/my-project')
@@ -102,5 +102,38 @@ describe("m30pm-lib-fs createProjectDirectory() tests", () => {
         expect(results.contents).to.equal("");
         expect(getShell().ls('/tmp/').toString().includes('my-project')).to.equal(true);
         getShell().rm('-rf', '/tmp/my-project');
+    })
+
+    it('should return /tmp/my-project-1, true, and "" for my-project when directory does exist and is empty', () => {
+        getShell().cd('/tmp/')
+        getShell().mkdir('my-project-1')
+        const results = createProjectDirectory('my-project-1');
+        expect(results.path).to.equal('/tmp/my-project-1')
+        expect(results.empty).to.equal(true);
+        expect(results.contents).to.equal("");
+        expect(getShell().ls('/tmp/').toString().includes('my-project-1')).to.equal(true);
+        getShell().rm('-rf', '/tmp/my-project-1');
+    })
+
+    it('should return /tmp/my-project-2, false, and "foo" for my-project when directory does exist and has file foo', () => {
+        getShell().cd('/tmp/')
+        getShell().mkdir('my-project-2')
+        getShell().touch('my-project-2/foo')
+        const results = createProjectDirectory('my-project-2');
+        expect(results.path).to.equal('/tmp/my-project-2')
+        expect(results.empty).to.equal(false);
+        expect(results.contents).to.equal("foo");
+        getShell().rm('-rf', '/tmp/my-project-2');
+    })
+
+    it('should return /tmp/my-project-3, false, and ".foo" for my-project when directory does exist and has file .foo', () => {
+        getShell().cd('/tmp/')
+        getShell().mkdir('my-project-3')
+        getShell().touch('my-project-3/.foo')
+        const results = createProjectDirectory('my-project-3');
+        expect(results.path).to.equal('/tmp/my-project-3')
+        expect(results.empty).to.equal(false);
+        expect(results.contents).to.equal(".foo");
+        getShell().rm('-rf', '/tmp/my-project-3');
     })
 })

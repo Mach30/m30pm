@@ -43,6 +43,8 @@ export function verifyMinToolVersion(toolInfo: any, minVersion: string) : any {
     return results;
 }
 
+// create project directory using project name (should follow oclif pattern; if no directory exists, create directory; if directory exists and empty, continue project creation; 
+// if directory exists and is not empty, return with error stating non-empty directory)
 export function createProjectDirectory(projectName: string) : any {
     let results : any = {}
     results["path"] = `${sh.pwd().toString()}/${projectName}`;  //TODO: use shelljs to return full path
@@ -57,6 +59,9 @@ export function createProjectDirectory(projectName: string) : any {
             results.contents = projectContents.toString();
             return results;
         }
+        else {
+            return results;
+        }
     }
     else {
         sh.mkdir(projectName)
@@ -69,7 +74,7 @@ export function createProject(project: ProjectConfiguration) : any {
     results["projectToCreate"] = project.name;
     results["success"] = true;
     results["message"] = "";
-//REMOVE    console.log(`Creating ${project.name}...`)
+
     //verify package manager, build tool, and version control tool are installed 
     results["packageManager"] = testTool(project.packageManager.toString());
     if (!results.packageManager.toolFound) {
@@ -100,8 +105,7 @@ export function createProject(project: ProjectConfiguration) : any {
         return results;
     }
 
-    //create project directory using project name (should follow oclif pattern; if no directory exists, create directory; if directory exists and empty, continue project creation; if directory exists and is not empty, exit with error stating non-empty directory)
-    // refactor
+    
     results["projectPath"] = createProjectDirectory(project.name)
     if (!results.projectPath.empty) {
         results.success = false;
