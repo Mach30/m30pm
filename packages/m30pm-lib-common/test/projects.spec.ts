@@ -74,14 +74,12 @@ describe("To JSObject Tests", () => {
     it('should return example project package.json string for a given example project with empty array string as package.json string', () => {
         const exampleProjectJson = fs.readFileSync(path.join(__dirname, 'example-package.json') , 'utf8');
         const project = new ProjectConfiguration("my-project", "0.0.0", "My New m30ml Project", "Mach 30", "CC-BY-4.0", "npm", "git", "gradle", "[]")
-        console.log(JSON.stringify(project.toJsObject(), null, 2))
         expect(JSON.stringify(project.toJsObject(), null, 2)).to.equal(exampleProjectJson)
     })
 
     it('should return example project package.json string for a given example project with empty object string as package.json', () => {
         const exampleProjectJson = fs.readFileSync(path.join(__dirname, 'example-package.json') , 'utf8');
         const project = new ProjectConfiguration("my-project", "0.0.0", "My New m30ml Project", "Mach 30", "CC-BY-4.0", "npm", "git", "gradle", "{}")
-        console.log(JSON.stringify(project.toJsObject(), null, 2))
         expect(JSON.stringify(project.toJsObject(), null, 2)).to.equal(exampleProjectJson)
     })
 })
