@@ -133,6 +133,21 @@ export class ProjectConfiguration {
         }
     }
 
+    public getInitialRcOptions(): any {
+        let rcOptions: any = {};
+        if (this._packageManager == Enums.PackageManagers.NPM) {
+            rcOptions["sign-git-tag"] = true;
+        }
+        else if (this._packageManager == Enums.PackageManagers.YARN) {
+            // no initial options for yarn
+        }
+        else {
+            // no initial options for invalid package manager
+        }
+
+        return rcOptions;
+    }
+
     public get name() {
         return this._name;
     }

@@ -9,6 +9,14 @@ export class BuiltinViews {
         return BuiltinViews.readResourceSync("projectStatusView.njk");
     }
 
+    public static getNpmRcFileView() : string {
+        return BuiltinViews.readResourceSync("npmRcFileView.njk");
+    }
+
+    public static getYarnRcYamlFileView() : string {
+        return BuiltinViews.readResourceSync("yarnRcYamlFileView.njk");
+    }
+
     private static readResourceSync(resourceName: string) : string {
         return fs.readFileSync(path.resolve(__dirname, "resources/", resourceName), "utf8").toString();
     }

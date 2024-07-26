@@ -1,6 +1,8 @@
 import { expect } from "@oclif/test";
-import { testTool, verifyMinToolVersion, getShell, createProjectDirectory } from "../src/projects"
+import { testTool, verifyMinToolVersion, getShell, createProjectDirectory, generatePackageManagerScaffolding } from "../src/projects"
+import { ProjectConfiguration } from "m30pm-lib-common";
 import exp from "constants";
+import * as fs from 'fs';
 
 describe("m30pm-lib-fs testTool() tests", () => {
     it('should return false, "", and "" for foo', () => {
@@ -135,5 +137,47 @@ describe("m30pm-lib-fs createProjectDirectory() tests", () => {
         expect(results.empty).to.equal(false);
         expect(results.contents).to.equal(".foo");
         getShell().rm('-rf', '/tmp/my-project-3');
+    })
+})
+
+describe("m30pm-lib-fs generatePackageManagerScaffolding() tests", () => {
+    it('should return .npmrc and have correct file structure for npm', () => {
+        getShell().cd('/tmp/')
+        getShell().mkdir('my-project-4')
+        const project = new ProjectConfiguration("my-project-4", "0.0.0", "My New m30ml Project", "Mach 30", "CC-BY-4.0", "npm", "git", "gradle", "")
+        const results = generatePackageManagerScaffolding(project, "/tmp/my-project-4")
+        expect(results.rcFileName).to.equal(".npmrc")
+        expect(getShell().ls('/tmp/my-project-4').toString().includes('package.json')).to.equal(true);
+        expect(getShell().ls('/tmp/my-project-4').toString().includes('packages')).to.equal(true);
+        expect(getShell().ls('-A', '/tmp/my-project-4').toString().includes('.npmrc')).to.equal(true);
+        expect(getShell().ls('-A', '/tmp/my-project-4').toString().includes('.yarnrc.yml')).to.equal(false);
+        const rcFile = fs.readFileSync("/tmp/my-project-4/.npmrc", 'utf8')
+        expect(rcFile).to.equal("sign-git-tag=true")
+        const expectedPackageFile = JSON.stringify(project.toJsObject(), null, 2)
+        const packageFile = fs.readFileSync("/tmp/my-project-4/package.json", 'utf8')
+        expect(packageFile).to.equal(expectedPackageFile)
+        getShell().rm('-rf', '/tmp/my-project-4')
+    })
+
+    it('should return .yarnrc.yml and have correct file structure for yarn', () => {
+        getShell().cd('/tmp/')
+        getShell().mkdir('my-project-5')
+        const project = new ProjectConfiguration("my-project-5", "0.0.0", "My New m30ml Project", "Mach 30", "CC-BY-4.0", "yarn", "git", "gradle", "")
+        const results = generatePackageManagerScaffolding(project, "/tmp/my-project-5")
+        expect(results.rcFileName).to.equal(".yarnrc.yml")
+        expect(getShell().ls('-A', '/tmp/my-project-5').toString().includes('.npmrc')).to.equal(false);
+        expect(getShell().ls('-A', '/tmp/my-project-5').toString().includes('.yarnrc.yml')).to.equal(true);
+        const rcFile = fs.readFileSync("/tmp/my-project-5/.yarnrc.yml", 'utf8')
+        expect(rcFile).to.equal("---")
+        getShell().rm('-rf', '/tmp/my-project-5');
+    })
+
+    it('should return emptu string for invalid package manager', () => {
+        getShell().cd('/tmp/')
+        getShell().mkdir('my-project-6')
+        const project = new ProjectConfiguration("my-project-6", "0.0.0", "My New m30ml Project", "Mach 30", "CC-BY-4.0", "not-npm", "git", "gradle", "")
+        const results = generatePackageManagerScaffolding(project, "/tmp/my-project-6")
+        expect(results.rcFileName).to.equal("")
+        getShell().rm('-rf', '/tmp/my-project-6')
     })
 })

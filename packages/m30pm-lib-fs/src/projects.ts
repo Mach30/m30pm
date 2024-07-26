@@ -1,4 +1,4 @@
-import { ProjectConfiguration, PackageManagers } from "m30pm-lib-common";
+import { ProjectConfiguration, PackageManagers, ViewRenderer, BuiltinViews } from "m30pm-lib-common";
 import * as sh from 'shelljs'
 import semver from 'semver';
 
@@ -69,6 +69,39 @@ export function createProjectDirectory(projectName: string) : any {
     }
 }
 
+// in project directory, generate selected tool scaffolding (a.k.a., for npm or yarn) 
+// (including .npmrc or .yarnrc) for a mono repo (a.k.a., npm/yarn workspaces)
+export function generatePackageManagerScaffolding(project: ProjectConfiguration, projectDirectory : string) : any {
+    let results : any = {}
+    results["rcFileName"] = ""
+
+    sh.cd(projectDirectory)
+    let packageFile = new sh.ShellString(JSON.stringify(project.toJsObject(), null, 2)) 
+    packageFile.to("package.json")
+    sh.mkdir("packages")
+
+    let rcOptionsData : any = {}
+    rcOptionsData["rcOptions"] = project.getInitialRcOptions();
+        
+    if (project.packageManager == PackageManagers.NPM) {
+        const rcFileContents = ViewRenderer.render(BuiltinViews.getNpmRcFileView(), rcOptionsData)
+        const rcFile = new sh.ShellString(rcFileContents)
+        results.rcFileName = ".npmrc"
+        rcFile.to(results.rcFileName)
+    }
+    else if (project.packageManager == PackageManagers.YARN) {
+        const rcFileContents = ViewRenderer.render(BuiltinViews.getYarnRcYamlFileView(), rcOptionsData)
+        const rcFile = new sh.ShellString(rcFileContents)
+        results.rcFileName = ".yarnrc.yml"
+        rcFile.to(results.rcFileName)
+    }
+    else {
+        // no options to save
+    }
+
+    return results;
+}
+
 export function createProject(project: ProjectConfiguration) : any {
     let results : any = {};
     results["projectToCreate"] = project.name;
@@ -113,23 +146,13 @@ export function createProject(project: ProjectConfiguration) : any {
         return results;
     }
 
-    //in project directory, generate selected tool scaffolding (a.k.a., for npm or yarn) (including .npmrc or .yarnrc) for a mono repo (a.k.a., npm/yarn workspaces)
-    // refactor
-    sh.cd(project.name)
-    let packageFile = new sh.ShellString(project.getJsonString())
-    packageFile.to("package.json")
-    sh.mkdir("packages")
-    let rcFile = new sh.ShellString(project.getRcContents())
-    if (project.packageManager == PackageManagers.NPM) {
-        rcFile.to(".npmrc")
+    results["packageMangerScaffolding"] = generatePackageManagerScaffolding(project, results.projectPath.path)
+    if (results.rcFileName === "") {
+        results.success = false;
+        results.message = `Invalid package manager ${project.packageManager.toString()}`;
+        return results;
     }
-    else if (project.packageManager == PackageManagers.YARN) {
-        rcFile.to(".yarnrc.yml")
-    }
-    else {
-        console.log("Invalid package manager")
-        sh.exit(1)
-    }
+    
 
     // refactor bt and vct separately
     //in project directory, generate scaffolding for build tool (a.k.a., gradle init with gradle file included - s.a., for base set of templates for generating documentation)
