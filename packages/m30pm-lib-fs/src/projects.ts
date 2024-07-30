@@ -1,4 +1,4 @@
-import { ProjectConfiguration, PackageManagers, ViewRenderer, BuiltinViews } from "m30pm-lib-common";
+import { ProjectConfiguration, PackageManagers, ViewRenderer, BuiltinViews, BuildTools } from "m30pm-lib-common";
 import * as sh from 'shelljs'
 import semver from 'semver';
 
@@ -107,6 +107,27 @@ export function generatePackageManagerScaffolding(project: ProjectConfiguration,
     return results;
 }
 
+export function initializeBuildTool(project: ProjectConfiguration, projectDirectory: string,  buildToolPath: string) : any {
+    let results : any = {};
+    results["btInitialized"] =  true;
+    results["stdout"] = "";
+    results["stderr"] = "";
+    
+    sh.cd(projectDirectory)
+    if (project.buildTool === BuildTools.GRADLE) {
+        //`gradle init` prompts for project type (basic), dsl (Groovy), project name, Generate build using new API and behavior (--no-incubating)
+        let btInit = sh.exec(`${buildToolPath} init --type basic --dsl groovy --project-name ${project.name} --no-incubating`);
+        results.btInitialized = btInit.code === 0;
+        results.stdout = btInit.stdout;
+        results.stderr = btInit.stderr;
+        return results;
+    }
+    else {
+        results.btInitialized = false;
+        return results;
+    }
+}
+
 export function createProject(project: ProjectConfiguration) : any {
     let results : any = {};
     results["projectToCreate"] = project.name;
@@ -161,8 +182,21 @@ export function createProject(project: ProjectConfiguration) : any {
 
     // refactor bt and vct separately
     //in project directory, generate scaffolding for build tool (a.k.a., gradle init with gradle file included - s.a., for base set of templates for generating documentation)
-    //`gradle init` prompts for project type (basic), dsl (Groovy), project name, Generate build using new API and behavior (--no-incubating)
-    let btInit = sh.exec(`${results.buildTool.toolPath} init --type basic --dsl groovy --project-name ${project.name} --no-incubating`)
+
+    // initialize build tool
+    results["buildTool"]["initialization"] = initializeBuildTool(project, results.projectPath.path, results.buildTool.toolPath);
+    if (!results.buildTool.initialization.btInitialized && project.buildTool !== BuildTools.INVALID_BT) {
+        results.success = false;
+        results.message = `Failed to initialize build tool ${project.buildTool.toString()}`;
+        return results;
+    }
+    else if (project.buildTool === BuildTools.INVALID_BT) {
+        results.success = false;
+        results.message = `Invalid build tool`;
+        return results;
+    }
+
+    // initialize version control tool
     //in project directory, generate scaffolding for version control tool (a.k.a., git, s.a., .gitignore)
     let vctInit = sh.exec(`${results.versionControlTool.toolPath} init --initial-branch=main`)
     //perform "best practice" git operations for newly generated project scaffolding git add . git commit -m "Initial commit" (with expanded commit description s.a., "project generated from...")

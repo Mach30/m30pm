@@ -1,5 +1,5 @@
 import { expect } from "@oclif/test";
-import { testTool, verifyMinToolVersion, getShell, createProjectDirectory, generatePackageManagerScaffolding } from "../src/projects"
+import { testTool, verifyMinToolVersion, getShell, createProjectDirectory, generatePackageManagerScaffolding, initializeBuildTool } from "../src/projects"
 import { ProjectConfiguration } from "m30pm-lib-common";
 import exp from "constants";
 import * as fs from 'fs';
@@ -183,5 +183,28 @@ describe("m30pm-lib-fs generatePackageManagerScaffolding() tests", () => {
         const results = generatePackageManagerScaffolding(project, "/tmp/my-project-6")
         expect(results.rcFileName).to.equal("")
         getShell().rm('-rf', '/tmp/my-project-6')
+    })
+})
+
+describe("m30pm-lib-fs initializeBuildTool() tests", () => {
+    it('should return true for valid build tool and stdout to not equal empty string and contain a build.gradle file in project directory', () => {
+        getShell().cd('/tmp/');
+        getShell().mkdir('my-project-7');
+        const project = new ProjectConfiguration("my-project-7", "0.0.0", "My New m30ml Project", "Mach 30", "CC-BY-4.0", "npm", "git", "gradle", "");
+        const results = initializeBuildTool(project, "/tmp/my-project-7", "/usr/local/bin/gradle");
+        expect(results.btInitialized).to.equal(true);
+        expect(results.stdout).to.not.equal("");
+        expect(getShell().ls('/tmp/my-project-7').toString().includes('build.gradle')).to.equal(true);
+        getShell().rm('-rf', '/tmp/my-project-7');
+    })
+
+    it('should return false for invalid build tool and not contain a build.gradle file in project directory', () => {
+        getShell().cd('/tmp/');
+        getShell().mkdir('my-project-8');
+        const project = new ProjectConfiguration("my-project-8", "0.0.0", "My New m30ml Project", "Mach 30", "CC-BY-4.0", "npm", "git", "notgradle", "");
+        const results = initializeBuildTool(project, "/tmp/my-project-8", "/usr/local/bin/gradle");
+        expect(results.btInitialized).to.equal(false);
+        expect(getShell().ls('/tmp/my-project-8').toString().includes('build.gradle')).to.equal(false);
+        getShell().rm('-rf', '/tmp/my-project-8');
     })
 })
