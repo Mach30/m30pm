@@ -1,4 +1,4 @@
-import { ProjectConfiguration, PackageManagers, ViewRenderer, BuiltinViews, BuildTools } from "m30pm-lib-common";
+import { ProjectConfiguration, PackageManagers, ViewRenderer, BuiltinViews, BuildTools, VersionControlTools } from "m30pm-lib-common";
 import * as sh from 'shelljs'
 import semver from 'semver';
 
@@ -128,11 +128,68 @@ export function initializeBuildTool(project: ProjectConfiguration, projectDirect
     }
 }
 
+export function initializeVersionControlTool(project : ProjectConfiguration, projectDirectory: string, versionControlToolPath : string) : any {
+    let results : any = {};
+    results["vctInitialized"] = true;
+    results["vctInit"] = {};
+    results.vctInit["code"] = 0;
+    results.vctInit["stdout"] = ""
+    results.vctInit["stderr"] = ""
+    results["vctAddDot"] = {};
+    results.vctAddDot["code"] = 0;
+    results.vctAddDot["stdout"] = ""
+    results.vctAddDot["stderr"] = ""
+    results["vctInitialCommit"] = {};
+    results.vctInitialCommit["code"] = 0;
+    results.vctInitialCommit["stdout"] = ""
+    results.vctInitialCommit["stderr"] = ""
+    results["vctNextStep"] = ""
+   
+    sh.cd(projectDirectory)
+    if (project.versionControlTool === VersionControlTools.GIT) {
+        //in project directory, generate scaffolding for version control tool (a.k.a., git, s.a., .gitignore)
+        let vctInit = sh.exec(`${versionControlToolPath} init --initial-branch=main`)
+        results.vctInitialized = vctInit.code === 0;
+        results.vctInit.code = vctInit.code;
+        results.vctInit.stdout = vctInit.stdout;
+        results.vctInit.stderr = vctInit.stderr;
+
+        if (!results.vctInitialized)
+            return results;
+   
+        //perform "best practice" git operations for newly generated project scaffolding git add . git commit -m "Initial commit" (with expanded commit description s.a., "project generated from...")
+        let vctAddDot = sh.exec(`${versionControlToolPath} add .`)
+        results.vctInitialized = vctAddDot.code === 0;
+        results.vctAddDot.code = vctAddDot.code;
+        results.vctAddDot.stdout = vctAddDot.stdout;
+        results.vctAddDot.stderr = vctAddDot.stderr;
+
+        if (!results.vctInitialized)
+            return results;
+
+        let vctCommitInitialCommit = sh.exec(`${versionControlToolPath} commit -m "Initial commit\n\nCreated by m30pm"`)
+        results.vctInitialized = vctCommitInitialCommit.code === 0;
+        results.vctInitialCommit.code = vctCommitInitialCommit.code;
+        results.vctInitialCommit.stdout = vctCommitInitialCommit.stdout;
+        results.vctInitialCommit.stderr = vctCommitInitialCommit.stderr;
+
+        if (!results.vctInitialized)
+            return results;
+        
+        // inform user of next step, running git command for setting up remote origin (e.g., git remote add origin <git-url>)
+        results.vctNextStep = "git remote add origin <git-url> && git push -u origin main"
+    }
+    else {
+        results.vctInitialized = false;
+        return results;
+    }
+}
+
 export function createProject(project: ProjectConfiguration) : any {
     let results : any = {};
     results["projectToCreate"] = project.name;
     results["success"] = true;
-    results["message"] = "";
+    results["message"] = `Project ${project.name} initialized`;
 
     //verify package manager, build tool, and version control tool are installed 
     results["packageManager"] = testTool(project.packageManager.toString());
@@ -184,7 +241,7 @@ export function createProject(project: ProjectConfiguration) : any {
     //in project directory, generate scaffolding for build tool (a.k.a., gradle init with gradle file included - s.a., for base set of templates for generating documentation)
 
     // initialize build tool
-    results["buildTool"]["initialization"] = initializeBuildTool(project, results.projectPath.path, results.buildTool.toolPath);
+    results.buildTool["initialization"] = initializeBuildTool(project, results.projectPath.path, results.buildTool.toolPath);
     if (!results.buildTool.initialization.btInitialized && project.buildTool !== BuildTools.INVALID_BT) {
         results.success = false;
         results.message = `Failed to initialize build tool ${project.buildTool.toString()}`;
@@ -197,10 +254,18 @@ export function createProject(project: ProjectConfiguration) : any {
     }
 
     // initialize version control tool
-    //in project directory, generate scaffolding for version control tool (a.k.a., git, s.a., .gitignore)
-    let vctInit = sh.exec(`${results.versionControlTool.toolPath} init --initial-branch=main`)
-    //perform "best practice" git operations for newly generated project scaffolding git add . git commit -m "Initial commit" (with expanded commit description s.a., "project generated from...")
-    let vctAddDot = sh.exec(`${results.versionControlTool.toolPath} add .`)
-    let vctCommitInitialCommit = sh.exec(`${results.versionControlTool.toolPath} commit -m "Initial commit\n\nCreated by m30pm"`)
-    //print out user git command for setting up remote origin (e.g., git remote add origin <git-url>)
+    results.versionControlTool["initialization"] = initializeVersionControlTool(project, results.projectPath.path, results.versionControlTool.toolPath)
+    if (!results.versionControlTool.initialization.vctInitialized && project.versionControlTool !== VersionControlTools.INVALID_VCT) {
+        results.success = false;
+        results.message = `Failed to initialize version control tool ${project.versionControlTool.toString()}`;
+        return results;
+    }
+    else if (project.versionControlTool === VersionControlTools.INVALID_VCT) {
+        results.success = false;
+        results.message = `Invalid version control tool`;
+        return results;
+    }
+
+    // if we got here, the project has been initialized, so all we have to do is return the results
+    return results;
 }
