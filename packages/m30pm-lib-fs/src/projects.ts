@@ -203,7 +203,4 @@ export function createProject(project: ProjectConfiguration) : any {
     let vctAddDot = sh.exec(`${results.versionControlTool.toolPath} add .`)
     let vctCommitInitialCommit = sh.exec(`${results.versionControlTool.toolPath} commit -m "Initial commit\n\nCreated by m30pm"`)
     //print out user git command for setting up remote origin (e.g., git remote add origin <git-url>)
-
-    //TODO: check results of sh.exec calls (namely lines 64-72)
 }
-
