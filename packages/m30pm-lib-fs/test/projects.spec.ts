@@ -98,7 +98,8 @@ describe("m30pm-lib-fs verifyMinToolVersion() tests", () => {
 describe("m30pm-lib-fs createProjectDirectory() tests", () => {
     it('should return /tmp/my-project, true, and "" for my-project when directory does not exist', () => {
         getShell().cd('/tmp/')
-        const results = createProjectDirectory('my-project');
+        const project = new ProjectConfiguration("my-project", "0.0.0", "My New m30ml Project", "Mach 30", "CC-BY-4.0", "npm", "git", "gradle", "")
+        const results = createProjectDirectory(project);
         expect(results.path).to.equal('/tmp/my-project')
         expect(results.empty).to.equal(true);
         expect(results.contents).to.equal("");
@@ -109,11 +110,16 @@ describe("m30pm-lib-fs createProjectDirectory() tests", () => {
     it('should return /tmp/my-project-1, true, and "" for my-project when directory does exist and is empty', () => {
         getShell().cd('/tmp/')
         getShell().mkdir('my-project-1')
-        const results = createProjectDirectory('my-project-1');
+        const project = new ProjectConfiguration("my-project-1", "0.0.0", "My New m30ml Project", "Mach 30", "CC-BY-4.0", "npm", "git", "gradle", "")
+        const results = createProjectDirectory(project);
         expect(results.path).to.equal('/tmp/my-project-1')
         expect(results.empty).to.equal(true);
         expect(results.contents).to.equal("");
         expect(getShell().ls('/tmp/').toString().includes('my-project-1')).to.equal(true);
+        expect(getShell().ls('/tmp/my-project-1').toString().includes('package.json')).to.equal(true);
+        const expectedPackageFile = JSON.stringify(project.toJsObject(), null, 2)
+        const packageFile = fs.readFileSync("/tmp/my-project-1/package.json", 'utf8')
+        expect(packageFile).to.equal(expectedPackageFile)
         getShell().rm('-rf', '/tmp/my-project-1');
     })
 
@@ -121,7 +127,8 @@ describe("m30pm-lib-fs createProjectDirectory() tests", () => {
         getShell().cd('/tmp/')
         getShell().mkdir('my-project-2')
         getShell().touch('my-project-2/foo')
-        const results = createProjectDirectory('my-project-2');
+        const project = new ProjectConfiguration("my-project-2", "0.0.0", "My New m30ml Project", "Mach 30", "CC-BY-4.0", "npm", "git", "gradle", "")
+        const results = createProjectDirectory(project);
         expect(results.path).to.equal('/tmp/my-project-2')
         expect(results.empty).to.equal(false);
         expect(results.contents).to.equal("foo");
@@ -132,7 +139,8 @@ describe("m30pm-lib-fs createProjectDirectory() tests", () => {
         getShell().cd('/tmp/')
         getShell().mkdir('my-project-3')
         getShell().touch('my-project-3/.foo')
-        const results = createProjectDirectory('my-project-3');
+        const project = new ProjectConfiguration("my-project-3", "0.0.0", "My New m30ml Project", "Mach 30", "CC-BY-4.0", "npm", "git", "gradle", "")
+        const results = createProjectDirectory(project);
         expect(results.path).to.equal('/tmp/my-project-3')
         expect(results.empty).to.equal(false);
         expect(results.contents).to.equal(".foo");
@@ -147,15 +155,11 @@ describe("m30pm-lib-fs generatePackageManagerScaffolding() tests", () => {
         const project = new ProjectConfiguration("my-project-4", "0.0.0", "My New m30ml Project", "Mach 30", "CC-BY-4.0", "npm", "git", "gradle", "")
         const results = generatePackageManagerScaffolding(project, "/tmp/my-project-4")
         expect(results.rcFileName).to.equal(".npmrc")
-        expect(getShell().ls('/tmp/my-project-4').toString().includes('package.json')).to.equal(true);
         expect(getShell().ls('/tmp/my-project-4').toString().includes('packages')).to.equal(true);
         expect(getShell().ls('-A', '/tmp/my-project-4').toString().includes('.npmrc')).to.equal(true);
         expect(getShell().ls('-A', '/tmp/my-project-4').toString().includes('.yarnrc.yml')).to.equal(false);
         const rcFile = fs.readFileSync("/tmp/my-project-4/.npmrc", 'utf8')
         expect(rcFile).to.equal("sign-git-tag=true")
-        const expectedPackageFile = JSON.stringify(project.toJsObject(), null, 2)
-        const packageFile = fs.readFileSync("/tmp/my-project-4/package.json", 'utf8')
-        expect(packageFile).to.equal(expectedPackageFile)
         getShell().rm('-rf', '/tmp/my-project-4')
     })
 

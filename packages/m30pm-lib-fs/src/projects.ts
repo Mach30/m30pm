@@ -45,9 +45,10 @@ export function verifyMinToolVersion(toolInfo: any, minVersion: string) : any {
 
 // create project directory using project name (should follow oclif pattern; if no directory exists, create directory; if directory exists and empty, continue project creation; 
 // if directory exists and is not empty, return with error stating non-empty directory)
-export function createProjectDirectory(projectName: string) : any {
+export function createProjectDirectory(project: ProjectConfiguration) : any {
     let results : any = {}
-    results["path"] = `${sh.pwd().toString()}/${projectName}`;  //TODO: use shelljs to return full path
+    const projectName = project.name;
+    results["path"] = `${sh.pwd().toString()}/${projectName}`;
     results["empty"] = true;
     results["contents"] = ""
 
@@ -60,11 +61,17 @@ export function createProjectDirectory(projectName: string) : any {
             return results;
         }
         else {
+            sh.cd(projectName);
+            let packageFile = new sh.ShellString(JSON.stringify(project.toJsObject(), null, 2)) 
+            packageFile.to("package.json");
             return results;
         }
     }
     else {
-        sh.mkdir(projectName)
+        sh.mkdir(projectName);
+        sh.cd(projectName);
+        let packageFile = new sh.ShellString(JSON.stringify(project.toJsObject(), null, 2)) 
+        packageFile.to("package.json");
         return results;
     }
 }
@@ -76,8 +83,6 @@ export function generatePackageManagerScaffolding(project: ProjectConfiguration,
     results["rcFileName"] = ""
 
     sh.cd(projectDirectory)
-    let packageFile = new sh.ShellString(JSON.stringify(project.toJsObject(), null, 2)) 
-    packageFile.to("package.json")
     sh.mkdir("packages")
 
     let rcOptionsData : any = {}
@@ -139,7 +144,7 @@ export function createProject(project: ProjectConfiguration) : any {
     }
 
     
-    results["projectPath"] = createProjectDirectory(project.name)
+    results["projectPath"] = createProjectDirectory(project)
     if (!results.projectPath.empty) {
         results.success = false;
         results.message = `Cannot create project, ${results.projectPath.path} is not empty`;
