@@ -129,9 +129,9 @@ export class ShellCommand {
         // capture results
         if (executedCommand !== null) {
             this._success = executedCommand.code === this._successExitCode;
-            this._exitCode = executedCommand.code;
-            this._stdout = executedCommand.stdout;
-            this._stderr = executedCommand.stderr;
+            this._exitCode = executedCommand.code ? executedCommand.code : 0;
+            this._stdout = executedCommand.stdout ? executedCommand.stdout : "";
+            this._stderr = executedCommand.stderr ? executedCommand.stderr : "";
         }
         else {
             this._success = false;
