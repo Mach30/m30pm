@@ -1,10 +1,33 @@
 import * as sh from 'shelljs'
-
 sh.config.silent = true;
 
+enum ShellCommandStatus {
+    NOT_EXECUTED = "Command has not been executed",
+    EXECUTED_ONCE = "Command has been executed",
+    EXECUTED_MORE_THAN_ONCE = "Command has already been executed"
+}
+
+export enum CommandToRun {
+    CAT = "cat",
+    CD = "cd",
+    EXEC = "exec",
+    LS = "ls",
+    MKDIR = "mkdir",
+    PWD = "pwd",
+    RM = "rm",
+    TEMP_DIR = "tempdir",
+    TO_FILE = "toFile",
+    TOUCH = "touch",
+    WHICH = "which"
+}
+
 export class ShellCommand {
+    private _executedStatus : ShellCommandStatus;
+    private _description: string;
     private _workingDirectory: string;
-    private _command: string;
+    private _command: CommandToRun;
+    private _commandLine: string;
+    private _additionalOptions: string;
     private _successExitCode: number;
     private _success: boolean = true;
     private _exitCode : number = 0;
@@ -12,19 +35,30 @@ export class ShellCommand {
     private _stderr: string = "";
 
     constructor(
+        description: string,
         workingDirectory: string,
-        command: string,
+        command: CommandToRun,
+        commandLine: string = "",
+        additionalOptions : string = "",
         successExitCode: number = 0
     ) {
+        this._executedStatus = ShellCommandStatus.NOT_EXECUTED;
+        this._description = description;
         this._workingDirectory = workingDirectory;
         this._command = command;
+        this._commandLine = commandLine;
+        this._additionalOptions = additionalOptions;
         this._successExitCode = successExitCode;
     }
 
     public toJsObject(): Object {
         let jsObject: any = {};
+        jsObject["executedStatus"] = this._executedStatus.toString();
+        jsObject["description"] = this._description;
         jsObject["workingDirectory"] = this._workingDirectory;
-        jsObject["command"] = this._command;
+        jsObject["command"] = this._command.toString();
+        jsObject["commandLine"] = this._commandLine;
+        jsObject["additionalOptions"] = this._additionalOptions;
         jsObject["successExitCode"] = this.successExitCode;
         jsObject["success"] = this._success;
         jsObject["exitCode"] = this._exitCode;
@@ -34,14 +68,88 @@ export class ShellCommand {
     }
 
     public execute() : boolean {
-        sh.cd(this._workingDirectory)
-        let executedCommand = sh.exec(this._command);
-        this._success = executedCommand.code === this._successExitCode;
-        this._exitCode = executedCommand.code;
-        this._stdout = executedCommand.stdout;
-        this._stderr = executedCommand.stderr;
+        if (this._executedStatus === ShellCommandStatus.EXECUTED_ONCE || 
+            this._executedStatus === ShellCommandStatus.EXECUTED_MORE_THAN_ONCE) {
+                this._executedStatus = ShellCommandStatus.EXECUTED_MORE_THAN_ONCE;
+                return false;
+            }
 
+        if (this._command !== CommandToRun.PWD)
+            sh.cd(this._workingDirectory)
+        
+        let executedCommand : sh.ShellString | sh.ShellArray | null = null;
+        switch(this._command) {
+            case CommandToRun.CAT: {
+                executedCommand = sh.cat(this._additionalOptions, this._commandLine)
+                break;
+            }
+            case CommandToRun.CD: {
+                executedCommand = sh.cd(this._commandLine)
+                break;
+            }
+            case CommandToRun.EXEC: {
+                executedCommand = sh.exec(this._commandLine);
+                break;
+            }
+            case CommandToRun.LS: {
+                executedCommand = sh.ls(this._additionalOptions, this._commandLine)
+                break;
+            }
+            case CommandToRun.MKDIR: {
+                executedCommand = sh.mkdir(this._additionalOptions, this._commandLine)
+                break;
+            }
+            case CommandToRun.PWD: {
+                executedCommand = sh.pwd();
+                break;
+            }
+            case CommandToRun.RM: {
+                executedCommand = sh.rm(this._additionalOptions, this._commandLine)
+                break;
+            }
+            case CommandToRun.TEMP_DIR: {
+                executedCommand = sh.tempdir();
+                break;
+            }
+            case CommandToRun.TO_FILE: {
+                executedCommand = new sh.ShellString(this._additionalOptions)
+                executedCommand.to(this._commandLine)
+                break;
+            }
+            case CommandToRun.TOUCH: {
+                executedCommand = sh.touch(this._additionalOptions, this._commandLine)
+                break;
+            }
+            case CommandToRun.WHICH: {
+                executedCommand = sh.which(this._commandLine)
+                break;
+            }
+        }
+
+        // capture results
+        if (executedCommand !== null) {
+            this._success = executedCommand.code === this._successExitCode;
+            this._exitCode = executedCommand.code;
+            this._stdout = executedCommand.stdout;
+            this._stderr = executedCommand.stderr;
+        }
+        else {
+            this._success = false;
+            this._exitCode = 1;
+            this._stdout = "";
+            this._stderr = "Command failed"
+        }
+
+        this._executedStatus = ShellCommandStatus.EXECUTED_ONCE;
         return this._success
+    }
+
+    public get executedStatus() {
+        return this._executedStatus.toString();
+    }
+
+    public get description() {
+        return this._description;
     }
 
     public get workingDirectory() {
@@ -49,7 +157,15 @@ export class ShellCommand {
     }
 
     public get command() {
-        return this._command;
+        return this._command.toString();
+    }
+
+    public get commandLine() {
+        return this._commandLine;
+    }
+
+    public get additionalOptions() {
+        return this._additionalOptions;
     }
 
     public get successExitCode() {
