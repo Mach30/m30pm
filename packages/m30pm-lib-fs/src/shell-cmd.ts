@@ -1,6 +1,10 @@
 import * as sh from 'shelljs'
 sh.config.silent = true;
 
+export function getShell() : any {
+    return sh;
+}
+
 enum ShellCommandStatus {
     NOT_EXECUTED = "Command has not been executed",
     EXECUTED_ONCE = "Command has been executed",

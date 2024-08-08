@@ -1,5 +1,5 @@
 import { expect } from "@oclif/test";
-import { ShellCommand, CommandToRun } from "../src/shell-cmd";
+import { ShellCommand, CommandToRun, getShell } from "../src/shell-cmd";
 
 describe("shell command constructor and to jsObject tests", () => {
     it('should return valid object for default success exit code', () => {

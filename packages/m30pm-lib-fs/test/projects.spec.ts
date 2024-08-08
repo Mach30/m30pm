@@ -1,5 +1,6 @@
 import { expect } from "@oclif/test";
-import { testTool, verifyMinToolVersion, getShell, createProjectDirectory, generatePackageManagerScaffolding, initializeBuildTool } from "../src/projects"
+import { testTool, verifyMinToolVersion, createProjectDirectory, generatePackageManagerScaffolding, initializeBuildTool } from "../src/projects"
+import { getShell } from "../src/shell-cmd"
 import { ProjectConfiguration } from "m30pm-lib-common";
 import exp from "constants";
 import * as fs from 'fs';

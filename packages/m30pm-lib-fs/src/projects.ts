@@ -5,10 +5,6 @@ import semver from 'semver';
 sh.config.silent = true;
 const minGradleVersion = "8.2.0"
 
-export function getShell() : any {
-    return sh;
-}
-
 export function testTool(toolName: string) : any {
     let results:any = {};
     results["toolName"] = toolName;
