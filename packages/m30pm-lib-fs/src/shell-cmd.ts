@@ -13,7 +13,6 @@ enum ShellCommandStatus {
 
 export enum CommandToRun {
     CAT = "cat",
-    CD = "cd",
     EXEC = "exec",
     LS = "ls",
     MKDIR = "mkdir",
@@ -78,62 +77,75 @@ export class ShellCommand {
                 return false;
             }
 
-        if (this._command !== CommandToRun.PWD)
-            sh.cd(this._workingDirectory)
-        
         let executedCommand : sh.ShellString | sh.ShellArray | null = null;
-        switch(this._command) {
-            case CommandToRun.CAT: {
-                executedCommand = sh.cat(this._additionalOptions, this._commandLine)
-                break;
-            }
-            case CommandToRun.CD: {
-                executedCommand = sh.cd(this._commandLine)
-                break;
-            }
-            case CommandToRun.EXEC: {
-                executedCommand = sh.exec(this._commandLine);
-                break;
-            }
-            case CommandToRun.LS: {
-                executedCommand = sh.ls(this._additionalOptions, this._commandLine)
-                break;
-            }
-            case CommandToRun.MKDIR: {
-                executedCommand = sh.mkdir(this._additionalOptions, this._commandLine)
-                break;
-            }
-            case CommandToRun.PWD: {
-                executedCommand = sh.pwd();
-                break;
-            }
-            case CommandToRun.RM: {
-                executedCommand = sh.rm(this._additionalOptions, this._commandLine)
-                break;
-            }
-            case CommandToRun.TEMP_DIR: {
-                executedCommand = sh.tempdir();
-                break;
-            }
-            case CommandToRun.TO_FILE: {
-                executedCommand = new sh.ShellString(this._additionalOptions)
-                executedCommand.to(this._commandLine)
-                break;
-            }
-            case CommandToRun.TOUCH: {
-                executedCommand = sh.touch(this._additionalOptions, this._commandLine)
-                break;
-            }
-            case CommandToRun.WHICH: {
-                executedCommand = sh.which(this._commandLine)
-                break;
+        if (this._command !== CommandToRun.PWD)
+            executedCommand = sh.cd(this._workingDirectory)
+        
+        if (executedCommand === null || executedCommand.code === 0) {  
+            switch(this._command) {
+                case CommandToRun.CAT: {
+                    if (this._additionalOptions === "")
+                        executedCommand = sh.cat(this._commandLine);
+                    else
+                        executedCommand = sh.cat(this._additionalOptions, this._commandLine);
+                    break;
+                }
+                case CommandToRun.EXEC: {
+                    executedCommand = sh.exec(this._commandLine);
+                    break;
+                }
+                case CommandToRun.LS: {
+                    if (this._additionalOptions === "") 
+                        executedCommand = sh.ls(this._commandLine)
+                    else
+                        executedCommand = sh.ls(this._additionalOptions, this._commandLine)
+                    break;
+                }
+                case CommandToRun.MKDIR: {
+                    if (this._additionalOptions === "")
+                        executedCommand = sh.mkdir(this._commandLine)
+                    else
+                        executedCommand = sh.mkdir(this._additionalOptions, this._commandLine)
+                    break;
+                }
+                case CommandToRun.PWD: {
+                    executedCommand = sh.pwd();
+                    break;
+                }
+                case CommandToRun.RM: {
+                    if (this._additionalOptions === "")
+                        executedCommand = sh.rm(this._commandLine)
+                    else
+                        executedCommand = sh.rm(this._additionalOptions, this._commandLine)
+                    break;
+                }
+                case CommandToRun.TEMP_DIR: {
+                    executedCommand = sh.tempdir();
+                    break;
+                }
+                case CommandToRun.TO_FILE: {
+                    executedCommand = new sh.ShellString(this._commandLine)
+                    executedCommand.to(this._additionalOptions)
+                    break;
+                }
+                case CommandToRun.TOUCH: {
+                    if (this._additionalOptions === "")
+                        executedCommand = sh.touch(this._commandLine)
+                    else
+                        executedCommand = sh.touch(this._additionalOptions, this._commandLine)
+                    break;
+                }
+                case CommandToRun.WHICH: {
+                    executedCommand = sh.which(this._commandLine)
+                    break;
+                }
             }
         }
 
         // capture results
         if (executedCommand !== null) {
-            this._success = executedCommand.code === this._successExitCode;
             this._exitCode = executedCommand.code ? executedCommand.code : 0;
+            this._success = this._exitCode === this._successExitCode;
             this._stdout = executedCommand.stdout ? executedCommand.stdout : "";
             this._stderr = executedCommand.stderr ? executedCommand.stderr : "";
         }
