@@ -1,4 +1,4 @@
-import { ProjectConfiguration, PackageManagers, ViewRenderer, BuiltinViews, BuildTools, VersionControlTools } from "m30pm-lib-common";
+import { ProjectConfiguration, PackageManagers, ViewRenderer, BuiltinViews, BuildTools, VersionControlTools, Helpers } from "m30pm-lib-common";
 import * as sh from 'shelljs'
 import semver from 'semver';
 
@@ -58,7 +58,7 @@ export function createProjectDirectory(project: ProjectConfiguration) : any {
         }
         else {
             sh.cd(projectName);
-            let packageFile = new sh.ShellString(JSON.stringify(project.toJsObject(), null, 2)) 
+            let packageFile = new sh.ShellString(Helpers.toJsonString(project.toJsObject())) 
             packageFile.to("package.json");
             return results;
         }
@@ -66,7 +66,7 @@ export function createProjectDirectory(project: ProjectConfiguration) : any {
     else {
         sh.mkdir(projectName);
         sh.cd(projectName);
-        let packageFile = new sh.ShellString(JSON.stringify(project.toJsObject(), null, 2)) 
+        let packageFile = new sh.ShellString(Helpers.toJsonString(project.toJsObject())) 
         packageFile.to("package.json");
         return results;
     }

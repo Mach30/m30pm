@@ -1,6 +1,7 @@
 import { json } from 'stream/consumers';
 import * as Enums from './enums'
 import semver from 'semver';
+import { Helpers } from './lib-common-helpers'
 
 export const DefaultVersion = '0.0.0'
 export const DefaultLicense = 'CC0-1.0'
@@ -54,7 +55,7 @@ export class ProjectConfiguration {
                 jsObject.packageManager,
                 jsObject.m30pm.versionControlTool,
                 jsObject.m30pm.buildTool,
-                JSON.stringify(jsObject, null, 2)
+                Helpers.toJsonString(jsObject)
             )
         } catch (error) {
             return new ProjectConfiguration(

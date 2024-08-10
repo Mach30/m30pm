@@ -1,5 +1,6 @@
 import { expect } from "@oclif/test";
 import { testTool, verifyMinToolVersion, createProjectDirectory, generatePackageManagerScaffolding, initializeBuildTool } from "../src/projects"
+import { Helpers } from "m30pm-lib-common";
 import { getShell } from "../src/shell-cmd"
 import { ProjectConfiguration } from "m30pm-lib-common";
 import exp from "constants";
@@ -118,7 +119,7 @@ describe("m30pm-lib-fs createProjectDirectory() tests", () => {
         expect(results.contents).to.equal("");
         expect(getShell().ls('/tmp/').toString().includes('my-project-1')).to.equal(true);
         expect(getShell().ls('/tmp/my-project-1').toString().includes('package.json')).to.equal(true);
-        const expectedPackageFile = JSON.stringify(project.toJsObject(), null, 2)
+        const expectedPackageFile = Helpers.toJsonString(project.toJsObject())
         const packageFile = fs.readFileSync("/tmp/my-project-1/package.json", 'utf8')
         expect(packageFile).to.equal(expectedPackageFile)
         getShell().rm('-rf', '/tmp/my-project-1');

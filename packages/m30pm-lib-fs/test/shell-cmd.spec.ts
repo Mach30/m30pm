@@ -1,5 +1,6 @@
 import { expect } from "@oclif/test";
 import { ShellCommand, CommandToRun, getShell } from "../src/shell-cmd";
+import { Helpers } from "m30pm-lib-common"
 import { ShellString } from "shelljs";
 import exp from "constants";
 
@@ -30,7 +31,7 @@ describe("shell command constructor and to jsObject tests", () => {
         expectedJsObject["exitCode"] = 0;
         expectedJsObject["stdout"] = "";
         expectedJsObject["stderr"] = "";
-        expect(JSON.stringify(cmd.toJsObject(), null, 2)).to.equal(JSON.stringify(expectedJsObject, null, 2));
+        expect(Helpers.toJsonString(cmd.toJsObject())).to.equal(Helpers.toJsonString(expectedJsObject));
     })
 
     it('should return valid object for non-default success exit code', () => {
@@ -59,7 +60,7 @@ describe("shell command constructor and to jsObject tests", () => {
         expectedJsObject["exitCode"] = 0;
         expectedJsObject["stdout"] = "";
         expectedJsObject["stderr"] = "";
-        expect(JSON.stringify(cmd.toJsObject(), null, 2)).to.equal(JSON.stringify(expectedJsObject, null, 2));
+        expect(Helpers.toJsonString(cmd.toJsObject())).to.equal(Helpers.toJsonString(expectedJsObject));
     })
 })
 
@@ -104,7 +105,7 @@ describe("shell command execute EXEC tests", () => {
         expectedJsObject["exitCode"] = 0;
         expectedJsObject["stdout"] = "/tmp\n";
         expectedJsObject["stderr"] = "";
-        expect(JSON.stringify(cmd.toJsObject(), null, 2)).to.equal(JSON.stringify(expectedJsObject, null, 2));
+        expect(Helpers.toJsonString(cmd.toJsObject())).to.equal(Helpers.toJsonString(expectedJsObject));
     })
 
     it('should return false after executing a command when specifying the wrong success exit code', () => {
