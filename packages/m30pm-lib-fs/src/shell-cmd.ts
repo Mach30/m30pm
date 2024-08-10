@@ -78,7 +78,9 @@ export class ShellCommand {
             }
 
         let executedCommand : sh.ShellString | sh.ShellArray | null = null;
-        if (this._command !== CommandToRun.PWD)
+        if (this._command !== CommandToRun.PWD && 
+            this._command !== CommandToRun.TEMP_DIR &&
+            this._command !== CommandToRun.WHICH)
             executedCommand = sh.cd(this._workingDirectory)
         
         if (executedCommand === null || executedCommand.code === 0) {  
@@ -120,12 +122,13 @@ export class ShellCommand {
                     break;
                 }
                 case CommandToRun.TEMP_DIR: {
-                    executedCommand = sh.tempdir();
+                    executedCommand = new sh.ShellString(sh.tempdir());
                     break;
                 }
                 case CommandToRun.TO_FILE: {
                     executedCommand = new sh.ShellString(this._commandLine)
                     executedCommand.to(this._additionalOptions)
+                    executedCommand.cat(this._additionalOptions)
                     break;
                 }
                 case CommandToRun.TOUCH: {

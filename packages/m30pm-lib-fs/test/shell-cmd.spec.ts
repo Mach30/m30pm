@@ -1,6 +1,7 @@
 import { expect } from "@oclif/test";
 import { ShellCommand, CommandToRun, getShell } from "../src/shell-cmd";
 import { ShellString } from "shelljs";
+import exp from "constants";
 
 describe("shell command constructor and to jsObject tests", () => {
     it('should return valid object for default success exit code', () => {
@@ -68,8 +69,7 @@ describe("shell command execute CAT tests", () => {
         let rcFileContents = new ShellString("Hello, World!\n");
         rcFileContents.to("hello.txt");
         let cmd = new ShellCommand("Test cat 1", "/tmp", CommandToRun.CAT, "hello.txt");
-        cmd.execute();
-        expect(cmd.success).to.equal(true);
+        expect(cmd.execute()).to.equal(true);
         expect(cmd.stdout).to.equal(rcFileContents.stdout);
         getShell().rm("/tmp/hello.txt");
     })
@@ -79,8 +79,7 @@ describe("shell command execute CAT tests", () => {
         let rcFileContents = new ShellString("Hello, World!\n");
         rcFileContents.to("hello.txt");
         let cmd = new ShellCommand("Test cat 2", "/tmp", CommandToRun.CAT, "hello.txt", "-n");
-        cmd.execute();
-        expect(cmd.success).to.equal(true);
+        expect(cmd.execute()).to.equal(true);
         expect(cmd.stdout).to.equal(`     1\t${rcFileContents.stdout}`);
         getShell().rm("/tmp/hello.txt");
     })
@@ -126,6 +125,13 @@ describe("shell command execute EXEC tests", () => {
         expect(cmd.exitCode).to.equal(1);
         expect(cmd.stderr).includes("cd: no such file or directory: /tm");
     })
+
+    it('should return false after executing a command twice and have execution status of run more than once', () => {
+        let cmd = new ShellCommand("Test execute", "/tmp", CommandToRun.EXEC, "pwd");
+        expect(cmd.execute()).to.equal(true);
+        expect(cmd.execute()).to.equal(false);
+        expect(cmd.executedStatus).to.equal("Command has already been executed")
+    })
 })
 
 describe("shell command execute LS tests", () => {
@@ -136,8 +142,7 @@ describe("shell command execute LS tests", () => {
         getShell().touch("file1")
         getShell().touch(".file2")
         let cmd = new ShellCommand("Test ls 1", "/tmp", CommandToRun.LS, "ls-test-1");
-        cmd.execute()
-        expect(cmd.success).to.equal(true)
+        expect(cmd.execute()).to.equal(true)
         expect(cmd.stdout).to.equal("file1\n")
         getShell().cd("/tmp")
         getShell().rm("-rf", "ls-test-1")
@@ -150,8 +155,7 @@ describe("shell command execute LS tests", () => {
         getShell().touch("file1")
         getShell().touch(".file2")
         let cmd = new ShellCommand("Test ls 2", "/tmp", CommandToRun.LS, "ls-test-2", "-A");
-        cmd.execute()
-        expect(cmd.success).to.equal(true)
+        expect(cmd.execute()).to.equal(true)
         expect(cmd.stdout).to.equal(".file2\nfile1\n")
         getShell().cd("/tmp")
         getShell().rm("-rf", "ls-test-2")
@@ -162,8 +166,7 @@ describe("shell command execute MKDIR tests", () => {
     it('should return true and create directory without additional options', () => {
         getShell().cd("/tmp")
         let cmd = new ShellCommand("Test mkdir 1", "/tmp", CommandToRun.MKDIR, "mkdir-test-1")
-        cmd.execute()
-        expect(cmd.success).to.equal(true)
+        expect(cmd.execute()).to.equal(true)
         expect(getShell().ls().stdout).to.include("mkdir-test-1")
         getShell().rm("-rf", "mkdir-test-1")
     })
@@ -171,8 +174,7 @@ describe("shell command execute MKDIR tests", () => {
     it('should return true and create directories with additional options=-p', () => {
         getShell().cd("/tmp")
         let cmd = new ShellCommand("Test mkdir 2", "/tmp", CommandToRun.MKDIR, "mkdir-test-2/foo", "-p")
-        cmd.execute()
-        expect(cmd.success).to.equal(true)
+        expect(cmd.execute()).to.equal(true)
         expect(getShell().ls().stdout).to.include("mkdir-test-2")
         expect(getShell().ls("mkdir-test-2").stdout).to.equal("foo\n")
         getShell().rm("-rf", "mkdir-test-2")
@@ -180,32 +182,89 @@ describe("shell command execute MKDIR tests", () => {
 })
 
 describe("shell command execute PWD tests", () => {
-    it('TBD', () => {
+    it('should return true, stdout should be cwd, and stderr should be empty string and CWD to be unchanged', () => {
+        getShell().cd("/tmp")
+        let cmd = new ShellCommand("Test pwd", "", CommandToRun.PWD)
+        expect(cmd.execute()).to.equal(true)
+        expect(cmd.stdout).to.equal("/tmp")
+        expect(cmd.stderr).to.equal("")
+        expect(getShell().pwd().stdout).to.equal("/tmp")
     })
 })
 
 describe("shell command execute RM tests", () => {
-    it('TBD', () => {
+    it('should return true and remove specified file without additonal options', () => {
+        getShell().cd("/tmp")
+        getShell().touch("foo")
+        let cmd = new ShellCommand("Test rm 1", "/tmp", CommandToRun.RM, "foo")
+        expect(cmd.execute()).to.equal(true)
+        expect(getShell().ls().stdout).to.not.include("foo")
+    })
+
+    it('should return true and remove specified directory with additional options=-f', () => {
+        getShell().cd("/tmp")
+        getShell().mkdir("bar")
+        let cmd = new ShellCommand("Test rm 2", "/tmp", CommandToRun.RM, "bar", "-rf")
+        expect(cmd.execute()).to.equal(true)
+        expect(getShell().ls().stdout).to.not.include("bar")
     })
 })
 
 describe("shell command execute TEMP_DIR tests", () => {
-    it('TBD', () => {
+    it('should return true, stdout should be /tmp, and stderr should be empty string and CWD unchanged', () => {
+        getShell().cd("/")
+        let cmd = new ShellCommand("Test tempdir", "", CommandToRun.TEMP_DIR)
+        expect(cmd.execute()).to.equal(true)
+        expect(cmd.stdout).to.equal("/tmp")
+        expect(cmd.stderr).to.equal("")
+        expect(getShell().pwd().stdout).to.equal("/")
     })
 })
 
 describe("shell command execute TO_FILE tests", () => {
-    it('TBD', () => {
+    it('should return true and stdout should equal the string saved to the file', () => {
+        let cmd = new ShellCommand("Test to_file", "/tmp", CommandToRun.TO_FILE, "Hello, World!\n", "hello-file.txt")
+        expect(cmd.execute()).to.equal(true)
+        expect(cmd.stdout).to.equal("Hello, World!\n")
+        getShell().rm("hello-file.txt")
     })
 })
 
 describe("shell command execute TOUCH tests", () => {
-    it('TBD', () => {
+    it('should return true, file foo should exist, stdout should be empty string, and stderr should be empty string without additional options', () => {
+        let cmd = new ShellCommand("Test touch 1", "/tmp", CommandToRun.TOUCH, "baz")
+        expect(cmd.execute()).to.equal(true)
+        expect(getShell().ls().stdout).to.include("baz")
+        expect(cmd.stdout).to.equal("")
+        expect(cmd.stderr).to.equal("")
+        getShell().rm("/tmp/baz")
+    })
+
+    it('should return true, file foo should not exist, stdout should be empty string, and stderr should be empty string with additional options=-c', () => {
+        let cmd = new ShellCommand("Test touch 2", "/tmp", CommandToRun.TOUCH, "baz", "-c")
+        expect(cmd.execute()).to.equal(true)
+        expect(getShell().ls().stdout).to.not.include("baz")
+        expect(cmd.stdout).to.equal("")
+        expect(cmd.stderr).to.equal("")
     })
 })
 
 describe("shell command execute WHICH tests", () => {
-    it('TBD', () => {
+    it('should return true, stdout should be /usr/bin/ls, and stderr should be empty string for ls and CWD is unchanged', () => {
+        getShell().cd("/")
+        let cmd = new ShellCommand("Test which 1", "", CommandToRun.WHICH, "ls")
+        expect(cmd.execute()).to.equal(true)
+        expect(cmd.stdout).to.equal("/usr/bin/ls")
+        expect(cmd.stderr).to.equal("")
+        expect(getShell().pwd().stdout).to.equal("/")
     })
+
+    it('should return false, stdout should be empty string, and stderr should be Command failed for foo', () => {
+        let cmd = new ShellCommand("Test which 2", "", CommandToRun.WHICH, "foo")
+        expect(cmd.execute()).to.equal(false)
+        expect(cmd.stdout).to.equal("")
+        expect(cmd.stderr).to.equal("Command failed")
+    })
+
 })
 
