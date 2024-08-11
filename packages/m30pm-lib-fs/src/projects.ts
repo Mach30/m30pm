@@ -6,7 +6,7 @@ import * as sh from 'shelljs'
 
 sh.config.silent = true;
 const minGradleVersion = "8.2.0"
-let projectDirectory = ""
+let _projectDirectory = ""
 
 // create project directory using project name (should follow oclif pattern; if no directory exists, create directory; if directory exists and empty, continue project creation; 
 // if directory exists and is not empty, return with error stating non-empty directory)
@@ -17,9 +17,9 @@ export function initializeProjectDirectory(project: ProjectConfiguration) : Comm
     pwdCmd.execute();
     cmdHistory.addExecutedCommand(pwdCmd);
     let workingDirectory = pwdCmd.stdout;
-    projectDirectory = `${workingDirectory}/${projectName}`
+    _projectDirectory = `${workingDirectory}/${projectName}`
     
-    let lsCmd = new ShellCommand(`Determine if Project Directory ${projectDirectory} Exists`, workingDirectory, CommandToRun.LS, projectName, "-d")
+    let lsCmd = new ShellCommand(`Determine if Project Directory ${_projectDirectory} Exists`, workingDirectory, CommandToRun.LS, projectName, "-d")
     lsCmd.execute();
     let projectDirectoryFound = lsCmd.success;
     let projectDirectoryCanBeUsed = true;
@@ -34,128 +34,107 @@ export function initializeProjectDirectory(project: ProjectConfiguration) : Comm
     }
 
     if (!projectDirectoryFound || !projectDirectoryCanBeUsed) {
-        let mkdirCmd = new ShellCommand(`Create Project Directory ${projectDirectory}`, 
+        let mkdirCmd = new ShellCommand(`Create Project Directory ${_projectDirectory}`, 
                                         workingDirectory, CommandToRun.MKDIR, projectName);
         mkdirCmd.execute();
         cmdHistory.addExecutedCommand(mkdirCmd)
     }
 
     if (projectDirectoryCanBeUsed) {
-        let createPackageJsonFileCmd = new ShellCommand("Create package.json File", projectDirectory, CommandToRun.TO_FILE, 
+        let createPackageJsonFileCmd = new ShellCommand("Create package.json File", _projectDirectory, CommandToRun.TO_FILE, 
                                                         Helpers.toJsonString(project.toJsObject()), "package.json")
         createPackageJsonFileCmd.execute();
         cmdHistory.addExecutedCommand(createPackageJsonFileCmd);
     }
+
     return cmdHistory;
-    }
+}
 
 // in project directory, generate selected tool scaffolding (a.k.a., for npm or yarn) 
 // (including .npmrc or .yarnrc) for a mono repo (a.k.a., npm/yarn workspaces)
 export function generatePackageManagerScaffolding(project: ProjectConfiguration, projectDirectory : string) : any {
-    let results : any = {}
-    results["rcFileName"] = ""
+    let cmdHistory = new CommandHistory(`Generate Package Manager Scaffolding for ${project.name}`)
 
-    sh.cd(projectDirectory)
-    sh.mkdir("packages")
+    let mkdirPackagesCmd = new ShellCommand("Create packages Directory", projectDirectory, CommandToRun.MKDIR, "packages");
+    mkdirPackagesCmd.execute();
+    cmdHistory.addExecutedCommand(mkdirPackagesCmd)
+    if (!mkdirPackagesCmd.success)
+        return cmdHistory;
 
     let rcOptionsData : any = {}
     rcOptionsData["rcOptions"] = project.getInitialRcOptions();
+    let rcFileContents = "";
+    let rcFileName = ""
         
     if (project.packageManager == PackageManagers.NPM) {
-        const rcFileContents = ViewRenderer.render(BuiltinViews.getNpmRcFileView(), rcOptionsData)
-        const rcFile = new sh.ShellString(rcFileContents)
-        results.rcFileName = ".npmrc"
-        rcFile.to(results.rcFileName)
+        rcFileContents = ViewRenderer.render(BuiltinViews.getNpmRcFileView(), rcOptionsData)
+        rcFileName = ".npmrc"
     }
     else if (project.packageManager == PackageManagers.YARN) {
-        const rcFileContents = ViewRenderer.render(BuiltinViews.getYarnRcYamlFileView(), rcOptionsData)
-        const rcFile = new sh.ShellString(rcFileContents)
-        results.rcFileName = ".yarnrc.yml"
-        rcFile.to(results.rcFileName)
+        rcFileContents = ViewRenderer.render(BuiltinViews.getYarnRcYamlFileView(), rcOptionsData)
+        rcFileName = ".yarnrc.yml"
     }
     else {
         // no options to save
     }
 
-    return results;
+    if (rcFileContents !== "") {
+        let saveRcFileCmd = new ShellCommand(`Save RC File ${rcFileName}`, projectDirectory, 
+                                             CommandToRun.TO_FILE, rcFileContents, rcFileName)
+        saveRcFileCmd.execute()
+        cmdHistory.addExecutedCommand(saveRcFileCmd)
+    }
+
+    return cmdHistory;
 }
 
 export function initializeBuildTool(project: ProjectConfiguration, projectDirectory: string,  buildToolPath: string) : any {
-    let results : any = {};
-    results["btInitialized"] =  true;
-    results["stdout"] = "";
-    results["stderr"] = "";
-    
-    sh.cd(projectDirectory)
+    let cmdHistory = new CommandHistory(`Initialize Build Tool for ${project.name}`)
+
     if (project.buildTool === BuildTools.GRADLE) {
         //`gradle init` prompts for project type (basic), dsl (Groovy), project name, Generate build using new API and behavior (--no-incubating)
-        let btInit = sh.exec(`${buildToolPath} init --type basic --dsl groovy --project-name ${project.name} --no-incubating`);
-        results.btInitialized = btInit.code === 0;
-        results.stdout = btInit.stdout;
-        results.stderr = btInit.stderr;
-        return results;
+        let gradleInitCmd = new ShellCommand("Run gradle init", projectDirectory, CommandToRun.EXEC,
+                                         `${buildToolPath} init --type basic --dsl groovy --project-name ${project.name} --no-incubating`)
+        gradleInitCmd.execute();
+        cmdHistory.addExecutedCommand(gradleInitCmd);
     }
-    else {
-        results.btInitialized = false;
-        return results;
-    }
+
+    return cmdHistory;
 }
 
 export function initializeVersionControlTool(project : ProjectConfiguration, projectDirectory: string, versionControlToolPath : string) : any {
-    let results : any = {};
-    results["vctInitialized"] = true;
-    results["vctInit"] = {};
-    results.vctInit["code"] = 0;
-    results.vctInit["stdout"] = ""
-    results.vctInit["stderr"] = ""
-    results["vctAddDot"] = {};
-    results.vctAddDot["code"] = 0;
-    results.vctAddDot["stdout"] = ""
-    results.vctAddDot["stderr"] = ""
-    results["vctInitialCommit"] = {};
-    results.vctInitialCommit["code"] = 0;
-    results.vctInitialCommit["stdout"] = ""
-    results.vctInitialCommit["stderr"] = ""
-    results["vctNextStep"] = ""
-   
-    sh.cd(projectDirectory)
+    let cmdHistory = new CommandHistory(`Initialize Version Control Tool for ${project.name}`)
+
     if (project.versionControlTool === VersionControlTools.GIT) {
         //in project directory, generate scaffolding for version control tool (a.k.a., git, s.a., .gitignore)
-        let vctInit = sh.exec(`${versionControlToolPath} init --initial-branch=main`)
-        results.vctInitialized = vctInit.code === 0;
-        results.vctInit.code = vctInit.code;
-        results.vctInit.stdout = vctInit.stdout;
-        results.vctInit.stderr = vctInit.stderr;
-
-        if (!results.vctInitialized)
-            return results;
+        let vctInitCmd = new ShellCommand("Initialize git Repository", projectDirectory, CommandToRun.EXEC,
+                                          `${versionControlToolPath} init --initial-branch=main`)
+        vctInitCmd.execute();
+        cmdHistory.addExecutedCommand(vctInitCmd);
+        if (!vctInitCmd.success)
+            return cmdHistory;
    
         //perform "best practice" git operations for newly generated project scaffolding git add . git commit -m "Initial commit" (with expanded commit description s.a., "project generated from...")
-        let vctAddDot = sh.exec(`${versionControlToolPath} add .`)
-        results.vctInitialized = vctAddDot.code === 0;
-        results.vctAddDot.code = vctAddDot.code;
-        results.vctAddDot.stdout = vctAddDot.stdout;
-        results.vctAddDot.stderr = vctAddDot.stderr;
+        let vctAddDotCmd = new ShellCommand("Add New Project Content to Commit", projectDirectory, CommandToRun.EXEC,
+                                            `${versionControlToolPath} add .`)
+        vctAddDotCmd.execute();
+        cmdHistory.addExecutedCommand(vctAddDotCmd);
+        if (!vctAddDotCmd.success)
+            return cmdHistory;
 
-        if (!results.vctInitialized)
-            return results;
-
-        let vctCommitInitialCommit = sh.exec(`${versionControlToolPath} commit -m "Initial commit\n\nCreated by m30pm"`)
-        results.vctInitialized = vctCommitInitialCommit.code === 0;
-        results.vctInitialCommit.code = vctCommitInitialCommit.code;
-        results.vctInitialCommit.stdout = vctCommitInitialCommit.stdout;
-        results.vctInitialCommit.stderr = vctCommitInitialCommit.stderr;
-
-        if (!results.vctInitialized)
-            return results;
-        
-        // inform user of next step, running git command for setting up remote origin (e.g., git remote add origin <git-url>)
-        results.vctNextStep = "git remote add origin <git-url> && git push -u origin main"
+        let vctCommitInitialCommitCmd = new ShellCommand("Make Initial Commit", projectDirectory, CommandToRun.EXEC,
+                                                         `${versionControlToolPath} commit -m "Initial commit\n\nCreated by m30pm"`)
+        vctCommitInitialCommitCmd.execute();       
     }
-    else {
-        results.vctInitialized = false;
-        return results;
-    }
+    
+    return cmdHistory;
+}
+
+export function getVctNextStep(versionControlTool : VersionControlTools) : string {
+    if (versionControlTool === VersionControlTools.GIT)
+        return "git remote add origin <git-url> && git push -u origin main";
+    else   
+        return "";
 }
 
 export class Projects {
@@ -198,32 +177,34 @@ export class Projects {
             return results;
         }
 
-        results["packageMangerScaffolding"] = generatePackageManagerScaffolding(project, results.projectPath.path)
-        if (results.rcFileName === "") {
+        let packageMangerScaffoldingCommands = generatePackageManagerScaffolding(project, _projectDirectory)
+        results.initializations["packageMangerScaffolding"] = packageMangerScaffoldingCommands.toJsObject();
+        if (!packageMangerScaffoldingCommands.success) {
             results.success = false;
-            results.message = `Invalid package manager ${project.packageManager.toString()}`;
+            results.message = `Cannot ${packageMangerScaffoldingCommands.description}`;
             return results;
         }
         
-
-        // refactor bt and vct separately
-        //in project directory, generate scaffolding for build tool (a.k.a., gradle init with gradle file included - s.a., for base set of templates for generating documentation)
-
         // initialize build tool
-        results.buildTool["initialization"] = initializeBuildTool(project, results.projectPath.path, results.buildTool.toolPath);
-        if (!results.buildTool.initialization.btInitialized && project.buildTool !== BuildTools.INVALID_BT) {
+        let builtToolCommands = initializeBuildTool(project, _projectDirectory, btInfo.path);
+        results.initializations["buildTool"] = builtToolCommands.toJsObject();
+        if (!builtToolCommands.success) {
             results.success = false;
-            results.message = `Failed to initialize build tool ${project.buildTool.toString()}`;
+            results.message = `Cannot ${builtToolCommands.description}`;
             return results;
         }
 
         // initialize version control tool
-        results.versionControlTool["initialization"] = initializeVersionControlTool(project, results.projectPath.path, results.versionControlTool.toolPath)
-        if (!results.versionControlTool.initialization.vctInitialized && project.versionControlTool !== VersionControlTools.INVALID_VCT) {
+        let versionControlToolCommands = initializeVersionControlTool(project, _projectDirectory, vctInfo.path)
+        results.initializations["versionControlTool"] = versionControlToolCommands.toJsObject();
+        if (!versionControlToolCommands.success) {
             results.success = false;
-            results.message = `Failed to initialize version control tool ${project.versionControlTool.toString()}`;
+            results.message = `Cannot ${versionControlToolCommands.description}`;
             return results;
         }
+
+        results["nextSteps"] = [];
+        results.nextSteps[0] = getVctNextStep(project.versionControlTool);
 
         // if we got here, the project has been initialized, so all we have to do is return the results
         return results;
