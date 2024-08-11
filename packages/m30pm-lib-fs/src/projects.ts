@@ -181,87 +181,89 @@ export function initializeVersionControlTool(project : ProjectConfiguration, pro
     }
 }
 
-export function createProject(project: ProjectConfiguration) : any {
-    let results : any = {};
-    results["projectToCreate"] = project.name;
-    results["success"] = true;
-    results["message"] = `Project ${project.name} initialized`;
+export class Projects {
+    public static createProject(project: ProjectConfiguration) : any {
+        let results : any = {};
+        results["projectToCreate"] = project.name;
+        results["success"] = true;
+        results["message"] = `Project ${project.name} initialized`;
 
-    //verify package manager, build tool, and version control tool are installed 
-    results["packageManager"] = testTool(project.packageManager.toString());
-    if (!results.packageManager.toolFound) {
-        results.success = false;
-        results.message = `Cannot find package manager ${results.packageManager.toolName}`
-        return results
-    }
-
-    results["buildTool"] = testTool(project.buildTool.toString());
-    if (!results.buildTool.toolFound) {
-        results.success = false;
-        results.message = `Cannot find build tool ${results.buildTool.toolName}`
-        return results
-    } else if (results.buildTool.toolName === 'gradle') {
-        // ensure min version of gradle is met
-        results.buildTool["verifyMinToolVersion"] = verifyMinToolVersion(results.buildTool, minGradleVersion)
-        if (!results.buildTool.verifyMinToolVersion.passedMinVersionCheck) {
+        //verify package manager, build tool, and version control tool are installed 
+        results["packageManager"] = testTool(project.packageManager.toString());
+        if (!results.packageManager.toolFound) {
             results.success = false;
-            results.message = `Gradle version must be >= v${minGradleVersion}`;
+            results.message = `Cannot find package manager ${results.packageManager.toolName}`
+            return results
+        }
+
+        results["buildTool"] = testTool(project.buildTool.toString());
+        if (!results.buildTool.toolFound) {
+            results.success = false;
+            results.message = `Cannot find build tool ${results.buildTool.toolName}`
+            return results
+        } else if (results.buildTool.toolName === 'gradle') {
+            // ensure min version of gradle is met
+            results.buildTool["verifyMinToolVersion"] = verifyMinToolVersion(results.buildTool, minGradleVersion)
+            if (!results.buildTool.verifyMinToolVersion.passedMinVersionCheck) {
+                results.success = false;
+                results.message = `Gradle version must be >= v${minGradleVersion}`;
+                return results;
+            }
+        }
+
+        results["versionControlTool"] = testTool(project.versionControlTool.toString());
+        if (!results.versionControlTool.toolFound) {
+            results.success = false;
+            results.message = `Cannot find version control tool ${results.versionControlTool.toolName}`;
             return results;
         }
-    }
 
-    results["versionControlTool"] = testTool(project.versionControlTool.toString());
-    if (!results.versionControlTool.toolFound) {
-        results.success = false;
-        results.message = `Cannot find version control tool ${results.versionControlTool.toolName}`;
+        
+        results["projectPath"] = createProjectDirectory(project)
+        if (!results.projectPath.empty) {
+            results.success = false;
+            results.message = `Cannot create project, ${results.projectPath.path} is not empty`;
+            return results;
+        }
+
+        results["packageMangerScaffolding"] = generatePackageManagerScaffolding(project, results.projectPath.path)
+        if (results.rcFileName === "") {
+            results.success = false;
+            results.message = `Invalid package manager ${project.packageManager.toString()}`;
+            return results;
+        }
+        
+
+        // refactor bt and vct separately
+        //in project directory, generate scaffolding for build tool (a.k.a., gradle init with gradle file included - s.a., for base set of templates for generating documentation)
+
+        // initialize build tool
+        results.buildTool["initialization"] = initializeBuildTool(project, results.projectPath.path, results.buildTool.toolPath);
+        if (!results.buildTool.initialization.btInitialized && project.buildTool !== BuildTools.INVALID_BT) {
+            results.success = false;
+            results.message = `Failed to initialize build tool ${project.buildTool.toString()}`;
+            return results;
+        }
+        else if (project.buildTool === BuildTools.INVALID_BT) {
+            results.success = false;
+            results.message = `Invalid build tool`;
+            return results;
+        }
+
+        // initialize version control tool
+        results.versionControlTool["initialization"] = initializeVersionControlTool(project, results.projectPath.path, results.versionControlTool.toolPath)
+        if (!results.versionControlTool.initialization.vctInitialized && project.versionControlTool !== VersionControlTools.INVALID_VCT) {
+            results.success = false;
+            results.message = `Failed to initialize version control tool ${project.versionControlTool.toString()}`;
+            return results;
+        }
+        else if (project.versionControlTool === VersionControlTools.INVALID_VCT) {
+            results.success = false;
+            results.message = `Invalid version control tool`;
+            return results;
+        }
+
+        // if we got here, the project has been initialized, so all we have to do is return the results
         return results;
     }
-
-    
-    results["projectPath"] = createProjectDirectory(project)
-    if (!results.projectPath.empty) {
-        results.success = false;
-        results.message = `Cannot create project, ${results.projectPath.path} is not empty`;
-        return results;
-    }
-
-    results["packageMangerScaffolding"] = generatePackageManagerScaffolding(project, results.projectPath.path)
-    if (results.rcFileName === "") {
-        results.success = false;
-        results.message = `Invalid package manager ${project.packageManager.toString()}`;
-        return results;
-    }
-    
-
-    // refactor bt and vct separately
-    //in project directory, generate scaffolding for build tool (a.k.a., gradle init with gradle file included - s.a., for base set of templates for generating documentation)
-
-    // initialize build tool
-    results.buildTool["initialization"] = initializeBuildTool(project, results.projectPath.path, results.buildTool.toolPath);
-    if (!results.buildTool.initialization.btInitialized && project.buildTool !== BuildTools.INVALID_BT) {
-        results.success = false;
-        results.message = `Failed to initialize build tool ${project.buildTool.toString()}`;
-        return results;
-    }
-    else if (project.buildTool === BuildTools.INVALID_BT) {
-        results.success = false;
-        results.message = `Invalid build tool`;
-        return results;
-    }
-
-    // initialize version control tool
-    results.versionControlTool["initialization"] = initializeVersionControlTool(project, results.projectPath.path, results.versionControlTool.toolPath)
-    if (!results.versionControlTool.initialization.vctInitialized && project.versionControlTool !== VersionControlTools.INVALID_VCT) {
-        results.success = false;
-        results.message = `Failed to initialize version control tool ${project.versionControlTool.toString()}`;
-        return results;
-    }
-    else if (project.versionControlTool === VersionControlTools.INVALID_VCT) {
-        results.success = false;
-        results.message = `Invalid version control tool`;
-        return results;
-    }
-
-    // if we got here, the project has been initialized, so all we have to do is return the results
-    return results;
 }

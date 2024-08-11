@@ -1,1 +1,1 @@
-export * from './projects'
+export { Projects } from './projects'

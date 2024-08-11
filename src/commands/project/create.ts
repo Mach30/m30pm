@@ -4,7 +4,7 @@ import {PackageManagers, ProjectConfiguration, DefaultVersion, DefaultLicense, V
 import input from '@inquirer/input'
 import select from '@inquirer/select'
 import confirm from '@inquirer/confirm'
-import * as fsLib from 'm30pm-lib-fs'
+import { Projects } from 'm30pm-lib-fs'
 import { mdStdout } from 'm30pm-lib-cli'
 
 export default class ProjectCreate extends Command {
@@ -155,7 +155,7 @@ export default class ProjectCreate extends Command {
       
  //   const createProject = await confirm({ message: 'Create project?' })
  //   if (createProject) {
- //     fsLib.createProject(projectConfiguration)
+ //     Projects.createProject(projectConfiguration)
  //   }
   }
 }
