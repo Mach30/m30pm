@@ -1,76 +1,53 @@
 import { ProjectConfiguration, PackageManagers, ViewRenderer, BuiltinViews, BuildTools, VersionControlTools, Helpers } from "m30pm-lib-common";
+import { ToolInfo } from "./tool-info";
+import { ShellCommand, CommandToRun } from "./shell-cmd";
+import { CommandHistory } from "./cmd-history";
 import * as sh from 'shelljs'
-import semver from 'semver';
 
 sh.config.silent = true;
 const minGradleVersion = "8.2.0"
-
-export function testTool(toolName: string) : any {
-    let results:any = {};
-    results["toolName"] = toolName;
-    results["toolPath"] = "";
-    results["toolVersion"] = "";
-
-    const toolPath = sh.which(toolName);
-    results["toolFound"] = toolPath ? true : false;
-    if (results["toolFound"]) {
-        results["toolPath"] = toolPath?.toString()
-        const versionStringRegEx = /[0-9]+(\.[0-9]+)+/;
-        const versionSearch = sh.exec(`${results["toolPath"]} --version`).toString().match(versionStringRegEx);
-        const versionString = versionSearch ? versionSearch[0] : "";
-        results["toolVersion"] = semver.coerce(versionString)?.toString();
-    }
-
-    return results;
-}
-
-export function verifyMinToolVersion(toolInfo: any, minVersion: string) : any {
-    let results : any = {};
-    const toolVersion = toolInfo.toolVersion;
-
-    results["toolName"] = toolInfo.toolName;
-    results["toolVersion"] = toolVersion;
-    results["minVersion"] = minVersion;
-    results["passedMinVersionCheck"] = false;
-
-    if (toolInfo.toolFound)
-        results["passedMinVersionCheck"] = semver.gte(toolVersion, minVersion);
-    
-    return results;
-}
+let projectDirectory = ""
 
 // create project directory using project name (should follow oclif pattern; if no directory exists, create directory; if directory exists and empty, continue project creation; 
 // if directory exists and is not empty, return with error stating non-empty directory)
-export function createProjectDirectory(project: ProjectConfiguration) : any {
-    let results : any = {}
+export function initializeProjectDirectory(project: ProjectConfiguration) : CommandHistory {
     const projectName = project.name;
-    results["path"] = `${sh.pwd().toString()}/${projectName}`;
-    results["empty"] = true;
-    results["contents"] = ""
+    let cmdHistory = new CommandHistory(`Initialze Project Directory for ${projectName}`)
+    let pwdCmd = new ShellCommand("Get Current Working Directory", "", CommandToRun.PWD)
+    pwdCmd.execute();
+    cmdHistory.addExecutedCommand(pwdCmd);
+    let workingDirectory = pwdCmd.stdout;
+    projectDirectory = `${workingDirectory}/${projectName}`
+    
+    let lsCmd = new ShellCommand(`Determine if Project Directory ${projectDirectory} Exists`, workingDirectory, CommandToRun.LS, projectName, "-d")
+    lsCmd.execute();
+    let projectDirectoryFound = lsCmd.success;
+    let projectDirectoryCanBeUsed = true;
 
-    const projectPath = sh.ls("-d", projectName);
-    if (projectPath.length) {
-        const projectContents = sh.ls("-A", projectPath.toString())
-        if (projectContents.length) {
-            results.empty = false;
-            results.contents = projectContents.toString();
-            return results;
-        }
-        else {
-            sh.cd(projectName);
-            let packageFile = new sh.ShellString(Helpers.toJsonString(project.toJsObject())) 
-            packageFile.to("package.json");
-            return results;
-        }
+    if (projectDirectoryFound) {
+        cmdHistory.addExecutedCommand(lsCmd);
+        let lsCmd2 = new ShellCommand("Determine if Project Name Points to File or Non-Empty Direcory", 
+                                      workingDirectory, CommandToRun.LS, projectName, "-A");
+        lsCmd2.execute();
+        cmdHistory.addExecutedCommand(lsCmd2)
+        projectDirectoryCanBeUsed = lsCmd2.success && lsCmd2.stdout === ""
     }
-    else {
-        sh.mkdir(projectName);
-        sh.cd(projectName);
-        let packageFile = new sh.ShellString(Helpers.toJsonString(project.toJsObject())) 
-        packageFile.to("package.json");
-        return results;
+
+    if (!projectDirectoryFound || !projectDirectoryCanBeUsed) {
+        let mkdirCmd = new ShellCommand(`Create Project Directory ${projectDirectory}`, 
+                                        workingDirectory, CommandToRun.MKDIR, projectName);
+        mkdirCmd.execute();
+        cmdHistory.addExecutedCommand(mkdirCmd)
     }
-}
+
+    if (projectDirectoryCanBeUsed) {
+        let createPackageJsonFileCmd = new ShellCommand("Create package.json File", projectDirectory, CommandToRun.TO_FILE, 
+                                                        Helpers.toJsonString(project.toJsObject()), "package.json")
+        createPackageJsonFileCmd.execute();
+        cmdHistory.addExecutedCommand(createPackageJsonFileCmd);
+    }
+    return cmdHistory;
+    }
 
 // in project directory, generate selected tool scaffolding (a.k.a., for npm or yarn) 
 // (including .npmrc or .yarnrc) for a mono repo (a.k.a., npm/yarn workspaces)
@@ -189,40 +166,35 @@ export class Projects {
         results["message"] = `Project ${project.name} initialized`;
 
         //verify package manager, build tool, and version control tool are installed 
-        results["packageManager"] = testTool(project.packageManager.toString());
-        if (!results.packageManager.toolFound) {
+        const pmInfo = new ToolInfo(project.packageManager.toString())
+        results["packageManager"] = pmInfo.toJsObject()
+        if (!pmInfo.verifiedVersion) {
             results.success = false;
-            results.message = `Cannot find package manager ${results.packageManager.toolName}`
+            results.message = `Cannot ${pmInfo.cmdHistory.description}`
             return results
         }
 
-        results["buildTool"] = testTool(project.buildTool.toString());
-        if (!results.buildTool.toolFound) {
+        const btInfo = new ToolInfo(project.buildTool.toString(), minGradleVersion)
+        results["buildTool"] = btInfo.toJsObject();
+        if (!btInfo.verifiedVersion) {
             results.success = false;
-            results.message = `Cannot find build tool ${results.buildTool.toolName}`
+            results.message = `Cannot ${btInfo.cmdHistory.description}`
             return results
-        } else if (results.buildTool.toolName === 'gradle') {
-            // ensure min version of gradle is met
-            results.buildTool["verifyMinToolVersion"] = verifyMinToolVersion(results.buildTool, minGradleVersion)
-            if (!results.buildTool.verifyMinToolVersion.passedMinVersionCheck) {
-                results.success = false;
-                results.message = `Gradle version must be >= v${minGradleVersion}`;
-                return results;
-            }
-        }
+        } 
 
-        results["versionControlTool"] = testTool(project.versionControlTool.toString());
-        if (!results.versionControlTool.toolFound) {
+        const vctInfo = new ToolInfo(project.versionControlTool.toString())
+        if (!vctInfo.verifiedVersion) {
             results.success = false;
-            results.message = `Cannot find version control tool ${results.versionControlTool.toolName}`;
+            results.message = `Cannot ${vctInfo.cmdHistory.description}`;
             return results;
         }
 
-        
-        results["projectPath"] = createProjectDirectory(project)
-        if (!results.projectPath.empty) {
+        results["initializations"] = {};
+        let projectDirectoryCommands = initializeProjectDirectory(project);
+        results.initializations["projectDirectory"] = projectDirectoryCommands.toJsObject();
+        if (!projectDirectoryCommands.success) {
             results.success = false;
-            results.message = `Cannot create project, ${results.projectPath.path} is not empty`;
+            results.message = `Cannot ${projectDirectoryCommands.description}`;
             return results;
         }
 
@@ -244,22 +216,12 @@ export class Projects {
             results.message = `Failed to initialize build tool ${project.buildTool.toString()}`;
             return results;
         }
-        else if (project.buildTool === BuildTools.INVALID_BT) {
-            results.success = false;
-            results.message = `Invalid build tool`;
-            return results;
-        }
 
         // initialize version control tool
         results.versionControlTool["initialization"] = initializeVersionControlTool(project, results.projectPath.path, results.versionControlTool.toolPath)
         if (!results.versionControlTool.initialization.vctInitialized && project.versionControlTool !== VersionControlTools.INVALID_VCT) {
             results.success = false;
             results.message = `Failed to initialize version control tool ${project.versionControlTool.toString()}`;
-            return results;
-        }
-        else if (project.versionControlTool === VersionControlTools.INVALID_VCT) {
-            results.success = false;
-            results.message = `Invalid version control tool`;
             return results;
         }
 

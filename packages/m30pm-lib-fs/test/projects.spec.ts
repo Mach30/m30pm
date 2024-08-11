@@ -1,31 +1,28 @@
 import { expect } from "@oclif/test";
-import { createProjectDirectory, generatePackageManagerScaffolding, initializeBuildTool } from "../src/projects"
+import { initializeProjectDirectory, generatePackageManagerScaffolding, initializeBuildTool } from "../src/projects"
+import { CommandHistory } from "../src/cmd-history";
 import { Helpers } from "m30pm-lib-common";
 import { getShell } from "../src/shell-cmd"
 import { ProjectConfiguration } from "m30pm-lib-common";
 import exp from "constants";
 import * as fs from 'fs';
 
-describe("m30pm-lib-fs createProjectDirectory() tests", () => {
-    it('should return /tmp/my-project, true, and "" for my-project when directory does not exist', () => {
+describe("m30pm-lib-fs initializeProjectDirectory() tests", () => {
+    it('should return true for my-project when directory does not exist', () => {
         getShell().cd('/tmp/')
         const project = new ProjectConfiguration("my-project", "0.0.0", "My New m30ml Project", "Mach 30", "CC-BY-4.0", "npm", "git", "gradle", "")
-        const results = createProjectDirectory(project);
-        expect(results.path).to.equal('/tmp/my-project')
-        expect(results.empty).to.equal(true);
-        expect(results.contents).to.equal("");
+        const history = initializeProjectDirectory(project);
+        expect(history.success).to.equal(true);
         expect(getShell().ls('/tmp/').toString().includes('my-project')).to.equal(true);
         getShell().rm('-rf', '/tmp/my-project');
     })
 
-    it('should return /tmp/my-project-1, true, and "" for my-project when directory does exist and is empty', () => {
+    it('should return true for my-project-1 when directory does exist and is empty', () => {
         getShell().cd('/tmp/')
         getShell().mkdir('my-project-1')
         const project = new ProjectConfiguration("my-project-1", "0.0.0", "My New m30ml Project", "Mach 30", "CC-BY-4.0", "npm", "git", "gradle", "")
-        const results = createProjectDirectory(project);
-        expect(results.path).to.equal('/tmp/my-project-1')
-        expect(results.empty).to.equal(true);
-        expect(results.contents).to.equal("");
+        const history = initializeProjectDirectory(project);
+        expect(history.success).to.equal(true);
         expect(getShell().ls('/tmp/').toString().includes('my-project-1')).to.equal(true);
         expect(getShell().ls('/tmp/my-project-1').toString().includes('package.json')).to.equal(true);
         const expectedPackageFile = Helpers.toJsonString(project.toJsObject())
@@ -34,27 +31,23 @@ describe("m30pm-lib-fs createProjectDirectory() tests", () => {
         getShell().rm('-rf', '/tmp/my-project-1');
     })
 
-    it('should return /tmp/my-project-2, false, and "foo" for my-project when directory does exist and has file foo', () => {
+    it('should return false when my-project-2 directory does exist and has file foo', () => {
         getShell().cd('/tmp/')
         getShell().mkdir('my-project-2')
         getShell().touch('my-project-2/foo')
         const project = new ProjectConfiguration("my-project-2", "0.0.0", "My New m30ml Project", "Mach 30", "CC-BY-4.0", "npm", "git", "gradle", "")
-        const results = createProjectDirectory(project);
-        expect(results.path).to.equal('/tmp/my-project-2')
-        expect(results.empty).to.equal(false);
-        expect(results.contents).to.equal("foo");
+        const history = initializeProjectDirectory(project);
+        expect(history.success).to.equal(false);
         getShell().rm('-rf', '/tmp/my-project-2');
     })
 
-    it('should return /tmp/my-project-3, false, and ".foo" for my-project when directory does exist and has file .foo', () => {
+    it('should return false for my-project-3 when directory does exist and has file .foo', () => {
         getShell().cd('/tmp/')
         getShell().mkdir('my-project-3')
         getShell().touch('my-project-3/.foo')
         const project = new ProjectConfiguration("my-project-3", "0.0.0", "My New m30ml Project", "Mach 30", "CC-BY-4.0", "npm", "git", "gradle", "")
-        const results = createProjectDirectory(project);
-        expect(results.path).to.equal('/tmp/my-project-3')
-        expect(results.empty).to.equal(false);
-        expect(results.contents).to.equal(".foo");
+        const history = initializeProjectDirectory(project);
+        expect(history.success).to.equal(false);
         getShell().rm('-rf', '/tmp/my-project-3');
     })
 })

@@ -13,7 +13,7 @@ export class ToolInfo {
     constructor (name : string, minVersion : string = "0.0.0") {
         this._name = name;
         this._minVersion = minVersion;
-        this._cmdHistory = new CommandHistory(`Get Tool Info for ${this.name}`);
+        this._cmdHistory = new CommandHistory(`Verify Tool Info for "${this.name}"`);
         this._path = ""
         this._version = ""
 

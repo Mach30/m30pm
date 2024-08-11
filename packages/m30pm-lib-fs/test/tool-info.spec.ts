@@ -12,7 +12,7 @@ describe("m30pm-lib-fs TestTool tests", () => {
         expect(fooInfo.version).to.equal("")
         expect(fooInfo.verifiedVersion).to.equal(false)
 
-        let expectedCmdHistory = new CommandHistory("Get Tool Info for foo");
+        let expectedCmdHistory = new CommandHistory(`Verify Tool Info for "foo"`);
         let whichCmd = new ShellCommand("Find Tool", "", CommandToRun.WHICH, "foo");
         whichCmd.execute();
         expectedCmdHistory.addExecutedCommand(whichCmd);
