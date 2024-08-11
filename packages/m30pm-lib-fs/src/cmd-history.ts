@@ -1,14 +1,23 @@
-import { CommandToRun, ShellCommand } from "./shell-cmd"
+import { ShellCommand } from "./shell-cmd"
 
 export class CommandHistory {
     private _description : string;
     private _success : boolean;
-    private _commands : Array<ShellCommand>;
+    private _executedCommands : Array<ShellCommand>;
 
     constructor(description : string) {
         this._description = description;
         this._success = true;
-        this._commands = new Array<ShellCommand>();
+        this._executedCommands = new Array<ShellCommand>();
+    }
+
+    public addExecutedCommand(command: ShellCommand) : boolean {
+        if (!command.executedExactlyOnce || !this._success)
+            return false;
+
+        this._success = command.success;
+        this._executedCommands.push(command);
+        return true;
     }
 
     public get description() {
@@ -19,11 +28,19 @@ export class CommandHistory {
         return this._success;
     }
 
-    public get commands() {
-        let commands = new Array<Object>();
-        this._commands.forEach((cmd: ShellCommand) => {
-            commands.push(cmd.toJsObject())
+    public get executedCommands() {
+        let executedCommands = new Array<Object>();
+        this._executedCommands.forEach((cmd: ShellCommand) => {
+            executedCommands.push(cmd.toJsObject())
         })
-        return commands;
+        return executedCommands;
+    }
+
+    public toJsObject() : Object {
+        let jsObject: any = {};
+        jsObject["description"] = this.description
+        jsObject["success"] = this.success
+        jsObject["executedCommands"] = this.executedCommands
+        return jsObject
     }
 }
