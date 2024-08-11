@@ -167,6 +167,10 @@ export class ShellCommand {
         return this._executedStatus.toString();
     }
 
+    public get executedExactlyOnce() : boolean {
+        return this._executedStatus === ShellCommandStatus.EXECUTED_ONCE;
+    }
+
     public get description() {
         return this._description;
     }

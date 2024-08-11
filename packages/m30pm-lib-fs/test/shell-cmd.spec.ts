@@ -18,6 +18,7 @@ describe("shell command constructor and to jsObject tests", () => {
         expect(cmd.exitCode).to.equal(0);
         expect(cmd.stdout).to.equal("");
         expect(cmd.stderr).to.equal("");
+        expect(cmd.executedExactlyOnce).to.equal(false)
 
         let expectedJsObject: any = {};
         expectedJsObject["executedStatus"] = "Command has not been executed";
@@ -47,6 +48,7 @@ describe("shell command constructor and to jsObject tests", () => {
         expect(cmd.exitCode).to.equal(0);
         expect(cmd.stdout).to.equal("");
         expect(cmd.stderr).to.equal("");
+        expect(cmd.executedExactlyOnce).to.equal(false)
 
         let expectedJsObject: any = {};
         expectedJsObject["executedStatus"] = "Command has not been executed";
@@ -92,6 +94,7 @@ describe("shell command execute EXEC tests", () => {
         expect(cmd.execute()).to.equal(true);
         expect(cmd.exitCode).to.equal(0);
         expect(cmd.stdout).to.equal("/tmp\n");
+        expect(cmd.executedExactlyOnce).to.equal(true);
 
         let expectedJsObject: any = {};
         expectedJsObject["executedStatus"] = "Command has been executed";
@@ -111,6 +114,7 @@ describe("shell command execute EXEC tests", () => {
     it('should return false after executing a command when specifying the wrong success exit code', () => {
         let cmd = new ShellCommand("Test execute", "/tmp", CommandToRun.EXEC, "pwd", "", 1);
         expect(cmd.execute()).to.equal(false);
+        expect(cmd.executedExactlyOnce).to.equal(true)
     })
 
     it('should return false after executing a command incorrectly', () => {
@@ -118,6 +122,7 @@ describe("shell command execute EXEC tests", () => {
         expect(cmd.execute()).to.equal(false);
         expect(cmd.exitCode).to.equal(2);
         expect(cmd.stderr).includes("Illegal option");
+        expect(cmd.executedExactlyOnce).to.equal(true);
     })
 
     it('should return false after executing a command in a non-existent working directory', () => {
@@ -125,6 +130,7 @@ describe("shell command execute EXEC tests", () => {
         expect(cmd.execute()).to.equal(false);
         expect(cmd.exitCode).to.equal(1);
         expect(cmd.stderr).includes("cd: no such file or directory: /tm");
+        expect(cmd.executedExactlyOnce).to.equal(true);
     })
 
     it('should return false after executing a command twice and have execution status of run more than once', () => {
@@ -132,6 +138,7 @@ describe("shell command execute EXEC tests", () => {
         expect(cmd.execute()).to.equal(true);
         expect(cmd.execute()).to.equal(false);
         expect(cmd.executedStatus).to.equal("Command has already been executed")
+        expect(cmd.executedExactlyOnce).to.equal(false);
     })
 })
 
