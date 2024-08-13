@@ -17,6 +17,22 @@ export class BuiltinViews {
         return BuiltinViews.readResourceSync("yarnRcYamlFileView.njk");
     }
 
+    public static getReadmeQuery() : string {
+        return BuiltinViews.readResourceSync("README.query.njk")
+    }
+
+    public static getReadmeView() : string {
+        return BuiltinViews.readResourceSync("README.md.njk")
+    }
+
+    public static getBuildQuery() : string {
+        return BuiltinViews.readResourceSync("build.query.njk")
+    }
+
+    public static getBuildView() : string {
+        return BuiltinViews.readResourceSync("build.gradle.njk")
+    }
+
     private static readResourceSync(resourceName: string) : string {
         return fs.readFileSync(path.resolve(__dirname, "resources/", resourceName), "utf8").toString();
     }

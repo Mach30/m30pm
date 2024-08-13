@@ -10,7 +10,7 @@ describe("m30pm-lib-fs initializeProjectDirectory() tests", () => {
     it('should return true for my-project when directory does not exist', () => {
         getShell().cd('/tmp/')
         const project = new ProjectConfiguration("my-project", "0.0.0", "My New m30ml Project", "Mach 30", "CC-BY-4.0", "npm", "git", "gradle", "")
-        const history = initializeProjectDirectory(project);
+        const history = initializeProjectDirectory(project, "/tmp");
         expect(history.success).to.equal(true);
         expect(getShell().ls('/tmp/').toString().includes('my-project')).to.equal(true);
         getShell().rm('-rf', '/tmp/my-project');
@@ -20,7 +20,7 @@ describe("m30pm-lib-fs initializeProjectDirectory() tests", () => {
         getShell().cd('/tmp/')
         getShell().mkdir('my-project-1')
         const project = new ProjectConfiguration("my-project-1", "0.0.0", "My New m30ml Project", "Mach 30", "CC-BY-4.0", "npm", "git", "gradle", "")
-        const history = initializeProjectDirectory(project);
+        const history = initializeProjectDirectory(project, "/tmp");
         expect(history.success).to.equal(true);
         expect(getShell().ls('/tmp/').toString().includes('my-project-1')).to.equal(true);
         expect(getShell().ls('/tmp/my-project-1').toString().includes('package.json')).to.equal(true);
@@ -35,7 +35,7 @@ describe("m30pm-lib-fs initializeProjectDirectory() tests", () => {
         getShell().mkdir('my-project-2')
         getShell().touch('my-project-2/foo')
         const project = new ProjectConfiguration("my-project-2", "0.0.0", "My New m30ml Project", "Mach 30", "CC-BY-4.0", "npm", "git", "gradle", "")
-        const history = initializeProjectDirectory(project);
+        const history = initializeProjectDirectory(project, "/tmp");
         expect(history.success).to.equal(false);
         getShell().rm('-rf', '/tmp/my-project-2');
     })
@@ -45,7 +45,7 @@ describe("m30pm-lib-fs initializeProjectDirectory() tests", () => {
         getShell().mkdir('my-project-3')
         getShell().touch('my-project-3/.foo')
         const project = new ProjectConfiguration("my-project-3", "0.0.0", "My New m30ml Project", "Mach 30", "CC-BY-4.0", "npm", "git", "gradle", "")
-        const history = initializeProjectDirectory(project);
+        const history = initializeProjectDirectory(project, "/tmp");
         expect(history.success).to.equal(false);
         getShell().rm('-rf', '/tmp/my-project-3');
     })

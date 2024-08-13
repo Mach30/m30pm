@@ -2,21 +2,16 @@ import { ProjectConfiguration, PackageManagers, ViewRenderer, BuiltinViews, Buil
 import { ToolInfo } from "./tool-info";
 import { ShellCommand, CommandToRun } from "./shell-cmd";
 import { CommandHistory } from "./cmd-history";
-import * as sh from 'shelljs'
 
-sh.config.silent = true;
 const minGradleVersion = "8.2.0"
+const gitIgnoreContents = "# m30pm .gitignore\ndist/\nnode_modules/\n"
 let _projectDirectory = ""
 
 // create project directory using project name (should follow oclif pattern; if no directory exists, create directory; if directory exists and empty, continue project creation; 
 // if directory exists and is not empty, return with error stating non-empty directory)
-export function initializeProjectDirectory(project: ProjectConfiguration) : CommandHistory {
+export function initializeProjectDirectory(project: ProjectConfiguration, workingDirectory : string) : CommandHistory {
     const projectName = project.name;
     let cmdHistory = new CommandHistory(`Initialze Project Directory for ${projectName}`)
-    let pwdCmd = new ShellCommand("Get Current Working Directory", "", CommandToRun.PWD)
-    pwdCmd.execute();
-    cmdHistory.addExecutedCommand(pwdCmd);
-    let workingDirectory = pwdCmd.stdout;
     _projectDirectory = `${workingDirectory}/${projectName}`
     
     let lsCmd = new ShellCommand(`Determine if Project Directory ${_projectDirectory} Exists`, workingDirectory, CommandToRun.LS, projectName, "-d")
@@ -45,6 +40,41 @@ export function initializeProjectDirectory(project: ProjectConfiguration) : Comm
                                                         Helpers.toJsonString(project.toJsObject()), "package.json")
         createPackageJsonFileCmd.execute();
         cmdHistory.addExecutedCommand(createPackageJsonFileCmd);
+        if (!createPackageJsonFileCmd.success)
+            return cmdHistory;
+
+        let createModelDirCmd = new ShellCommand("Create model/ Directory", _projectDirectory, CommandToRun.MKDIR, "model")
+        createModelDirCmd.execute();
+        cmdHistory.addExecutedCommand(createModelDirCmd);
+        if (!createModelDirCmd.success)
+            return cmdHistory;
+
+        let createModelDotFileCmd = new ShellCommand("Create Dot File for model/ Directory", _projectDirectory, CommandToRun.TO_FILE, 
+                                                     "Directory to store top-level model source code", ".description")
+        createModelDotFileCmd.execute()
+        cmdHistory.addExecutedCommand(createModelDotFileCmd)
+        if (!createModelDotFileCmd.success)
+            return cmdHistory;
+
+        let createViewsDirCmd = new ShellCommand("Create views/queries/ Directories", _projectDirectory, CommandToRun.MKDIR, "views/queries", "-p")
+        createViewsDirCmd.execute();
+        cmdHistory.addExecutedCommand(createViewsDirCmd)
+        if (!createViewsDirCmd.success)
+            return cmdHistory;
+
+        let createViewsDotFileCmd = new ShellCommand("Create Dot File for views/ Directory", _projectDirectory, CommandToRun.TO_FILE, 
+                                                     "Directory to store views source code", ".description")
+        createViewsDotFileCmd.execute()
+        cmdHistory.addExecutedCommand(createViewsDotFileCmd)
+        if (!createViewsDotFileCmd.success)
+        return cmdHistory;
+
+        let createQueriesDotFileCmd = new ShellCommand("Create Dot File for views/queries/ Directory", _projectDirectory, CommandToRun.TO_FILE, 
+                                                       "Directory to store queries source code", ".description")
+        createQueriesDotFileCmd.execute()
+        cmdHistory.addExecutedCommand(createQueriesDotFileCmd)
+        if (!createQueriesDotFileCmd.success)
+            return cmdHistory;
     }
 
     return cmdHistory;
@@ -115,6 +145,13 @@ export function initializeVersionControlTool(project : ProjectConfiguration, pro
             return cmdHistory;
    
         //perform "best practice" git operations for newly generated project scaffolding git add . git commit -m "Initial commit" (with expanded commit description s.a., "project generated from...")
+        let createGitIgnoreFileCmd = new ShellCommand("Create m30pm .gitignore File", projectDirectory, CommandToRun.TO_FILE,
+                                                      gitIgnoreContents, ".gitignore")
+        createGitIgnoreFileCmd.execute()
+        cmdHistory.addExecutedCommand(createGitIgnoreFileCmd)
+        if (!createGitIgnoreFileCmd.success)
+            return cmdHistory;
+
         let vctAddDotCmd = new ShellCommand("Add New Project Content to Commit", projectDirectory, CommandToRun.EXEC,
                                             `${versionControlToolPath} add .`)
         vctAddDotCmd.execute();
@@ -162,6 +199,7 @@ export class Projects {
         } 
 
         const vctInfo = new ToolInfo(project.versionControlTool.toString())
+        results["versionControlTool"] = vctInfo.toJsObject();
         if (!vctInfo.verifiedVersion) {
             results.success = false;
             results.message = `Cannot ${vctInfo.cmdHistory.description}`;
@@ -169,7 +207,10 @@ export class Projects {
         }
 
         results["initializations"] = {};
-        let projectDirectoryCommands = initializeProjectDirectory(project);
+        let pwdCmd = new ShellCommand("Get Current Working Directory", "", CommandToRun.PWD)
+        pwdCmd.execute();
+        results.initializations["getWorkingDir"] = pwdCmd.toJsObject();
+        let projectDirectoryCommands = initializeProjectDirectory(project, pwdCmd.stdout);
         results.initializations["projectDirectory"] = projectDirectoryCommands.toJsObject();
         if (!projectDirectoryCommands.success) {
             results.success = false;
