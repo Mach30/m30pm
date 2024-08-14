@@ -64,7 +64,7 @@ describe("m30pm-lib-fs generatePackageManagerScaffolding() tests", () => {
         const project = new ProjectConfiguration("my-project-4", "0.0.0", "My New m30ml Project", "Mach 30", "CC-BY-4.0", "npm", "git", "gradle", "")
         const history = generatePackageManagerScaffolding(project, "/tmp/my-project-4")
         expect(history.success).to.equal(true)
-        expect(getShell().ls('/tmp/my-project-4').toString().includes('packages')).to.equal(true);
+        expect(getShell().cat('/tmp/my-project-4/packages/.description').stdout).to.equal('Directory to store sub-projects within\n')
         expect(getShell().ls('-A', '/tmp/my-project-4').toString().includes('.npmrc')).to.equal(true);
         expect(getShell().ls('-A', '/tmp/my-project-4').toString().includes('.yarnrc.yml')).to.equal(false);
         const rcFile = getShell().cat("/tmp/my-project-4/.npmrc").stdout
@@ -111,6 +111,7 @@ describe("m30pm-lib-fs initializeVersionControlTool() tests", () => {
     //     //console.log(history.toJsObject())
     //     expect(history.success).to.equal(true);
     //     expect(getShell().ls('-d', '/tmp/my-project-8/.git').toString().includes('.git')).to.equal(true);
+    //     expect(getShell().ls('-a', '/tmp/my-project-8').stdout).includes('.gitignore')
     //     getShell().rm('-rf', '/tmp/my-project-8');
     // })
 

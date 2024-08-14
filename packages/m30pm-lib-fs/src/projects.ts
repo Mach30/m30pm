@@ -117,6 +117,13 @@ export function generatePackageManagerScaffolding(project: ProjectConfiguration,
     cmdHistory.addExecutedCommand(mkdirPackagesCmd)
     if (!mkdirPackagesCmd.success)
         return cmdHistory;
+    
+    let createPackagesDotFileCmd = new ShellCommand("Create Dot File for packages/ Directory", `${projectDirectory}/packages`, CommandToRun.TO_FILE, 
+                                                    "Directory to store sub-projects within\n", ".description")
+    createPackagesDotFileCmd.execute()
+    cmdHistory.addExecutedCommand(createPackagesDotFileCmd)
+    if (!createPackagesDotFileCmd.success)
+        return cmdHistory;
 
     let rcOptionsData : any = {}
     rcOptionsData["rcOptions"] = project.getInitialRcOptions();
