@@ -5,6 +5,7 @@ import { CommandHistory } from "./cmd-history";
 import * as yaml from 'js-yaml';
 
 const minGradleVersion = "8.2.0"
+const minGitVersion = "2.28.0"
 const gitIgnoreContents = "# m30pm .gitignore\ndist/\nnode_modules/\n"
 let _projectDirectory = ""
 
@@ -261,7 +262,10 @@ export class Projects {
             return results
         } 
 
-        const vctInfo = new ToolInfo(project.versionControlTool.toString())
+        let minVctVersion = "0.0.0";
+        if (project.versionControlTool === VersionControlTools.GIT)
+            minVctVersion = minGitVersion;
+        const vctInfo = new ToolInfo(project.versionControlTool.toString(), minVctVersion)
         results["versionControlTool"] = vctInfo.toJsObject();
         if (!vctInfo.verifiedVersion) {
             results.success = false;
