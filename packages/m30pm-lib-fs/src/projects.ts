@@ -250,7 +250,10 @@ export class Projects {
             return results
         }
 
-        const btInfo = new ToolInfo(project.buildTool.toString(), minGradleVersion)
+        let minBtVersion = "0.0.0";
+        if (project.buildTool === BuildTools.GRADLE)
+            minBtVersion = minGradleVersion;
+        const btInfo = new ToolInfo(project.buildTool.toString(), minBtVersion)
         results["buildTool"] = btInfo.toJsObject();
         if (!btInfo.verifiedVersion) {
             results.success = false;
