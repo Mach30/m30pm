@@ -2,6 +2,7 @@ import { ProjectConfiguration, PackageManagers, ViewRenderer, BuiltinViews, Buil
 import { ToolInfo } from "./tool-info";
 import { ShellCommand, CommandToRun } from "./shell-cmd";
 import { CommandHistory } from "./cmd-history";
+import * as yaml from 'js-yaml';
 
 const minGradleVersion = "8.2.0"
 const gitIgnoreContents = "# m30pm .gitignore\ndist/\nnode_modules/\n"
@@ -49,8 +50,8 @@ export function initializeProjectDirectory(project: ProjectConfiguration, workin
         if (!createModelDirCmd.success)
             return cmdHistory;
 
-        let createModelDotFileCmd = new ShellCommand("Create Dot File for model/ Directory", _projectDirectory, CommandToRun.TO_FILE, 
-                                                     "Directory to store top-level model source code", ".description")
+        let createModelDotFileCmd = new ShellCommand("Create Dot File for model/ Directory", `${_projectDirectory}/model`, CommandToRun.TO_FILE, 
+                                                     "Directory to store top-level model source code\n", ".description")
         createModelDotFileCmd.execute()
         cmdHistory.addExecutedCommand(createModelDotFileCmd)
         if (!createModelDotFileCmd.success)
@@ -62,19 +63,45 @@ export function initializeProjectDirectory(project: ProjectConfiguration, workin
         if (!createViewsDirCmd.success)
             return cmdHistory;
 
-        let createViewsDotFileCmd = new ShellCommand("Create Dot File for views/ Directory", _projectDirectory, CommandToRun.TO_FILE, 
-                                                     "Directory to store views source code", ".description")
+        let createViewsDotFileCmd = new ShellCommand("Create Dot File for views/ Directory", `${_projectDirectory}/views`, CommandToRun.TO_FILE, 
+                                                     "Directory to store views source code\n", ".description")
         createViewsDotFileCmd.execute()
         cmdHistory.addExecutedCommand(createViewsDotFileCmd)
         if (!createViewsDotFileCmd.success)
         return cmdHistory;
 
-        let createQueriesDotFileCmd = new ShellCommand("Create Dot File for views/queries/ Directory", _projectDirectory, CommandToRun.TO_FILE, 
-                                                       "Directory to store queries source code", ".description")
+        let createQueriesDotFileCmd = new ShellCommand("Create Dot File for views/queries/ Directory", `${_projectDirectory}/views/queries`, CommandToRun.TO_FILE, 
+                                                       "Directory to store queries source code\n", ".description")
         createQueriesDotFileCmd.execute()
         cmdHistory.addExecutedCommand(createQueriesDotFileCmd)
         if (!createQueriesDotFileCmd.success)
             return cmdHistory;
+
+        let readmeQuery = BuiltinViews.getReadmeQuery();
+        let createReadmeQueryFileCmd = new ShellCommand("Create default README Query File", `${_projectDirectory}/views/queries`, CommandToRun.TO_FILE,
+                                                         readmeQuery, "README.query.njk");
+        createReadmeQueryFileCmd.execute();
+        cmdHistory.addExecutedCommand(createReadmeQueryFileCmd);
+        if (!createReadmeQueryFileCmd.success)
+            return cmdHistory;
+        
+        let readmeView = BuiltinViews.getReadmeView();
+        let createReadmeViewFileCmd = new ShellCommand("Create default README View File", `${_projectDirectory}/views`, CommandToRun.TO_FILE,
+                                                        readmeView, "README.md.njk");
+        createReadmeViewFileCmd.execute();
+        cmdHistory.addExecutedCommand(createReadmeViewFileCmd);
+        if (!createReadmeViewFileCmd.success)
+            return cmdHistory;
+
+        // add readme
+        let readmeQueryContents = yaml.load(ViewRenderer.render(readmeQuery, project.toJsObject())) as Object;
+        let readmeFileContents = ViewRenderer.render(readmeView, readmeQueryContents);
+        let createReadmeFileCmd = new ShellCommand("Save Generated README.md File", _projectDirectory, CommandToRun.TO_FILE,
+                                                   readmeFileContents, "README.md");
+        createReadmeFileCmd.execute();
+        cmdHistory.addExecutedCommand(createReadmeFileCmd);
+        if (!createReadmeViewFileCmd.success)
+            return cmdHistory
     }
 
     return cmdHistory;
@@ -127,6 +154,32 @@ export function initializeBuildTool(project: ProjectConfiguration, projectDirect
                                          `${buildToolPath} init --type basic --dsl groovy --project-name ${project.name} --no-incubating`)
         gradleInitCmd.execute();
         cmdHistory.addExecutedCommand(gradleInitCmd);
+
+        // put render new build file here
+        let buildQuery = BuiltinViews.getBuildQuery();
+        let createBuildFileQueryFileCmd = new ShellCommand("Create default build.gradle Query File", `${projectDirectory}/views/queries`, CommandToRun.TO_FILE,
+                                                           buildQuery, "build.query.njk");
+        createBuildFileQueryFileCmd.execute();
+        cmdHistory.addExecutedCommand(createBuildFileQueryFileCmd);
+        if (!createBuildFileQueryFileCmd.success)
+            return cmdHistory;
+        
+        let buildView = BuiltinViews.getBuildView()
+        let createBuildFileViewFileCmd = new ShellCommand("Create default build.gradle View File", `${projectDirectory}/views`, CommandToRun.TO_FILE,
+                                                          buildView, "build.gradle.njk");
+        createBuildFileViewFileCmd.execute();
+        cmdHistory.addExecutedCommand(createBuildFileViewFileCmd);
+        if (!createBuildFileViewFileCmd.success)
+            return cmdHistory;
+        
+        let buildQueryContents = yaml.load(ViewRenderer.render(buildQuery, {})) as Object;
+        let buildFileContents = ViewRenderer.render(buildView, buildQueryContents);
+        let createBuildFileCmd = new ShellCommand("Save Generated build.gradle File", projectDirectory, CommandToRun.TO_FILE,
+                                                   buildFileContents, "build.gradle");
+        createBuildFileCmd.execute();
+        cmdHistory.addExecutedCommand(createBuildFileCmd);
+        if (!createBuildFileCmd.success)
+            return cmdHistory
     }
 
     return cmdHistory;
