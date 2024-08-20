@@ -36,11 +36,11 @@ describe("m30pm-lib-fs TestTool tests", () => {
         expect(lsInfo.verifiedVersion).to.equal(true)
     })
 
-    it('should return true, /usr/bin/git, and 2.45.2 for git', () => {
+    it('should return true, /usr/bin/git, and 2.46.0 for git', () => {
         const gitInfo = new ToolInfo('git')
         expect(gitInfo.installed).to.equal(true)
         expect(gitInfo.path).to.equal("/usr/bin/git")
-        expect(gitInfo.version).to.equal("2.45.2")
+        expect(gitInfo.version).to.equal("2.46.0")
         expect(gitInfo.verifiedVersion).to.equal(true)
     })
 
@@ -52,11 +52,11 @@ describe("m30pm-lib-fs TestTool tests", () => {
         expect(gradleInfo.verifiedVersion).to.equal(true)
     })
 
-    it('should return true, /var/lib/nvm/versions/node/v20.11.1/bin/npm, and 10.2.4 for npm', () => {
+    it('should return true, /var/lib/nvm/versions/node/v20.15.1/bin/npm, and 10.7.0 for npm', () => {
         const npmInfo = new ToolInfo("npm")
         expect(npmInfo.installed).to.equal(true)
-        expect(npmInfo.path).to.equal("/var/lib/nvm/versions/node/v20.11.1/bin/npm")
-        expect(npmInfo.version).to.equal("10.2.4")
+        expect(npmInfo.path).to.equal("/var/lib/nvm/versions/node/v20.15.1/bin/npm")
+        expect(npmInfo.version).to.equal("10.7.0")
         expect(npmInfo.verifiedVersion).to.equal(true)
     })
 
