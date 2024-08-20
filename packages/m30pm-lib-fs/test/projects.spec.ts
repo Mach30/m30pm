@@ -22,7 +22,6 @@ describe("m30pm-lib-fs initializeProjectDirectory() tests", () => {
         const project = new ProjectConfiguration("my-project-1", "0.0.0", "My New m30ml Project", "Mach 30", "CC-BY-4.0", "npm", "git", "gradle", "")
         const history = initializeProjectDirectory(project, "/tmp");
         expect(history.success).to.equal(true);
-        expect(getShell().ls('/tmp/').toString().includes('my-project-1')).to.equal(true);
         expect(getShell().ls('/tmp/my-project-1').toString().includes('package.json')).to.equal(true);
         const expectedPackageFile = Helpers.toJsonString(project.toJsObject())
         const packageFile = getShell().cat("/tmp/my-project-1/package.json").stdout
@@ -54,6 +53,77 @@ describe("m30pm-lib-fs initializeProjectDirectory() tests", () => {
         const history = initializeProjectDirectory(project, "/tmp");
         expect(history.success).to.equal(false);
         getShell().rm('-rf', '/tmp/my-project-3');
+    })
+})
+
+describe("m30pm-lib-fs initializeProjectDirectory() with scoped projects tests", () => {
+    it('should return true for @my-scope/my-project when @my-scope directory does not exist', () => {
+        getShell().cd('/tmp/')
+        const project = new ProjectConfiguration("@my-scope/my-project", "0.0.0", "My New m30ml Project", "Mach 30", "CC-BY-4.0", "npm", "git", "gradle", "")
+        const history = initializeProjectDirectory(project, "/tmp");
+        expect(history.success).to.equal(true);
+        expect(getShell().ls('/tmp/').toString().includes('@my-scope')).to.equal(true);
+        expect(getShell().ls('/tmp/@my-scope').toString().includes('my-project')).to.equal(true);
+        getShell().rm('-rf', '/tmp/@my-scope');
+    })
+
+    it('should return true for @my-scope-1/my-project when @my-scope-1/ directory does exist and my-project/ does not exist', () => {
+        getShell().cd('/tmp/')
+        getShell().mkdir('@my-scope-1')
+        const project = new ProjectConfiguration("@my-scope-1/my-project", "0.0.0", "My New m30ml Project", "Mach 30", "CC-BY-4.0", "npm", "git", "gradle", "")
+        const history = initializeProjectDirectory(project, "/tmp");
+        expect(history.success).to.equal(true);
+        expect(getShell().ls('/tmp/@my-scope-1').toString().includes('my-project')).to.equal(true);
+        getShell().rm('-rf', '/tmp/@my-scope-1');
+    })
+
+    it('should return true for @my-scope-2/my-project when directory does exist and is empty', () => {
+        getShell().cd('/tmp/')
+        getShell().mkdir('-p', '@my-scope-2/my-project')
+        const project = new ProjectConfiguration("@my-scope-2/my-project", "0.0.0", "My New m30ml Project", "Mach 30", "CC-BY-4.0", "npm", "git", "gradle", "")
+        const history = initializeProjectDirectory(project, "/tmp");
+        expect(history.success).to.equal(true);
+        expect(getShell().ls('/tmp/@my-scope-2/my-project').toString().includes('package.json')).to.equal(true);
+        const expectedPackageFile = Helpers.toJsonString(project.toJsObject())
+        const packageFile = getShell().cat("/tmp/@my-scope-2/my-project/package.json").stdout
+        expect(packageFile).to.equal(expectedPackageFile)
+        expect(getShell().cat('/tmp/@my-scope-2/my-project/model/.description').stdout).to.equal("Directory to store top-level model source code\n");
+        expect(getShell().cat('/tmp/@my-scope-2/my-project/views/.description').stdout).to.equal("Directory to store views source code\n");
+        expect(getShell().cat('/tmp/@my-scope-2/my-project/views/queries/.description').stdout).to.equal("Directory to store queries source code\n");
+        expect(getShell().ls('/tmp/@my-scope-2/my-project/views/queries').stdout).includes('README.query.njk')
+        expect(getShell().ls('/tmp/@my-scope-2/my-project/views').stdout).includes('README.md.njk')
+        expect(getShell().ls('/tmp/@my-scope-2/my-project').stdout).includes('README.md')
+        getShell().rm('-rf', '/tmp/@my-scope-2');
+    })
+
+    it('should return false when @my-scope-3/my-project directory does exist and has file foo', () => {
+        getShell().cd('/tmp/')
+        getShell().mkdir("-p",'@my-scope-3/my-project')
+        getShell().touch('@my-scope-3/my-project/foo')
+        const project = new ProjectConfiguration("@my-scope-3/my-project", "0.0.0", "My New m30ml Project", "Mach 30", "CC-BY-4.0", "npm", "git", "gradle", "")
+        const history = initializeProjectDirectory(project, "/tmp");
+        expect(history.success).to.equal(false);
+        getShell().rm('-rf', '/tmp/@my-scope-3');
+    })
+
+    it('should return false for @my-scope-4/my-project when directory does exist and has file .foo', () => {
+        getShell().cd('/tmp/')
+        getShell().mkdir("-p",'@my-scope-4/my-project')
+        getShell().touch('@my-scope-4/my-project/.foo')
+        const project = new ProjectConfiguration("@my-scope-4/my-project", "0.0.0", "My New m30ml Project", "Mach 30", "CC-BY-4.0", "npm", "git", "gradle", "")
+        const history = initializeProjectDirectory(project, "/tmp");
+        expect(history.success).to.equal(false);
+        getShell().rm('-rf', '/tmp/@my-scope-4');
+    })
+
+    it('should return true for @my-scope-5/my-project when @my-scope-5/ directory does exist, @my-scope-5/foo/ exists, and my-project/ does not exist', () => {
+        getShell().cd('/tmp/')
+        getShell().mkdir("-p",'@my-scope-5/foo')
+        const project = new ProjectConfiguration("@my-scope-5/my-project", "0.0.0", "My New m30ml Project", "Mach 30", "CC-BY-4.0", "npm", "git", "gradle", "")
+        const history = initializeProjectDirectory(project, "/tmp");
+        expect(history.success).to.equal(true);
+        expect(getShell().ls('/tmp/@my-scope-5').toString().includes('my-project')).to.equal(true);
+        getShell().rm('-rf', '/tmp/@my-scope-5');
     })
 })
 

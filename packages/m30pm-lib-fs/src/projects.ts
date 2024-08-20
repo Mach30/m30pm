@@ -31,10 +31,24 @@ export function initializeProjectDirectory(project: ProjectConfiguration, workin
     }
 
     if (!projectDirectoryFound || !projectDirectoryCanBeUsed) {
-        let mkdirCmd = new ShellCommand(`Create Project Directory ${_projectDirectory}`, 
+        const projectNameParts = projectName.split('/');
+        if (projectNameParts.length === 1) {
+            let mkdirCmd = new ShellCommand(`Create Project Directory ${_projectDirectory}`, 
                                         workingDirectory, CommandToRun.MKDIR, projectName);
-        mkdirCmd.execute();
-        cmdHistory.addExecutedCommand(mkdirCmd)
+            mkdirCmd.execute();
+            cmdHistory.addExecutedCommand(mkdirCmd)
+        } 
+        else {
+            let mkdirCmd1 = new ShellCommand(`Create Project Directory ${_projectDirectory}, step 1`, 
+                                             workingDirectory, CommandToRun.MKDIR, projectNameParts[0], "-p");
+            mkdirCmd1.execute();
+            cmdHistory.addExecutedCommand(mkdirCmd1)
+
+            let mkdirCmd2 = new ShellCommand(`Create Project Directory ${_projectDirectory}, step 2`, 
+                                              `${workingDirectory}/${projectNameParts[0]}`, CommandToRun.MKDIR, projectNameParts[1]);
+            mkdirCmd2.execute();
+            cmdHistory.addExecutedCommand(mkdirCmd2)
+        }
     }
 
     if (projectDirectoryCanBeUsed) {
