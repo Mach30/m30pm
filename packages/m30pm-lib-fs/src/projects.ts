@@ -6,7 +6,7 @@ import * as yaml from 'js-yaml';
 
 const minGradleVersion = "8.2.0"
 const minGitVersion = "2.28.0"
-const gitIgnoreContents = "# m30pm .gitignore\ndist/\nnode_modules/\n"
+const gitIgnoreContents = "# m30pm .gitignore\ndist/\nnode_modules/\n.logs/\n"
 let _projectDirectory = ""
 
 // create project directory using project name (should follow oclif pattern; if no directory exists, create directory; if directory exists and empty, continue project creation; 
