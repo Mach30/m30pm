@@ -18,6 +18,7 @@ export class ProjectConfiguration {
     private _packageManager: Enums.PackageManagers;
     private _versionControlTool: Enums.VersionControlTools;
     private _buildTool: Enums.BuildTools;
+    private _loggingLevel: Enums.LogLevels;
     private _packageJsonObject: Object;
     
     constructor(
@@ -29,7 +30,8 @@ export class ProjectConfiguration {
         packageManager: string,
         versionControlTool: string,
         buildTool: string,
-        packageJsonObject: string
+        loggingLevel: string = "info",
+        packageJsonObject: string = ""
     ) {
         this._providedName = "";
         this._name = this.validateName(name);
@@ -41,6 +43,7 @@ export class ProjectConfiguration {
         this._packageManager = this.validatePackageManager(packageManager);
         this._versionControlTool = this.validateVersionControlTool(versionControlTool);
         this._buildTool = this.validateBuildTool(buildTool);
+        this._loggingLevel = this.validateLoggingLevel(loggingLevel);
         this._packageJsonObject = this.validatePackageJsonObject(packageJsonObject);
     }
 
@@ -55,10 +58,12 @@ export class ProjectConfiguration {
                 jsObject.packageManager,
                 jsObject.m30pm.versionControlTool,
                 jsObject.m30pm.buildTool,
+                jsObject.m30pm.loggingLevel,
                 Helpers.toJsonString(jsObject)
             )
         } catch (error) {
             return new ProjectConfiguration(
+                "",
                 "",
                 "",
                 "",
@@ -99,6 +104,7 @@ export class ProjectConfiguration {
         jsObject["m30pm"] = {}
         jsObject["m30pm"]["versionControlTool"] = this._versionControlTool
         jsObject["m30pm"]["buildTool"] = this._buildTool
+        jsObject["m30pm"]["loggingLevel"] = this._loggingLevel;
         return jsObject
     }
 
@@ -181,6 +187,10 @@ export class ProjectConfiguration {
         return this._buildTool;
     }
 
+    public get loggingLevel() {
+        return this._loggingLevel;
+    }
+
     private validateName(name: string): string {
         this._providedName = name;
         let validatedName = "";
@@ -240,6 +250,27 @@ export class ProjectConfiguration {
             validatedBuildTool = Enums.BuildTools.GRADLE
         }
         return validatedBuildTool;
+    }
+
+    private validateLoggingLevel(loggingLevel: string): Enums.LogLevels {
+        let validatedLoggingLevel = Enums.LogLevels.NONE;
+        let testLoggingLevel = Enums.stringToEnumValue(Enums.LogLevels, loggingLevel);
+        switch (testLoggingLevel){
+            case Enums.LogLevels.ERROR: {
+                validatedLoggingLevel = Enums.LogLevels.ERROR;
+                break;
+            }
+            case Enums.LogLevels.INFO: {
+                validatedLoggingLevel = Enums.LogLevels.INFO;
+                break;
+            }
+            case Enums.LogLevels.DEBUG: {
+                validatedLoggingLevel = Enums.LogLevels.DEBUG;
+                break;
+            }
+        }
+
+        return validatedLoggingLevel;
     }
 
     private validatePackageJsonObject(packageJsonObject: string) {

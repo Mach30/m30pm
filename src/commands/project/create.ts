@@ -138,8 +138,7 @@ export default class ProjectCreate extends Command {
       license,
       packageManager,
       versionControlTool,
-      buildTool,
-      ""
+      buildTool
       )
 
     const projectStatus = projectConfiguration.getProjectStatus()
