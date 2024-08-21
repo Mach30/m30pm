@@ -77,16 +77,6 @@ export class ProjectConfiguration {
         }
     }
 
-    /**
-     * @deprecated conversion from string allocated to m30pm-lib-fs
-     */
-    public static fromJsonString(
-        jsonString: string
-    ) {
-        const jsObject = JSON.parse(jsonString)
-        return ProjectConfiguration.fromJsObject(jsObject)
-    }
-
     public isValid(): boolean {
         return this._name !== "" && this._version !== "" && this._license !== '' && this._packageManager !== Enums.PackageManagers.INVALID_PM && this._versionControlTool !== Enums.VersionControlTools.INVALID_VCT && this._buildTool !== Enums.BuildTools.INVALID_BT;
     }
@@ -116,28 +106,6 @@ export class ProjectConfiguration {
         statusObject["providedValues"]["name"] = this._providedName;
         statusObject["providedValues"]["version"] = this._providedVersion;
         return statusObject
-    }
-
-    /**
-     * @deprecated conversion to string allocated to m30pm-lib-fs
-     */
-    public getJsonString(): string {
-        return JSON.stringify(this.toJsObject(), null, 2)
-    }
-
-    /**
-     * @deprecated conversion to string allocated to m30pm-lib-fs
-     */
-    public getRcContents(): string {
-        if (this._packageManager == Enums.PackageManagers.NPM) {
-            return "sign-git-tag=true"
-        }
-        else if (this._packageManager == Enums.PackageManagers.YARN) {
-            return ""
-        }
-        else {
-            return ""
-        }
     }
 
     public getInitialRcOptions(): any {
