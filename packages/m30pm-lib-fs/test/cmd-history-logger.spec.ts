@@ -1,9 +1,11 @@
 import { expect } from "@oclif/test";
 import { CommandHistoryLogger, FunctionArgument, FunctionInfo } from "../src/cmd-history-logger";
-import { getShell } from "../src/shell-cmd";
+import { CommandHistory } from "../src/cmd-history";
+import { getShell, ShellCommand, CommandToRun } from "../src/shell-cmd";
 import { LogLevels } from "m30pm-lib-common";
 import { Helpers } from "m30pm-lib-common"
 import { ProjectConfiguration } from "m30pm-lib-common";
+import exp from "constants";
 
 describe("Test FunctionInfo class toJsObject()", () => {
     it('should return valid object for function with no arguments', () => {
@@ -57,12 +59,32 @@ describe("Test FunctionInfo class toJsObject()", () => {
 })
 
 describe("Test CommandHistoryLogger class", () => {
+    it('should log command history when added', () => {
+        getShell().cd("/tmp")
+        getShell().mkdir("log-project-1")
+        getShell().cd("log-project-1")
+        let funcInfo = new FunctionInfo("Foo")
+        let logger = new CommandHistoryLogger(LogLevels.INFO, "/tmp/log-project-1", funcInfo)
+        let cmdHistory = new CommandHistory("my command history")
+        let pwdCommand = new ShellCommand("pwd", "", CommandToRun.PWD)
+        pwdCommand.execute()
+        cmdHistory.addExecutedCommand(pwdCommand)
+        logger.addCommandHistory(cmdHistory)
+        let expectedJsObject: any = {}
+        expectedJsObject["encounteredError"] = false
+        expectedJsObject["functionInfo"] = funcInfo.toJsObject()
+        expectedJsObject["commandHistoryList"] = []
+        expectedJsObject["commandHistoryList"][0] = cmdHistory.toJsObject()
+        expect(Helpers.toJsonString(logger.toJsObject())).to.equal(Helpers.toJsonString(expectedJsObject))
+        getShell().rm("-rf", "/tmp/log-project-1")
+    })
+
     it('should create .logs/ dir as part of writeLog', () => {
         getShell().cd("/tmp")
-        getShell().mkdir("log-project")
-        let logger = new CommandHistoryLogger(LogLevels.INFO, "/tmp/log-project", new FunctionInfo("Foo"))
+        getShell().mkdir("log-project-2")
+        let logger = new CommandHistoryLogger(LogLevels.INFO, "/tmp/log-project-2", new FunctionInfo("Foo"))
         logger.writeLog()
-        expect(getShell().ls('-al', '/tmp/log-project').stdout).include(".logs")
-        getShell().rm('-rf', "/tmp/log-project")
+        expect(getShell().ls('-al', '/tmp/log-project-2').stdout).include(".logs")
+        getShell().rm('-rf', "/tmp/log-project-2")
     })
 })

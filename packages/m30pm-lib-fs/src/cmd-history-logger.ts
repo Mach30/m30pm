@@ -55,14 +55,32 @@ export class FunctionInfo {
 export class CommandHistoryLogger {
     private _loggingLevel: LogLevels;
     private _projectPath: string;
+    private _encounteredError: Boolean;
     private _functionInfo: FunctionInfo;
-    private _commandHistoryList: Array<CommandHistory>
+    private _commandHistoryList: Array<CommandHistory>;
 
     constructor(loggingLevel: LogLevels, projectPath: string, functionInfo: FunctionInfo) {
         this._loggingLevel = loggingLevel;
         this._projectPath = projectPath;
+        this._encounteredError = false;         
         this._functionInfo = functionInfo;
-        this._commandHistoryList = new Array<CommandHistory>();            
+        this._commandHistoryList = new Array<CommandHistory>();   
+    }
+
+    public addCommandHistory(cmdHistory: CommandHistory) {
+        this._encounteredError = !cmdHistory.success;
+        this._commandHistoryList.push(cmdHistory);
+    }
+
+    public toJsObject(): Object {
+        let jsObject: any = {}
+        jsObject["encounteredError"] = this._encounteredError;
+        jsObject["functionInfo"] = this._functionInfo.toJsObject();
+        jsObject["commandHistoryList"] = [];
+        this._commandHistoryList.forEach( (cmdHistory) => {
+            jsObject["commandHistoryList"].push(cmdHistory.toJsObject())
+        })
+        return jsObject;
     }
 
     public writeLog() {
