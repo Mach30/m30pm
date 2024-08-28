@@ -1,7 +1,8 @@
 import { ProjectConfiguration, PackageManagers, ViewRenderer, BuiltinViews, BuildTools, VersionControlTools, Helpers } from "m30pm-lib-common";
 import { ToolInfo } from "./tool-info";
-import { ShellCommand, CommandToRun } from "./shell-cmd";
+import { ShellCommand, CommandToRun, getShell } from "./shell-cmd";
 import { CommandHistory } from "./cmd-history";
+import { CommandHistoryLogger, FunctionArgument, FunctionInfo } from "./cmd-history-logger";
 import * as yaml from 'js-yaml';
 
 const minGradleVersion = "8.2.0"
@@ -124,7 +125,7 @@ export function initializeProjectDirectory(project: ProjectConfiguration, workin
 
 // in project directory, generate selected tool scaffolding (a.k.a., for npm or yarn) 
 // (including .npmrc or .yarnrc) for a mono repo (a.k.a., npm/yarn workspaces)
-export function generatePackageManagerScaffolding(project: ProjectConfiguration, projectDirectory : string) : any {
+export function generatePackageManagerScaffolding(project: ProjectConfiguration, projectDirectory : string) : CommandHistory {
     let cmdHistory = new CommandHistory(`Generate Package Manager Scaffolding for ${project.name}`)
 
     let mkdirPackagesCmd = new ShellCommand("Create packages Directory", projectDirectory, CommandToRun.MKDIR, "packages");
@@ -167,7 +168,7 @@ export function generatePackageManagerScaffolding(project: ProjectConfiguration,
     return cmdHistory;
 }
 
-export function initializeBuildTool(project: ProjectConfiguration, projectDirectory: string,  buildToolPath: string) : any {
+export function initializeBuildTool(project: ProjectConfiguration, projectDirectory: string,  buildToolPath: string) : CommandHistory {
     let cmdHistory = new CommandHistory(`Initialize Build Tool for ${project.name}`)
 
     if (project.buildTool === BuildTools.GRADLE) {
@@ -207,7 +208,7 @@ export function initializeBuildTool(project: ProjectConfiguration, projectDirect
     return cmdHistory;
 }
 
-export function initializeVersionControlTool(project : ProjectConfiguration, projectDirectory: string, versionControlToolPath : string) : any {
+export function initializeVersionControlTool(project : ProjectConfiguration, projectDirectory: string, versionControlToolPath : string) : CommandHistory {
     let cmdHistory = new CommandHistory(`Initialize Version Control Tool for ${project.name}`)
 
     if (project.versionControlTool === VersionControlTools.GIT) {
@@ -252,12 +253,22 @@ export function getVctNextStep(versionControlTool : VersionControlTools) : strin
 export class Projects {
     public static createProject(project: ProjectConfiguration) : any {
         let results : any = {};
+
+        let pwdCmd = new ShellCommand("Get Current Working Directory", "", CommandToRun.PWD)
+        pwdCmd.execute();
+        results["getWorkingDir"] = pwdCmd.toJsObject();
+
+        let funcInfo = new FunctionInfo("createProject")
+        funcInfo.addArgument(new FunctionArgument("project", project.toJsObject()))
+        let logger = new CommandHistoryLogger(project.loggingLevel, `${pwdCmd.stdout}/${project.name}`, funcInfo)
+
         results["projectToCreate"] = project.name;
         results["success"] = true;
         results["message"] = `Project ${project.name} initialized`;
 
         //verify package manager, build tool, and version control tool are installed 
         const pmInfo = new ToolInfo(project.packageManager.toString())
+        logger.addCommandHistory(pmInfo.cmdHistory)
         results["packageManager"] = pmInfo.toJsObject()
         if (!pmInfo.verifiedVersion) {
             results.success = false;
@@ -269,6 +280,7 @@ export class Projects {
         if (project.buildTool === BuildTools.GRADLE)
             minBtVersion = minGradleVersion;
         const btInfo = new ToolInfo(project.buildTool.toString(), minBtVersion)
+        logger.addCommandHistory(btInfo.cmdHistory)
         results["buildTool"] = btInfo.toJsObject();
         if (!btInfo.verifiedVersion) {
             results.success = false;
@@ -280,6 +292,7 @@ export class Projects {
         if (project.versionControlTool === VersionControlTools.GIT)
             minVctVersion = minGitVersion;
         const vctInfo = new ToolInfo(project.versionControlTool.toString(), minVctVersion)
+        logger.addCommandHistory(vctInfo.cmdHistory)
         results["versionControlTool"] = vctInfo.toJsObject();
         if (!vctInfo.verifiedVersion) {
             results.success = false;
@@ -288,10 +301,8 @@ export class Projects {
         }
 
         results["initializations"] = {};
-        let pwdCmd = new ShellCommand("Get Current Working Directory", "", CommandToRun.PWD)
-        pwdCmd.execute();
-        results.initializations["getWorkingDir"] = pwdCmd.toJsObject();
         let projectDirectoryCommands = initializeProjectDirectory(project, pwdCmd.stdout);
+        logger.addCommandHistory(projectDirectoryCommands)
         results.initializations["projectDirectory"] = projectDirectoryCommands.toJsObject();
         if (!projectDirectoryCommands.success) {
             results.success = false;
@@ -300,6 +311,7 @@ export class Projects {
         }
 
         let packageMangerScaffoldingCommands = generatePackageManagerScaffolding(project, _projectDirectory)
+        logger.addCommandHistory(packageMangerScaffoldingCommands)
         results.initializations["packageMangerScaffolding"] = packageMangerScaffoldingCommands.toJsObject();
         if (!packageMangerScaffoldingCommands.success) {
             results.success = false;
@@ -308,16 +320,18 @@ export class Projects {
         }
         
         // initialize build tool
-        let builtToolCommands = initializeBuildTool(project, _projectDirectory, btInfo.path);
-        results.initializations["buildTool"] = builtToolCommands.toJsObject();
-        if (!builtToolCommands.success) {
+        let buildToolCommands = initializeBuildTool(project, _projectDirectory, btInfo.path);
+        logger.addCommandHistory(buildToolCommands)
+        results.initializations["buildTool"] = buildToolCommands.toJsObject();
+        if (!buildToolCommands.success) {
             results.success = false;
-            results.message = `Cannot ${builtToolCommands.description}`;
+            results.message = `Cannot ${buildToolCommands.description}`;
             return results;
         }
 
         // initialize version control tool
         let versionControlToolCommands = initializeVersionControlTool(project, _projectDirectory, vctInfo.path)
+        logger.addCommandHistory(versionControlToolCommands)
         results.initializations["versionControlTool"] = versionControlToolCommands.toJsObject();
         if (!versionControlToolCommands.success) {
             results.success = false;
@@ -329,6 +343,8 @@ export class Projects {
         results.nextSteps[0] = getVctNextStep(project.versionControlTool);
 
         // if we got here, the project has been initialized, so all we have to do is return the results
+        //let writeLogFileCommand = new ShellCommand("", _projectDirectory, CommandToRun.TO_FILE, Helpers.toJsonString(logger.toJsObject()), "log.json")
+        //writeLogFileCommand.execute()
         return results;
     }
 }
