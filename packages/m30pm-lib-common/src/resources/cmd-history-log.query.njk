@@ -1,0 +1,15 @@
+{#- name: Command History Log Query -#}
+{#- description: Filter command history log data by logging level -#}
+{#- parameters: -#}
+{#- - name: loggingLevel -#}
+{#-   type: string -#}
+{#-   description: one of the following values [none, error, info, debug] -#}
+{#- dataType: CommandHistoryLog -#}
+{%- set returnEmptyResults = parameters.loggingLevel == "none" or (parameters.loggingLevel == "error" and not data.encounteredError) -%}
+---
+{% if returnEmptyResults -%}
+{}
+{% else -%}
+encounteredError: {{ data.encounteredError }}
+{% endif -%}
+...

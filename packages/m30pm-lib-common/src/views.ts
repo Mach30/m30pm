@@ -5,6 +5,10 @@ import path from 'path'
 //run nunjucks.renderString()
 
 export class BuiltinViews {
+    public static getCommandHistoryLogQuery(): string {
+        return BuiltinViews.readResourceSync("cmd-history-log.query.njk");
+    }
+
     public static getProjectStatusView() : string {
         return BuiltinViews.readResourceSync("projectStatusView.njk");
     }

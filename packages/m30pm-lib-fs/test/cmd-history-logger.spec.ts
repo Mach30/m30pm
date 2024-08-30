@@ -4,7 +4,7 @@ import { CommandHistory } from "../src/cmd-history";
 import { getShell, ShellCommand, CommandToRun } from "../src/shell-cmd";
 import { LogLevels } from "m30pm-lib-common";
 import { Helpers } from "m30pm-lib-common"
-import { ProjectConfiguration } from "m30pm-lib-common";
+import { ProjectConfiguration, BuiltinViews, ViewRenderer } from "m30pm-lib-common";
 import exp from "constants";
 
 describe("Test FunctionInfo class toJsObject()", () => {
@@ -86,5 +86,61 @@ describe("Test CommandHistoryLogger class", () => {
         logger.writeLog()
         expect(getShell().ls('-al', '/tmp/log-project-2').stdout).include(".logs")
         getShell().rm('-rf', "/tmp/log-project-2")
+    })
+})
+
+describe("Test CommandHistoryLogger query", () => {
+    it('should return empty results for loggingLevel = "none"', () => {
+        let funcInfo = new FunctionInfo("Foo")
+        let logger = new CommandHistoryLogger(LogLevels.INFO, "/tmp/log-project-1", funcInfo)
+        let cmdHistory = new CommandHistory("my command history")
+        let pwdCommand = new ShellCommand("pwd", "", CommandToRun.PWD)
+        pwdCommand.execute()
+        cmdHistory.addExecutedCommand(pwdCommand)
+        logger.addCommandHistory(cmdHistory)
+        let queryInput: any = {}
+        queryInput["parameters"] = {}
+        queryInput.parameters["loggingLevel"] = "none"
+        queryInput["data"] = cmdHistory.toJsObject()
+        let query = BuiltinViews.getCommandHistoryLogQuery()
+        let queryResults = ViewRenderer.render(query, queryInput)
+        let expectedQueryResults = "---\n{}\n..."
+        expect(queryResults).to.equal(expectedQueryResults)
+    })
+
+    it('should return empty results for loggingLevel = "none" even with an encountered error', () => {
+        let funcInfo = new FunctionInfo("Foo")
+        let logger = new CommandHistoryLogger(LogLevels.INFO, "/tmp/log-project-1", funcInfo)
+        let cmdHistory = new CommandHistory("my command history")
+        let pwdCommand = new ShellCommand("cd /root", "", CommandToRun.EXEC, "cd /root")
+        pwdCommand.execute()
+        cmdHistory.addExecutedCommand(pwdCommand)
+        logger.addCommandHistory(cmdHistory)
+        let queryInput: any = {}
+        queryInput["parameters"] = {}
+        queryInput.parameters["loggingLevel"] = "none"
+        queryInput["data"] = cmdHistory.toJsObject()
+        let query = BuiltinViews.getCommandHistoryLogQuery()
+        let queryResults = ViewRenderer.render(query, queryInput)
+        let expectedQueryResults = "---\n{}\n..."
+        expect(queryResults).to.equal(expectedQueryResults)
+    })
+
+    it('should return empty results for loggingLevel = "error" and encounteredError = false', () => {
+        let funcInfo = new FunctionInfo("Foo")
+        let logger = new CommandHistoryLogger(LogLevels.INFO, "/tmp/log-project-1", funcInfo)
+        let cmdHistory = new CommandHistory("my command history")
+        let pwdCommand = new ShellCommand("pwd", "", CommandToRun.PWD)
+        pwdCommand.execute()
+        cmdHistory.addExecutedCommand(pwdCommand)
+        logger.addCommandHistory(cmdHistory)
+        let queryInput: any = {}
+        queryInput["parameters"] = {}
+        queryInput.parameters["loggingLevel"] = "error"
+        queryInput["data"] = cmdHistory.toJsObject()
+        let query = BuiltinViews.getCommandHistoryLogQuery()
+        let queryResults = ViewRenderer.render(query, queryInput)
+        let expectedQueryResults = "---\n{}\n..."
+        expect(queryResults).to.equal(expectedQueryResults)
     })
 })
