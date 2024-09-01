@@ -56,8 +56,8 @@ export class ShellCommand {
 
     public toJsObject(): Object {
         let jsObject: any = {};
-        jsObject["executedStatus"] = this._executedStatus.toString();
         jsObject["description"] = this._description;
+        jsObject["executedStatus"] = this._executedStatus.toString();
         jsObject["workingDirectory"] = this._workingDirectory;
         jsObject["command"] = this._command.toString();
         jsObject["commandLine"] = this._commandLine;

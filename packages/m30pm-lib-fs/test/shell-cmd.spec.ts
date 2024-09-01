@@ -21,8 +21,8 @@ describe("shell command constructor and to jsObject tests", () => {
         expect(cmd.executedExactlyOnce).to.equal(false)
 
         let expectedJsObject: any = {};
-        expectedJsObject["executedStatus"] = "Command has not been executed";
         expectedJsObject["description"] = "Execute ls in /tmp"
+        expectedJsObject["executedStatus"] = "Command has not been executed";
         expectedJsObject["workingDirectory"] = "/tmp";
         expectedJsObject["command"] = "exec";
         expectedJsObject["commandLine"] = "ls -la";
@@ -51,8 +51,8 @@ describe("shell command constructor and to jsObject tests", () => {
         expect(cmd.executedExactlyOnce).to.equal(false)
 
         let expectedJsObject: any = {};
-        expectedJsObject["executedStatus"] = "Command has not been executed";
         expectedJsObject["description"] = "Get CWD"
+        expectedJsObject["executedStatus"] = "Command has not been executed";
         expectedJsObject["workingDirectory"] = "";
         expectedJsObject["command"] = "pwd";
         expectedJsObject["commandLine"] = "";
@@ -97,8 +97,8 @@ describe("shell command execute EXEC tests", () => {
         expect(cmd.executedExactlyOnce).to.equal(true);
 
         let expectedJsObject: any = {};
-        expectedJsObject["executedStatus"] = "Command has been executed";
         expectedJsObject["description"] = "Test execute"
+        expectedJsObject["executedStatus"] = "Command has been executed";
         expectedJsObject["workingDirectory"] = "/tmp";
         expectedJsObject["command"] = "exec";
         expectedJsObject["commandLine"] = "pwd";
