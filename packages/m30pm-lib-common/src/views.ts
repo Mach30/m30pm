@@ -1,6 +1,7 @@
 import nunjucks from 'nunjucks'
 import fs from 'fs'
 import path from 'path'
+import * as yaml from 'js-yaml';
 
 //run nunjucks.renderString()
 
@@ -46,5 +47,36 @@ export class ViewRenderer {
 
     public static render(template: string, context: object) : string {
         return nunjucks.renderString(template, context)
+    }
+}
+
+export class QueryRunner {
+    private _query: string
+    private _data: Object
+    private _parameters: Array<any>
+
+    constructor(query: string, data: Object) {
+        this._query = query
+        this._data = data
+        this._parameters = new Array<any>()
+    }
+
+    public addParameter(name: string, value: any) {
+        let parameter: any = {}
+        parameter["name"] = name;
+        parameter["value"] = value;
+        this._parameters.push(parameter)
+    }
+
+    public runQuery(): string {
+        let queryInput: any = {}
+        queryInput["parameters"] = {}
+        this._parameters.forEach( (parameter) => {
+            queryInput["parameters"][parameter.name] = parameter.value
+        })
+        queryInput["data"] = this._data
+
+        let queryResultsObject = yaml.load(ViewRenderer.render(this._query, queryInput)) as Object;
+        return "---\n" + yaml.dump(queryResultsObject) + "..."
     }
 }
