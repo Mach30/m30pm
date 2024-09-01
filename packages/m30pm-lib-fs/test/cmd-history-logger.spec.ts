@@ -4,7 +4,7 @@ import { CommandHistory } from "../src/cmd-history";
 import { getShell, ShellCommand, CommandToRun } from "../src/shell-cmd";
 import { LogLevels } from "m30pm-lib-common";
 import { Helpers } from "m30pm-lib-common"
-import { ProjectConfiguration, BuiltinViews, ViewRenderer } from "m30pm-lib-common";
+import { ProjectConfiguration, BuiltinViews, ViewRenderer, QueryRunner } from "m30pm-lib-common";
 
 describe("Test FunctionInfo class toJsObject()", () => {
     it('should return valid object for function with no arguments', () => {
@@ -97,12 +97,11 @@ describe.only("Test CommandHistoryLogger query", () => {
         pwdCommand.execute()
         cmdHistory.addExecutedCommand(pwdCommand)
         logger.addCommandHistory(cmdHistory)
-        let queryInput: any = {}
-        queryInput["parameters"] = {}
-        queryInput.parameters["loggingLevel"] = "none"
-        queryInput["data"] = logger.toJsObject()
-        let query = BuiltinViews.getCommandHistoryLogQuery()
-        let queryResults = ViewRenderer.render(query, queryInput)
+
+        let query = new QueryRunner(BuiltinViews.getCommandHistoryLogQuery(), logger.toJsObject())
+        query.addParameter("loggingLevel", "none")
+        let queryResults = query.runQuery()
+
         let expectedQueryResults = "---\n{}\n..."
         expect(queryResults).to.equal(expectedQueryResults)
     })
@@ -115,12 +114,11 @@ describe.only("Test CommandHistoryLogger query", () => {
         execCommand.execute()
         cmdHistory.addExecutedCommand(execCommand)
         logger.addCommandHistory(cmdHistory)
-        let queryInput: any = {}
-        queryInput["parameters"] = {}
-        queryInput.parameters["loggingLevel"] = "none"
-        queryInput["data"] = logger.toJsObject()
-        let query = BuiltinViews.getCommandHistoryLogQuery()
-        let queryResults = ViewRenderer.render(query, queryInput)
+
+        let query = new QueryRunner(BuiltinViews.getCommandHistoryLogQuery(), logger.toJsObject())
+        query.addParameter("loggingLevel", "none")
+        let queryResults = query.runQuery()
+
         let expectedQueryResults = "---\n{}\n..."
         expect(queryResults).to.equal(expectedQueryResults)
     })
@@ -133,12 +131,11 @@ describe.only("Test CommandHistoryLogger query", () => {
         pwdCommand.execute()
         cmdHistory.addExecutedCommand(pwdCommand)
         logger.addCommandHistory(cmdHistory)
-        let queryInput: any = {}
-        queryInput["parameters"] = {}
-        queryInput.parameters["loggingLevel"] = "error"
-        queryInput["data"] = logger.toJsObject()
-        let query = BuiltinViews.getCommandHistoryLogQuery()
-        let queryResults = ViewRenderer.render(query, queryInput)
+
+        let query = new QueryRunner(BuiltinViews.getCommandHistoryLogQuery(), logger.toJsObject())
+        query.addParameter("loggingLevel", "error")
+        let queryResults = query.runQuery()
+
         let expectedQueryResults = "---\n{}\n..."
         expect(queryResults).to.equal(expectedQueryResults)
     })
@@ -168,12 +165,9 @@ describe.only("Test CommandHistoryLogger query", () => {
         cmdHistory2.addExecutedCommand(execCommand)
         logger.addCommandHistory(cmdHistory2)
 
-        let queryInput: any = {}
-        queryInput["parameters"] = {}
-        queryInput.parameters["loggingLevel"] = "error"
-        queryInput["data"] = logger.toJsObject()
-        let query = BuiltinViews.getCommandHistoryLogQuery()
-        let queryResults = ViewRenderer.render(query, queryInput)
+        let query = new QueryRunner(BuiltinViews.getCommandHistoryLogQuery(), logger.toJsObject())
+        query.addParameter("loggingLevel", "error")
+        let queryResults = query.runQuery()
 
         let expectedQueryResults = "---\n"
         expectedQueryResults += "encounteredError: true\n"
@@ -183,7 +177,7 @@ describe.only("Test CommandHistoryLogger query", () => {
         expectedQueryResults += "    - name: a\n"
         expectedQueryResults += "      value: 1\n"
         expectedQueryResults += "    - name: b\n"
-        expectedQueryResults += "      value: \"bar\"\n"
+        expectedQueryResults += "      value: bar\n"
         expectedQueryResults += "..."
 
         expect(queryResults).to.equal(expectedQueryResults)
