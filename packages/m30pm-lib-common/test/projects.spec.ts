@@ -76,13 +76,13 @@ describe("To JSObject Tests", () => {
 
     it('should return example project package.json string for a given example project with empty array string as package.json string', () => {
         const exampleProjectJson = fs.readFileSync(path.join(__dirname, 'example-package.json') , 'utf8');
-        const project = new ProjectConfiguration("my-project", "0.0.0", "My New m30ml Project", "Mach 30", "CC-BY-4.0", "npm", "git", "gradle", "info", "[]")
+        const project = new ProjectConfiguration("my-project", "0.0.0", "My New m30ml Project", "Mach 30", "CC-BY-4.0", "npm", "git", "gradle", "error", "[]")
         expect(Helpers.toJsonString(project.toJsObject())).to.equal(exampleProjectJson)
     })
 
     it('should return example project package.json string for a given example project with empty object string as package.json', () => {
         const exampleProjectJson = fs.readFileSync(path.join(__dirname, 'example-package.json') , 'utf8');
-        const project = new ProjectConfiguration("my-project", "0.0.0", "My New m30ml Project", "Mach 30", "CC-BY-4.0", "npm", "git", "gradle", "info", "{}")
+        const project = new ProjectConfiguration("my-project", "0.0.0", "My New m30ml Project", "Mach 30", "CC-BY-4.0", "npm", "git", "gradle", "error", "{}")
         expect(Helpers.toJsonString(project.toJsObject())).to.equal(exampleProjectJson)
     })
 })
@@ -170,7 +170,7 @@ describe("Project Validation Tests for ProjectConfiguration.fromJsObject()", () 
 describe("Project Validation Tests for Logging Levels", () => {
     it('should return INFO for unspecified', () => {
         const project = new ProjectConfiguration("my-project", "0.0.0", "My New m30ml Project", "Mach 30", "CC-BY-4.0", "npm", "git", "gradle")
-        expect(project.loggingLevel).to.equal(LogLevels.INFO);
+        expect(project.loggingLevel).to.equal(LogLevels.ERROR);
     })
 
     it('should return INFO for "info"', () => {

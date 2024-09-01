@@ -11,7 +11,7 @@
   "m30pm": {
     "versionControlTool": "git",
     "buildTool": "gradle",
-    "loggingLevel": "info"
+    "loggingLevel": "error"
   },
   "keywords": [
     "example"

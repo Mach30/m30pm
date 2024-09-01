@@ -30,7 +30,7 @@ export class ProjectConfiguration {
         packageManager: string,
         versionControlTool: string,
         buildTool: string,
-        loggingLevel: string = "info",
+        loggingLevel: string = "error",
         packageJsonObject: string = ""
     ) {
         this._providedName = "";
