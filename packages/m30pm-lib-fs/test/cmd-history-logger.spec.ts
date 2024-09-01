@@ -5,7 +5,6 @@ import { getShell, ShellCommand, CommandToRun } from "../src/shell-cmd";
 import { LogLevels } from "m30pm-lib-common";
 import { Helpers } from "m30pm-lib-common"
 import { ProjectConfiguration, BuiltinViews, ViewRenderer } from "m30pm-lib-common";
-import exp from "constants";
 
 describe("Test FunctionInfo class toJsObject()", () => {
     it('should return valid object for function with no arguments', () => {
@@ -89,7 +88,7 @@ describe("Test CommandHistoryLogger class", () => {
     })
 })
 
-describe("Test CommandHistoryLogger query", () => {
+describe.only("Test CommandHistoryLogger query", () => {
     it('should return empty results for loggingLevel = "none"', () => {
         let funcInfo = new FunctionInfo("Foo")
         let logger = new CommandHistoryLogger(LogLevels.INFO, "/tmp/log-project-1", funcInfo)
@@ -101,7 +100,7 @@ describe("Test CommandHistoryLogger query", () => {
         let queryInput: any = {}
         queryInput["parameters"] = {}
         queryInput.parameters["loggingLevel"] = "none"
-        queryInput["data"] = cmdHistory.toJsObject()
+        queryInput["data"] = logger.toJsObject()
         let query = BuiltinViews.getCommandHistoryLogQuery()
         let queryResults = ViewRenderer.render(query, queryInput)
         let expectedQueryResults = "---\n{}\n..."
@@ -112,14 +111,14 @@ describe("Test CommandHistoryLogger query", () => {
         let funcInfo = new FunctionInfo("Foo")
         let logger = new CommandHistoryLogger(LogLevels.INFO, "/tmp/log-project-1", funcInfo)
         let cmdHistory = new CommandHistory("my command history")
-        let pwdCommand = new ShellCommand("cd /root", "", CommandToRun.EXEC, "cd /root")
-        pwdCommand.execute()
-        cmdHistory.addExecutedCommand(pwdCommand)
+        let execCommand = new ShellCommand("cd /root", "", CommandToRun.EXEC, "cd /root")
+        execCommand.execute()
+        cmdHistory.addExecutedCommand(execCommand)
         logger.addCommandHistory(cmdHistory)
         let queryInput: any = {}
         queryInput["parameters"] = {}
         queryInput.parameters["loggingLevel"] = "none"
-        queryInput["data"] = cmdHistory.toJsObject()
+        queryInput["data"] = logger.toJsObject()
         let query = BuiltinViews.getCommandHistoryLogQuery()
         let queryResults = ViewRenderer.render(query, queryInput)
         let expectedQueryResults = "---\n{}\n..."
@@ -137,10 +136,87 @@ describe("Test CommandHistoryLogger query", () => {
         let queryInput: any = {}
         queryInput["parameters"] = {}
         queryInput.parameters["loggingLevel"] = "error"
-        queryInput["data"] = cmdHistory.toJsObject()
+        queryInput["data"] = logger.toJsObject()
         let query = BuiltinViews.getCommandHistoryLogQuery()
         let queryResults = ViewRenderer.render(query, queryInput)
         let expectedQueryResults = "---\n{}\n..."
         expect(queryResults).to.equal(expectedQueryResults)
+    })
+
+    it('should return just the error and its context for loggingLevel = "error" and encounteredError = true', () => {
+        // context is: all function info, failed command history description, full details of failed command
+        // two command histories, the first with 1 successful command, 
+        // the second with 1 successful and 1 failed command
+        let funcInfo = new FunctionInfo("Foo")
+        funcInfo.addArgument(new FunctionArgument("a", 1))
+        funcInfo.addArgument(new FunctionArgument("b", "bar"))
+        let logger = new CommandHistoryLogger(LogLevels.INFO, "/tmp/log-project-1", funcInfo)
+        
+        let cmdHistory1 = new CommandHistory("Successful Command")
+        getShell().cd("/tmp")
+        let pwdCommand = new ShellCommand("pwd", "", CommandToRun.PWD)
+        pwdCommand.execute()
+        cmdHistory1.addExecutedCommand(pwdCommand)
+        logger.addCommandHistory(cmdHistory1)
+
+        let cmdHistory2 = new CommandHistory("Successful Command and Failed Command")
+        let pwdCommand2 = new ShellCommand("pwd", "", CommandToRun.PWD)
+        pwdCommand2.execute()
+        cmdHistory2.addExecutedCommand(pwdCommand2)
+        let execCommand = new ShellCommand("cd /root", "", CommandToRun.EXEC, "cd /root")
+        execCommand.execute()
+        cmdHistory2.addExecutedCommand(execCommand)
+        logger.addCommandHistory(cmdHistory2)
+
+        let queryInput: any = {}
+        queryInput["parameters"] = {}
+        queryInput.parameters["loggingLevel"] = "error"
+        queryInput["data"] = logger.toJsObject()
+        let query = BuiltinViews.getCommandHistoryLogQuery()
+        let queryResults = ViewRenderer.render(query, queryInput)
+
+        let expectedQueryResults = "---\n"
+        expectedQueryResults += "encounteredError: true\n"
+        expectedQueryResults += "functionInfo:\n"
+        expectedQueryResults += "  name: Foo\n"
+        expectedQueryResults += "  arguments:\n"
+        expectedQueryResults += "    - name: a\n"
+        expectedQueryResults += "      value: 1\n"
+        expectedQueryResults += "    - name: b\n"
+        expectedQueryResults += "      value: \"bar\"\n"
+        expectedQueryResults += "..."
+
+        expect(queryResults).to.equal(expectedQueryResults)
+    })
+
+    it('should return just summaries of command histories and commands for logging level = "info" and encounteredError = false', () => {
+        // return only name of function and descriptions of command histories and commands
+        // two command histories, the first with 1 successful command, 
+        // the second with 2 successful commands
+    })
+
+    it('should return summaries of command histories and commands and context of error for loggingLevel = "info" and encounteredError = true', () => {
+        // return all function info, descriptions of command histories and successful commands
+        // return full details for failed command
+        // two command histories, the first with 1 successful command, 
+        // the second with 1 successful and 1 failed command
+    })
+
+    it('should return all details for loggingLevel = "debug" and encounteredError = false', () => {
+        // two command histories, the first with 1 successful command, 
+        // the second with 2 successful commands
+    })
+
+    it('should return all details for loggingLevel = "debug" and encounteredError = true', () => {
+        // two command histories, the first with 1 successful command, 
+        // the second with 1 successful and 1 failed command
+    })
+
+    it('should return properly formatted function argument value when it is an object', () => {
+        // 
+    })
+
+    it('should return properly formatted function argument value when it is a list', () => {
+        // 
     })
 })

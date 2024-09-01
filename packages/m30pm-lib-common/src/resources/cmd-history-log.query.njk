@@ -6,10 +6,20 @@
 {#-   description: one of the following values [none, error, info, debug] -#}
 {#- dataType: CommandHistoryLog -#}
 {%- set returnEmptyResults = parameters.loggingLevel == "none" or (parameters.loggingLevel == "error" and not data.encounteredError) -%}
+{%- set returnFunctionArguments = parameters.loggingLevel == "debug" or data.encounteredError -%}
 ---
-{% if returnEmptyResults -%}
+{%- if returnEmptyResults %}
 {}
-{% else -%}
+{%- else %}
 encounteredError: {{ data.encounteredError }}
-{% endif -%}
+functionInfo:
+  name: {{ data.functionInfo.name }}
+  {%- if returnFunctionArguments %}
+  arguments:
+    {%- for argument in data.functionInfo.arguments %}
+    - name: {{ argument.name }}
+      value: {{ argument.value | dump | safe }}
+    {%- endfor %}
+  {%- endif %}
+{%- endif %}
 ...
