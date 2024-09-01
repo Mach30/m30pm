@@ -5,6 +5,8 @@ import { getShell, ShellCommand, CommandToRun } from "../src/shell-cmd";
 import { LogLevels } from "m30pm-lib-common";
 import { Helpers } from "m30pm-lib-common"
 import { ProjectConfiguration, BuiltinViews, ViewRenderer, QueryRunner } from "m30pm-lib-common";
+import * as fs from 'fs';
+import path from 'path';
 
 describe("Test FunctionInfo class toJsObject()", () => {
     it('should return valid object for function with no arguments', () => {
@@ -204,6 +206,33 @@ describe.only("Test CommandHistoryLogger query", () => {
     it('should return all details for loggingLevel = "debug" and encounteredError = true', () => {
         // two command histories, the first with 1 successful command, 
         // the second with 1 successful and 1 failed command
+        let funcInfo = new FunctionInfo("Foo")
+        funcInfo.addArgument(new FunctionArgument("a", 1))
+        funcInfo.addArgument(new FunctionArgument("b", "bar"))
+        let logger = new CommandHistoryLogger(LogLevels.INFO, "/tmp/log-project-1", funcInfo)
+        
+        let cmdHistory1 = new CommandHistory("Successful Command")
+        getShell().cd("/tmp")
+        let pwdCommand = new ShellCommand("pwd", "", CommandToRun.PWD)
+        pwdCommand.execute()
+        cmdHistory1.addExecutedCommand(pwdCommand)
+        logger.addCommandHistory(cmdHistory1)
+
+        let cmdHistory2 = new CommandHistory("Successful Command and Failed Command")
+        let pwdCommand2 = new ShellCommand("pwd", "", CommandToRun.PWD)
+        pwdCommand2.execute()
+        cmdHistory2.addExecutedCommand(pwdCommand2)
+        let execCommand = new ShellCommand("cd /root", "", CommandToRun.EXEC, "cd /root")
+        execCommand.execute()
+        cmdHistory2.addExecutedCommand(execCommand)
+        logger.addCommandHistory(cmdHistory2)
+
+        let query = new QueryRunner(BuiltinViews.getCommandHistoryLogQuery(), logger.toJsObject())
+        query.addParameter("loggingLevel", "debug")
+        let queryResults = query.runQuery()
+        
+        const expectedQueryResults = fs.readFileSync(path.join(__dirname, 'debug-log-error.yaml') , 'utf8');
+        expect(queryResults).to.equal(expectedQueryResults)
     })
 
     it('should return properly formatted function argument value when it is an object', () => {
