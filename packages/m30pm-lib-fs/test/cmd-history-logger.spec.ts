@@ -90,7 +90,7 @@ describe("Test CommandHistoryLogger class", () => {
     })
 })
 
-describe.only("Test CommandHistoryLogger query", () => {
+describe("Test CommandHistoryLogger query", () => {
     it('should return empty results for loggingLevel = "none"', () => {
         let funcInfo = new FunctionInfo("Foo")
         let logger = new CommandHistoryLogger(LogLevels.INFO, "/tmp/log-project-1", funcInfo)
@@ -180,6 +180,22 @@ describe.only("Test CommandHistoryLogger query", () => {
         expectedQueryResults += "      value: 1\n"
         expectedQueryResults += "    - name: b\n"
         expectedQueryResults += "      value: bar\n"
+        expectedQueryResults += "commandHistoryList:\n"
+        expectedQueryResults += "  - description: Successful Command and Failed Command\n"
+        expectedQueryResults += "    success: false\n"
+        expectedQueryResults += "    executedCommands:\n"
+        expectedQueryResults += "      - description: cd /root\n"
+        expectedQueryResults += "        executedStatus: Command has been executed\n"
+        expectedQueryResults += "        workingDirectory: ''\n"
+        expectedQueryResults += "        command: exec\n"
+        expectedQueryResults += "        commandLine: cd /root\n"
+        expectedQueryResults += "        additionalOptions: ''\n"
+        expectedQueryResults += "        successExitCode: 0\n"
+        expectedQueryResults += "        success: false\n"
+        expectedQueryResults += "        exitCode: 2\n"
+        expectedQueryResults += "        stdout: ''\n"
+        expectedQueryResults += "        stderr: |\n"
+        expectedQueryResults += "          /bin/sh: 1: cd: can't cd to /root\n"
         expectedQueryResults += "..."
 
         expect(queryResults).to.equal(expectedQueryResults)
@@ -189,6 +205,48 @@ describe.only("Test CommandHistoryLogger query", () => {
         // return only name of function and descriptions of command histories and commands
         // two command histories, the first with 1 successful command, 
         // the second with 2 successful commands
+        let funcInfo = new FunctionInfo("Foo")
+        funcInfo.addArgument(new FunctionArgument("a", 1))
+        funcInfo.addArgument(new FunctionArgument("b", "bar"))
+        let logger = new CommandHistoryLogger(LogLevels.INFO, "/tmp/log-project-1", funcInfo)
+        
+        let cmdHistory1 = new CommandHistory("Successful Command")
+        getShell().cd("/tmp")
+        let pwdCommand = new ShellCommand("pwd", "", CommandToRun.PWD)
+        pwdCommand.execute()
+        cmdHistory1.addExecutedCommand(pwdCommand)
+        logger.addCommandHistory(cmdHistory1)
+
+        let cmdHistory2 = new CommandHistory("Two Successful Commands")
+        let pwdCommand2 = new ShellCommand("pwd", "", CommandToRun.PWD)
+        pwdCommand2.execute()
+        cmdHistory2.addExecutedCommand(pwdCommand2)
+        let pwdCommand3 = new ShellCommand("pwd", "", CommandToRun.PWD)
+        pwdCommand3.execute()
+        cmdHistory2.addExecutedCommand(pwdCommand3)
+        logger.addCommandHistory(cmdHistory2)
+
+        let query = new QueryRunner(BuiltinViews.getCommandHistoryLogQuery(), logger.toJsObject())
+        query.addParameter("loggingLevel", "info")
+        let queryResults = query.runQuery()
+
+        let expectedQueryResults = "---\n"
+        expectedQueryResults += "encounteredError: false\n"
+        expectedQueryResults += "functionInfo:\n"
+        expectedQueryResults += "  name: Foo\n"
+        expectedQueryResults += "commandHistoryList:\n"
+        expectedQueryResults += "  - description: Successful Command\n"
+        expectedQueryResults += "    success: true\n"
+        expectedQueryResults += "    executedCommands:\n"
+        expectedQueryResults += "      - description: pwd\n"
+        expectedQueryResults += "  - description: Two Successful Commands\n"
+        expectedQueryResults += "    success: true\n"
+        expectedQueryResults += "    executedCommands:\n"
+        expectedQueryResults += "      - description: pwd\n"
+        expectedQueryResults += "      - description: pwd\n"
+        expectedQueryResults += "..."
+
+        expect(queryResults).to.equal(expectedQueryResults)
     })
 
     it('should return summaries of command histories and commands and context of error for loggingLevel = "info" and encounteredError = true', () => {
@@ -196,11 +254,96 @@ describe.only("Test CommandHistoryLogger query", () => {
         // return full details for failed command
         // two command histories, the first with 1 successful command, 
         // the second with 1 successful and 1 failed command
+        let funcInfo = new FunctionInfo("Foo")
+        funcInfo.addArgument(new FunctionArgument("a", 1))
+        funcInfo.addArgument(new FunctionArgument("b", "bar"))
+        let logger = new CommandHistoryLogger(LogLevels.INFO, "/tmp/log-project-1", funcInfo)
+        
+        let cmdHistory1 = new CommandHistory("Successful Command")
+        getShell().cd("/tmp")
+        let pwdCommand = new ShellCommand("pwd", "", CommandToRun.PWD)
+        pwdCommand.execute()
+        cmdHistory1.addExecutedCommand(pwdCommand)
+        logger.addCommandHistory(cmdHistory1)
+
+        let cmdHistory2 = new CommandHistory("Successful Command and Failed Command")
+        let pwdCommand2 = new ShellCommand("pwd", "", CommandToRun.PWD)
+        pwdCommand2.execute()
+        cmdHistory2.addExecutedCommand(pwdCommand2)
+        let execCommand = new ShellCommand("cd /root", "", CommandToRun.EXEC, "cd /root")
+        execCommand.execute()
+        cmdHistory2.addExecutedCommand(execCommand)
+        logger.addCommandHistory(cmdHistory2)
+
+        let query = new QueryRunner(BuiltinViews.getCommandHistoryLogQuery(), logger.toJsObject())
+        query.addParameter("loggingLevel", "info")
+        let queryResults = query.runQuery()
+
+        let expectedQueryResults = "---\n"
+        expectedQueryResults += "encounteredError: true\n"
+        expectedQueryResults += "functionInfo:\n"
+        expectedQueryResults += "  name: Foo\n"
+        expectedQueryResults += "  arguments:\n"
+        expectedQueryResults += "    - name: a\n"
+        expectedQueryResults += "      value: 1\n"
+        expectedQueryResults += "    - name: b\n"
+        expectedQueryResults += "      value: bar\n"
+        expectedQueryResults += "commandHistoryList:\n"
+        expectedQueryResults += "  - description: Successful Command\n"
+        expectedQueryResults += "    success: true\n"
+        expectedQueryResults += "    executedCommands:\n"
+        expectedQueryResults += "      - description: pwd\n"
+        expectedQueryResults += "  - description: Successful Command and Failed Command\n"
+        expectedQueryResults += "    success: false\n"
+        expectedQueryResults += "    executedCommands:\n"
+        expectedQueryResults += "      - description: pwd\n"
+        expectedQueryResults += "      - description: cd /root\n"
+        expectedQueryResults += "        executedStatus: Command has been executed\n"
+        expectedQueryResults += "        workingDirectory: ''\n"
+        expectedQueryResults += "        command: exec\n"
+        expectedQueryResults += "        commandLine: cd /root\n"
+        expectedQueryResults += "        additionalOptions: ''\n"
+        expectedQueryResults += "        successExitCode: 0\n"
+        expectedQueryResults += "        success: false\n"
+        expectedQueryResults += "        exitCode: 2\n"
+        expectedQueryResults += "        stdout: ''\n"
+        expectedQueryResults += "        stderr: |\n"
+        expectedQueryResults += "          /bin/sh: 1: cd: can't cd to /root\n"
+        expectedQueryResults += "..."
+
+        expect(queryResults).to.equal(expectedQueryResults)
     })
 
     it('should return all details for loggingLevel = "debug" and encounteredError = false', () => {
         // two command histories, the first with 1 successful command, 
         // the second with 2 successful commands
+        let funcInfo = new FunctionInfo("Foo")
+        funcInfo.addArgument(new FunctionArgument("a", 1))
+        funcInfo.addArgument(new FunctionArgument("b", "bar"))
+        let logger = new CommandHistoryLogger(LogLevels.INFO, "/tmp/log-project-1", funcInfo)
+        
+        let cmdHistory1 = new CommandHistory("Successful Command")
+        getShell().cd("/tmp")
+        let pwdCommand = new ShellCommand("pwd", "", CommandToRun.PWD)
+        pwdCommand.execute()
+        cmdHistory1.addExecutedCommand(pwdCommand)
+        logger.addCommandHistory(cmdHistory1)
+
+        let cmdHistory2 = new CommandHistory("Two Successful Commands")
+        let pwdCommand2 = new ShellCommand("pwd", "", CommandToRun.PWD)
+        pwdCommand2.execute()
+        cmdHistory2.addExecutedCommand(pwdCommand2)
+        let pwdCommand3 = new ShellCommand("pwd", "", CommandToRun.PWD)
+        pwdCommand3.execute()
+        cmdHistory2.addExecutedCommand(pwdCommand3)
+        logger.addCommandHistory(cmdHistory2)
+
+        let query = new QueryRunner(BuiltinViews.getCommandHistoryLogQuery(), logger.toJsObject())
+        query.addParameter("loggingLevel", "debug")
+        let queryResults = query.runQuery()
+
+        const expectedQueryResults = fs.readFileSync(path.join(__dirname, 'debug-log-no-error.yaml') , 'utf8');
+        expect(queryResults).to.equal(expectedQueryResults)
     })
 
     it('should return all details for loggingLevel = "debug" and encounteredError = true', () => {
@@ -236,10 +379,51 @@ describe.only("Test CommandHistoryLogger query", () => {
     })
 
     it('should return properly formatted function argument value when it is an object', () => {
-        // 
+        let funcInfo = new FunctionInfo("Foo")
+        funcInfo.addArgument(new FunctionArgument("a", {"foo":"bar","x":"z"}))
+        let logger = new CommandHistoryLogger(LogLevels.INFO, "/tmp/log-project-1", funcInfo)
+
+        let query = new QueryRunner(BuiltinViews.getCommandHistoryLogQuery(), logger.toJsObject())
+        query.addParameter("loggingLevel", "debug")
+        let queryResults = query.runQuery()
+
+        let expectedQueryResults = "---\n"
+        expectedQueryResults += "encounteredError: false\n"
+        expectedQueryResults += "functionInfo:\n"
+        expectedQueryResults += "  name: Foo\n"
+        expectedQueryResults += "  arguments:\n"
+        expectedQueryResults += "    - name: a\n"
+        expectedQueryResults += "      value:\n"
+        expectedQueryResults += "        foo: bar\n"
+        expectedQueryResults += "        x: z\n"
+        expectedQueryResults += "commandHistoryList: []\n"
+        expectedQueryResults += "..."
+
+        expect(queryResults).to.equal(expectedQueryResults)
     })
 
     it('should return properly formatted function argument value when it is a list', () => {
-        // 
+        let funcInfo = new FunctionInfo("Foo")
+        funcInfo.addArgument(new FunctionArgument("a", [1,2,3]))
+        let logger = new CommandHistoryLogger(LogLevels.INFO, "/tmp/log-project-1", funcInfo)
+
+        let query = new QueryRunner(BuiltinViews.getCommandHistoryLogQuery(), logger.toJsObject())
+        query.addParameter("loggingLevel", "debug")
+        let queryResults = query.runQuery()
+
+        let expectedQueryResults = "---\n"
+        expectedQueryResults += "encounteredError: false\n"
+        expectedQueryResults += "functionInfo:\n"
+        expectedQueryResults += "  name: Foo\n"
+        expectedQueryResults += "  arguments:\n"
+        expectedQueryResults += "    - name: a\n"
+        expectedQueryResults += "      value:\n"
+        expectedQueryResults += "        - 1\n"
+        expectedQueryResults += "        - 2\n"
+        expectedQueryResults += "        - 3\n"
+        expectedQueryResults += "commandHistoryList: []\n"
+        expectedQueryResults += "..."
+
+        expect(queryResults).to.equal(expectedQueryResults)
     })
 })

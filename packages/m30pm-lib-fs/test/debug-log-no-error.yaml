@@ -1,5 +1,5 @@
 ---
-encounteredError: true
+encounteredError: false
 functionInfo:
   name: Foo
   arguments:
@@ -22,8 +22,8 @@ commandHistoryList:
         exitCode: 0
         stdout: /tmp
         stderr: ''
-  - description: Successful Command and Failed Command
-    success: false
+  - description: Two Successful Commands
+    success: true
     executedCommands:
       - description: pwd
         executedStatus: Command has been executed
@@ -36,16 +36,15 @@ commandHistoryList:
         exitCode: 0
         stdout: /tmp
         stderr: ''
-      - description: cd /root
+      - description: pwd
         executedStatus: Command has been executed
         workingDirectory: ''
-        command: exec
-        commandLine: cd /root
+        command: pwd
+        commandLine: ''
         additionalOptions: ''
         successExitCode: 0
-        success: false
-        exitCode: 2
-        stdout: ''
-        stderr: |
-          /bin/sh: 1: cd: can't cd to /root
+        success: true
+        exitCode: 0
+        stdout: /tmp
+        stderr: ''
 ...
