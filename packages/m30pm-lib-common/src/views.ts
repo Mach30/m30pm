@@ -68,7 +68,7 @@ export class QueryRunner {
         this._parameters.push(parameter)
     }
 
-    public runQuery(): string {
+    public runQuery(debug: Boolean = false): string {
         let queryInput: any = {}
         queryInput["parameters"] = {}
         this._parameters.forEach( (parameter) => {
@@ -76,7 +76,11 @@ export class QueryRunner {
         })
         queryInput["data"] = this._data
 
-        let queryResultsObject = yaml.load(ViewRenderer.render(this._query, queryInput)) as Object;
+        let queryResults = ViewRenderer.render(this._query, queryInput)
+        if (debug)
+            console.log(queryResults)
+        
+        let queryResultsObject = yaml.load(queryResults) as Object;
         return "---\n" + yaml.dump(queryResultsObject) + "..."
     }
 }
