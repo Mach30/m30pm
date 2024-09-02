@@ -251,8 +251,6 @@ export function getVctNextStep(versionControlTool : VersionControlTools) : strin
 
 export class Projects {
     public static createProject(project: ProjectConfiguration, notifyUser: NotifyUserFunction) {
-        let results : any = {};
-
         let pwdCmd = new ShellCommand("Get Current Working Directory", "", CommandToRun.PWD)
         pwdCmd.execute();
         let workingDirectory = pwdCmd.stdout
@@ -294,7 +292,6 @@ export class Projects {
         if (!pmInfo.verifiedVersion || !btInfo.verifiedVersion || !vctInfo.verifiedVersion)
             return
 
-        results["initializations"] = {}; //to delete
         let projectDirectoryCommands = initializeProjectDirectory(project, workingDirectory, projectDirectory);
         logger.addCommandHistory(projectDirectoryCommands)
 
