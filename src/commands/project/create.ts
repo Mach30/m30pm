@@ -154,9 +154,8 @@ export default class ProjectCreate extends Command {
       
     const createProject = await confirm({ message: 'Create project?' })
     if (createProject) {
-      console.log(`Creating Project ${projectConfiguration.name}`)
-      let projectCreationLog = Projects.createProject(projectConfiguration);
-      console.log(projectCreationLog)
+      console.log(``)
+      Projects.createProject(projectConfiguration, mdStdout.notifyUserOnConsole);
     }
   }
 }

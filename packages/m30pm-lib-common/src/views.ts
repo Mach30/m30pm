@@ -3,7 +3,13 @@ import fs from 'fs'
 import path from 'path'
 import * as yaml from 'js-yaml';
 
-//run nunjucks.renderString()
+export enum FormattedMessageType {
+    NORMAL = "normal",
+    WARNING = "warning",
+    ERROR = "error"
+}
+
+export type NotifyUserFunction = (mdFormattedMessage: string, messageType: FormattedMessageType) => void;
 
 export class BuiltinViews {
     public static getCommandHistoryLogQuery(): string {
@@ -81,6 +87,6 @@ export class QueryRunner {
             console.log(queryResults)
         
         let queryResultsObject = yaml.load(queryResults) as Object;
-        return "---\n" + yaml.dump(queryResultsObject) + "..."
+        return "---\n" + yaml.dump(queryResultsObject) + "...\n"
     }
 }

@@ -1,23 +1,22 @@
-import { ProjectConfiguration, PackageManagers, ViewRenderer, BuiltinViews, BuildTools, VersionControlTools, Helpers } from "m30pm-lib-common";
+import { ProjectConfiguration, PackageManagers, ViewRenderer, BuiltinViews, BuildTools, VersionControlTools, Helpers, LogLevels } from "m30pm-lib-common";
 import { ToolInfo } from "./tool-info";
 import { ShellCommand, CommandToRun, getShell } from "./shell-cmd";
 import { CommandHistory } from "./cmd-history";
 import { CommandHistoryLogger, FunctionArgument, FunctionInfo } from "./cmd-history-logger";
+import { FormattedMessageType, NotifyUserFunction } from "m30pm-lib-common";
 import * as yaml from 'js-yaml';
 
 const minGradleVersion = "8.2.0"
 const minGitVersion = "2.28.0"
 const gitIgnoreContents = "# m30pm .gitignore\ndist/\nnode_modules/\n.logs/\n"
-let _projectDirectory = ""
 
 // create project directory using project name (should follow oclif pattern; if no directory exists, create directory; if directory exists and empty, continue project creation; 
 // if directory exists and is not empty, return with error stating non-empty directory)
-export function initializeProjectDirectory(project: ProjectConfiguration, workingDirectory : string) : CommandHistory {
+export function initializeProjectDirectory(project: ProjectConfiguration, workingDirectory : string, projectDirectory: string) : CommandHistory {
     const projectName = project.name;
     let cmdHistory = new CommandHistory(`Initialze Project Directory for ${projectName}`)
-    _projectDirectory = `${workingDirectory}/${projectName}`
     
-    let lsCmd = new ShellCommand(`Determine if Project Directory ${_projectDirectory} Exists`, workingDirectory, CommandToRun.LS, projectName, "-d")
+    let lsCmd = new ShellCommand(`Determine if Project Directory ${projectDirectory} Exists`, workingDirectory, CommandToRun.LS, projectName, "-d")
     lsCmd.execute();
     let projectDirectoryFound = lsCmd.success;
     let projectDirectoryCanBeUsed = true;
@@ -34,18 +33,18 @@ export function initializeProjectDirectory(project: ProjectConfiguration, workin
     if (!projectDirectoryFound || !projectDirectoryCanBeUsed) {
         const projectNameParts = projectName.split('/');
         if (projectNameParts.length === 1) {
-            let mkdirCmd = new ShellCommand(`Create Project Directory ${_projectDirectory}`, 
+            let mkdirCmd = new ShellCommand(`Create Project Directory ${projectDirectory}`, 
                                         workingDirectory, CommandToRun.MKDIR, projectName);
             mkdirCmd.execute();
             cmdHistory.addExecutedCommand(mkdirCmd)
         } 
         else {
-            let mkdirCmd1 = new ShellCommand(`Create Project Directory ${_projectDirectory}, step 1`, 
+            let mkdirCmd1 = new ShellCommand(`Create Project Directory ${projectDirectory}, step 1`, 
                                              workingDirectory, CommandToRun.MKDIR, projectNameParts[0], "-p");
             mkdirCmd1.execute();
             cmdHistory.addExecutedCommand(mkdirCmd1)
 
-            let mkdirCmd2 = new ShellCommand(`Create Project Directory ${_projectDirectory}, step 2`, 
+            let mkdirCmd2 = new ShellCommand(`Create Project Directory ${projectDirectory}, step 2`, 
                                               `${workingDirectory}/${projectNameParts[0]}`, CommandToRun.MKDIR, projectNameParts[1]);
             mkdirCmd2.execute();
             cmdHistory.addExecutedCommand(mkdirCmd2)
@@ -53,40 +52,40 @@ export function initializeProjectDirectory(project: ProjectConfiguration, workin
     }
 
     if (projectDirectoryCanBeUsed) {
-        let createPackageJsonFileCmd = new ShellCommand("Create package.json File", _projectDirectory, CommandToRun.TO_FILE, 
+        let createPackageJsonFileCmd = new ShellCommand("Create package.json File", projectDirectory, CommandToRun.TO_FILE, 
                                                         Helpers.toJsonString(project.toJsObject()), "package.json")
         createPackageJsonFileCmd.execute();
         cmdHistory.addExecutedCommand(createPackageJsonFileCmd);
         if (!createPackageJsonFileCmd.success)
             return cmdHistory;
 
-        let createModelDirCmd = new ShellCommand("Create model/ Directory", _projectDirectory, CommandToRun.MKDIR, "model")
+        let createModelDirCmd = new ShellCommand("Create model/ Directory", projectDirectory, CommandToRun.MKDIR, "model")
         createModelDirCmd.execute();
         cmdHistory.addExecutedCommand(createModelDirCmd);
         if (!createModelDirCmd.success)
             return cmdHistory;
 
-        let createModelDotFileCmd = new ShellCommand("Create Dot File for model/ Directory", `${_projectDirectory}/model`, CommandToRun.TO_FILE, 
+        let createModelDotFileCmd = new ShellCommand("Create Dot File for model/ Directory", `${projectDirectory}/model`, CommandToRun.TO_FILE, 
                                                      "Directory to store top-level model source code\n", ".description")
         createModelDotFileCmd.execute()
         cmdHistory.addExecutedCommand(createModelDotFileCmd)
         if (!createModelDotFileCmd.success)
             return cmdHistory;
 
-        let createViewsDirCmd = new ShellCommand("Create views/queries/ Directories", _projectDirectory, CommandToRun.MKDIR, "views/queries", "-p")
+        let createViewsDirCmd = new ShellCommand("Create views/queries/ Directories", projectDirectory, CommandToRun.MKDIR, "views/queries", "-p")
         createViewsDirCmd.execute();
         cmdHistory.addExecutedCommand(createViewsDirCmd)
         if (!createViewsDirCmd.success)
             return cmdHistory;
 
-        let createViewsDotFileCmd = new ShellCommand("Create Dot File for views/ Directory", `${_projectDirectory}/views`, CommandToRun.TO_FILE, 
+        let createViewsDotFileCmd = new ShellCommand("Create Dot File for views/ Directory", `${projectDirectory}/views`, CommandToRun.TO_FILE, 
                                                      "Directory to store views source code\n", ".description")
         createViewsDotFileCmd.execute()
         cmdHistory.addExecutedCommand(createViewsDotFileCmd)
         if (!createViewsDotFileCmd.success)
         return cmdHistory;
 
-        let createQueriesDotFileCmd = new ShellCommand("Create Dot File for views/queries/ Directory", `${_projectDirectory}/views/queries`, CommandToRun.TO_FILE, 
+        let createQueriesDotFileCmd = new ShellCommand("Create Dot File for views/queries/ Directory", `${projectDirectory}/views/queries`, CommandToRun.TO_FILE, 
                                                        "Directory to store queries source code\n", ".description")
         createQueriesDotFileCmd.execute()
         cmdHistory.addExecutedCommand(createQueriesDotFileCmd)
@@ -94,7 +93,7 @@ export function initializeProjectDirectory(project: ProjectConfiguration, workin
             return cmdHistory;
 
         let readmeQuery = BuiltinViews.getReadmeQuery();
-        let createReadmeQueryFileCmd = new ShellCommand("Create default README Query File", `${_projectDirectory}/views/queries`, CommandToRun.TO_FILE,
+        let createReadmeQueryFileCmd = new ShellCommand("Create default README Query File", `${projectDirectory}/views/queries`, CommandToRun.TO_FILE,
                                                          readmeQuery, "README.query.njk");
         createReadmeQueryFileCmd.execute();
         cmdHistory.addExecutedCommand(createReadmeQueryFileCmd);
@@ -102,7 +101,7 @@ export function initializeProjectDirectory(project: ProjectConfiguration, workin
             return cmdHistory;
         
         let readmeView = BuiltinViews.getReadmeView();
-        let createReadmeViewFileCmd = new ShellCommand("Create default README View File", `${_projectDirectory}/views`, CommandToRun.TO_FILE,
+        let createReadmeViewFileCmd = new ShellCommand("Create default README View File", `${projectDirectory}/views`, CommandToRun.TO_FILE,
                                                         readmeView, "README.md.njk");
         createReadmeViewFileCmd.execute();
         cmdHistory.addExecutedCommand(createReadmeViewFileCmd);
@@ -112,7 +111,7 @@ export function initializeProjectDirectory(project: ProjectConfiguration, workin
         // add readme
         let readmeQueryContents = yaml.load(ViewRenderer.render(readmeQuery, project.toJsObject())) as Object;
         let readmeFileContents = ViewRenderer.render(readmeView, readmeQueryContents);
-        let createReadmeFileCmd = new ShellCommand("Save Generated README.md File", _projectDirectory, CommandToRun.TO_FILE,
+        let createReadmeFileCmd = new ShellCommand("Save Generated README.md File", projectDirectory, CommandToRun.TO_FILE,
                                                    readmeFileContents, "README.md");
         createReadmeFileCmd.execute();
         cmdHistory.addExecutedCommand(createReadmeFileCmd);
@@ -251,100 +250,155 @@ export function getVctNextStep(versionControlTool : VersionControlTools) : strin
 }
 
 export class Projects {
-    public static createProject(project: ProjectConfiguration) : any {
+    public static createProject(project: ProjectConfiguration, notifyUser: NotifyUserFunction) {
         let results : any = {};
 
         let pwdCmd = new ShellCommand("Get Current Working Directory", "", CommandToRun.PWD)
         pwdCmd.execute();
-        results["getWorkingDir"] = pwdCmd.toJsObject();
+        let workingDirectory = pwdCmd.stdout
+        let projectDirectory = `${workingDirectory}/${project.name}`
 
         let funcInfo = new FunctionInfo("createProject")
         funcInfo.addArgument(new FunctionArgument("project", project.toJsObject()))
-        let logger = new CommandHistoryLogger(project.loggingLevel, `${pwdCmd.stdout}/${project.name}`, funcInfo)
+        let logger = new CommandHistoryLogger(LogLevels.DEBUG, projectDirectory, funcInfo)
 
-        results["projectToCreate"] = project.name;
-        results["success"] = true;
-        results["message"] = `Project ${project.name} initialized`;
+        notifyUser(`# Creating Project ${project.name}`, FormattedMessageType.NORMAL)
 
         //verify package manager, build tool, and version control tool are installed 
         const pmInfo = new ToolInfo(project.packageManager.toString())
         logger.addCommandHistory(pmInfo.cmdHistory)
-        results["packageManager"] = pmInfo.toJsObject()
-        if (!pmInfo.verifiedVersion) {
-            results.success = false;
-            results.message = `Cannot ${pmInfo.cmdHistory.description}`
-            return results
-        }
+
+        let pmMessage = formatToolInfoMessage(pmInfo, "Package Manager")        
+        notifyUser(pmMessage, pmInfo.verifiedVersion ? FormattedMessageType.NORMAL : FormattedMessageType.ERROR)
 
         let minBtVersion = "0.0.0";
         if (project.buildTool === BuildTools.GRADLE)
             minBtVersion = minGradleVersion;
         const btInfo = new ToolInfo(project.buildTool.toString(), minBtVersion)
         logger.addCommandHistory(btInfo.cmdHistory)
-        results["buildTool"] = btInfo.toJsObject();
-        if (!btInfo.verifiedVersion) {
-            results.success = false;
-            results.message = `Cannot ${btInfo.cmdHistory.description}`
-            return results
-        } 
+
+        let btMessage = formatToolInfoMessage(btInfo, "Build Tool")
+        notifyUser(btMessage, btInfo.verifiedVersion ? FormattedMessageType.NORMAL : FormattedMessageType.ERROR)
+
 
         let minVctVersion = "0.0.0";
         if (project.versionControlTool === VersionControlTools.GIT)
             minVctVersion = minGitVersion;
         const vctInfo = new ToolInfo(project.versionControlTool.toString(), minVctVersion)
         logger.addCommandHistory(vctInfo.cmdHistory)
-        results["versionControlTool"] = vctInfo.toJsObject();
-        if (!vctInfo.verifiedVersion) {
-            results.success = false;
-            results.message = `Cannot ${vctInfo.cmdHistory.description}`;
-            return results;
-        }
 
-        results["initializations"] = {};
-        let projectDirectoryCommands = initializeProjectDirectory(project, pwdCmd.stdout);
+        let vctMessage = formatToolInfoMessage(vctInfo, "Version Control Tool")
+        notifyUser(vctMessage, vctInfo.verifiedVersion ? FormattedMessageType.NORMAL : FormattedMessageType.ERROR)
+
+        // ensure all required tools are verified before continuing
+        if (!pmInfo.verifiedVersion || !btInfo.verifiedVersion || !vctInfo.verifiedVersion)
+            return
+
+        results["initializations"] = {}; //to delete
+        let projectDirectoryCommands = initializeProjectDirectory(project, workingDirectory, projectDirectory);
         logger.addCommandHistory(projectDirectoryCommands)
-        results.initializations["projectDirectory"] = projectDirectoryCommands.toJsObject();
-        if (!projectDirectoryCommands.success) {
-            results.success = false;
-            results.message = `Cannot ${projectDirectoryCommands.description}`;
-            return results;
+
+        let projectDirectoryMessage = ""
+        if (projectDirectoryCommands.success) {
+            projectDirectoryMessage += `## ${projectDirectoryCommands.description}\n`
+            projectDirectoryMessage += `Created directory \`${projectDirectory}\`\n`
+        } else {
+            projectDirectoryMessage += `# Cannot ${projectDirectoryCommands.description}\n`
+            projectDirectoryCommands.executedCommands.forEach((cmd: any) => {
+                if (!cmd.success) {
+                    projectDirectoryMessage += `| Failed Command Property | Value |\n`
+                    projectDirectoryMessage += `|---------|-------|\n`
+                    projectDirectoryMessage += `| description | ${cmd.description} |\n`
+                    projectDirectoryMessage += `| executedStatus | ${cmd.executedStatus} |\n`
+                    projectDirectoryMessage += `| workingDirectory | ${cmd.workingDirectory} |\n`
+                    projectDirectoryMessage += `| command | ${cmd.command} |\n`
+                    projectDirectoryMessage += `| commandLine | ${cmd.commandLine} |\n`
+                    projectDirectoryMessage += `| additionalOptions | ${cmd.additionalOptions} |\n`
+                    projectDirectoryMessage += `| successExitCode | ${cmd.successExitCode} |\n`
+                    projectDirectoryMessage += `| success | ${cmd.success} |\n`
+                    projectDirectoryMessage += `| exitCode | ${cmd.exitCode} |\n`
+                    projectDirectoryMessage += `| stdout | ${cmd.stdout} |\n`
+                    projectDirectoryMessage += `| stderr | ${cmd.stderr} |\n`
+                }
+            })
         }
 
-        let packageMangerScaffoldingCommands = generatePackageManagerScaffolding(project, _projectDirectory)
+        notifyUser(projectDirectoryMessage, projectDirectoryCommands.success ? FormattedMessageType.NORMAL : FormattedMessageType.ERROR)
+        if (!projectDirectoryCommands.success)
+            return
+
+        // generate package manager scaffolding
+        let packageMangerScaffoldingCommands = generatePackageManagerScaffolding(project, projectDirectory)
         logger.addCommandHistory(packageMangerScaffoldingCommands)
-        results.initializations["packageMangerScaffolding"] = packageMangerScaffoldingCommands.toJsObject();
+
+        let logFilePath = `${logger.logFileDirectory}/${logger.logFileName}`
+        let pmScaffoldingMessage = formatInitializationMessage(packageMangerScaffoldingCommands, logFilePath)
+        notifyUser(pmScaffoldingMessage, packageMangerScaffoldingCommands.success ? FormattedMessageType.NORMAL : FormattedMessageType.ERROR)
         if (!packageMangerScaffoldingCommands.success) {
-            results.success = false;
-            results.message = `Cannot ${packageMangerScaffoldingCommands.description}`;
-            return results;
+            logger.writeLog()
+            return
         }
         
         // initialize build tool
-        let buildToolCommands = initializeBuildTool(project, _projectDirectory, btInfo.path);
+        let buildToolCommands = initializeBuildTool(project, projectDirectory, btInfo.path);
         logger.addCommandHistory(buildToolCommands)
-        results.initializations["buildTool"] = buildToolCommands.toJsObject();
+
+        let btInitMessage = formatInitializationMessage(buildToolCommands, logFilePath)
+        notifyUser(btInitMessage, buildToolCommands.success ? FormattedMessageType.NORMAL : FormattedMessageType.ERROR)
         if (!buildToolCommands.success) {
-            results.success = false;
-            results.message = `Cannot ${buildToolCommands.description}`;
-            return results;
+            logger.writeLog()
+            return
         }
 
         // initialize version control tool
-        let versionControlToolCommands = initializeVersionControlTool(project, _projectDirectory, vctInfo.path)
+        let versionControlToolCommands = initializeVersionControlTool(project, projectDirectory, vctInfo.path)
         logger.addCommandHistory(versionControlToolCommands)
-        results.initializations["versionControlTool"] = versionControlToolCommands.toJsObject();
+
+        let vctInitMessage = formatInitializationMessage(versionControlToolCommands, logFilePath)
+        notifyUser(vctInitMessage, versionControlToolCommands.success ? FormattedMessageType.NORMAL : FormattedMessageType.ERROR)
         if (!versionControlToolCommands.success) {
-            results.success = false;
-            results.message = `Cannot ${versionControlToolCommands.description}`;
-            return results;
+            logger.writeLog()
+            return
         }
 
-        results["nextSteps"] = [];
-        results.nextSteps[0] = getVctNextStep(project.versionControlTool);
+        let vctNextStep = getVctNextStep(project.versionControlTool);
+        let nextSteps = "";
+        nextSteps += `# Project ${project.name} Created\n`
+        nextSteps += "## Next Steps\n"
+        nextSteps += `- Change to Project Directory: \`cd ${project.name}\`\n`
+        if (vctNextStep !== '')
+            nextSteps += `- Complete Version Control Initialization: \`${vctNextStep}\`\n`
 
-        // if we got here, the project has been initialized, so all we have to do is return the results
-        //let writeLogFileCommand = new ShellCommand("", _projectDirectory, CommandToRun.TO_FILE, Helpers.toJsonString(logger.toJsObject()), "log.json")
-        //writeLogFileCommand.execute()
-        return results;
+        notifyUser(nextSteps, FormattedMessageType.NORMAL)
+        logger.writeLog()
     }
+}
+
+function formatToolInfoMessage(tool: ToolInfo, toolType: string) : string {
+    let message: string = "";
+    if (tool.verifiedVersion) {
+        message += `## ${tool.cmdHistory.description} (${toolType})\n`
+        message += `Found ${toolType}: ${tool.name} v${tool.version} at \`${tool.path}\``
+    } else {
+        message += `# Cannot ${tool.cmdHistory.description} (${toolType})\n`
+        if (!tool.installed)
+            message += `${tool.name} not installed\n`
+        else
+            message += `Found ${toolType}: **${tool.name} v${tool.version} (min version is ${tool.minVersion})** at:\n  \`${tool.path}\` \n`
+    }
+
+    return message
+}
+
+function formatInitializationMessage(initializationCommands: CommandHistory, logFileName: string) : string {
+    let message: string = "";
+    if (initializationCommands.success) {
+        message += `## ${initializationCommands.description}\n`
+        message += `Complete\n`
+    } else {
+        message += `# Cannot ${initializationCommands.description}\n`
+        message += `See logs for details\n-\`${logFileName}.md\`\n-\`${logFileName}.yaml\`\n`
+    }
+
+    return message
 }

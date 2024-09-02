@@ -9,7 +9,7 @@ describe("m30pm-lib-fs initializeProjectDirectory() tests", () => {
     it('should return true for my-project when directory does not exist', () => {
         getShell().cd('/tmp/')
         const project = new ProjectConfiguration("my-project", "0.0.0", "My New m30ml Project", "Mach 30", "CC-BY-4.0", "npm", "git", "gradle")
-        const history = initializeProjectDirectory(project, "/tmp");
+        const history = initializeProjectDirectory(project, "/tmp", "/tmp/my-project");
         expect(history.success).to.equal(true);
         expect(getShell().ls('/tmp/').toString().includes('my-project')).to.equal(true);
         getShell().rm('-rf', '/tmp/my-project');
@@ -19,7 +19,7 @@ describe("m30pm-lib-fs initializeProjectDirectory() tests", () => {
         getShell().cd('/tmp/')
         getShell().mkdir('my-project-1')
         const project = new ProjectConfiguration("my-project-1", "0.0.0", "My New m30ml Project", "Mach 30", "CC-BY-4.0", "npm", "git", "gradle")
-        const history = initializeProjectDirectory(project, "/tmp");
+        const history = initializeProjectDirectory(project, "/tmp", "/tmp/my-project-1");
         expect(history.success).to.equal(true);
         expect(getShell().ls('/tmp/my-project-1').toString().includes('package.json')).to.equal(true);
         const expectedPackageFile = Helpers.toJsonString(project.toJsObject())
@@ -39,7 +39,7 @@ describe("m30pm-lib-fs initializeProjectDirectory() tests", () => {
         getShell().mkdir('my-project-2')
         getShell().touch('my-project-2/foo')
         const project = new ProjectConfiguration("my-project-2", "0.0.0", "My New m30ml Project", "Mach 30", "CC-BY-4.0", "npm", "git", "gradle")
-        const history = initializeProjectDirectory(project, "/tmp");
+        const history = initializeProjectDirectory(project, "/tmp", "/tmp/my-project-2");
         expect(history.success).to.equal(false);
         getShell().rm('-rf', '/tmp/my-project-2');
     })
@@ -49,7 +49,7 @@ describe("m30pm-lib-fs initializeProjectDirectory() tests", () => {
         getShell().mkdir('my-project-3')
         getShell().touch('my-project-3/.foo')
         const project = new ProjectConfiguration("my-project-3", "0.0.0", "My New m30ml Project", "Mach 30", "CC-BY-4.0", "npm", "git", "gradle")
-        const history = initializeProjectDirectory(project, "/tmp");
+        const history = initializeProjectDirectory(project, "/tmp", "/tmp/my-project-3");
         expect(history.success).to.equal(false);
         getShell().rm('-rf', '/tmp/my-project-3');
     })
@@ -59,7 +59,7 @@ describe("m30pm-lib-fs initializeProjectDirectory() with scoped projects tests",
     it('should return true for @my-scope/my-project when @my-scope directory does not exist', () => {
         getShell().cd('/tmp/')
         const project = new ProjectConfiguration("@my-scope/my-project", "0.0.0", "My New m30ml Project", "Mach 30", "CC-BY-4.0", "npm", "git", "gradle")
-        const history = initializeProjectDirectory(project, "/tmp");
+        const history = initializeProjectDirectory(project, "/tmp", "/tmp/@my-scope/my-project");
         expect(history.success).to.equal(true);
         expect(getShell().ls('/tmp/').toString().includes('@my-scope')).to.equal(true);
         expect(getShell().ls('/tmp/@my-scope').toString().includes('my-project')).to.equal(true);
@@ -70,7 +70,7 @@ describe("m30pm-lib-fs initializeProjectDirectory() with scoped projects tests",
         getShell().cd('/tmp/')
         getShell().mkdir('@my-scope-1')
         const project = new ProjectConfiguration("@my-scope-1/my-project", "0.0.0", "My New m30ml Project", "Mach 30", "CC-BY-4.0", "npm", "git", "gradle")
-        const history = initializeProjectDirectory(project, "/tmp");
+        const history = initializeProjectDirectory(project, "/tmp", "/tmp/@my-scope-1/my-project");
         expect(history.success).to.equal(true);
         expect(getShell().ls('/tmp/@my-scope-1').toString().includes('my-project')).to.equal(true);
         getShell().rm('-rf', '/tmp/@my-scope-1');
@@ -80,7 +80,7 @@ describe("m30pm-lib-fs initializeProjectDirectory() with scoped projects tests",
         getShell().cd('/tmp/')
         getShell().mkdir('-p', '@my-scope-2/my-project')
         const project = new ProjectConfiguration("@my-scope-2/my-project", "0.0.0", "My New m30ml Project", "Mach 30", "CC-BY-4.0", "npm", "git", "gradle")
-        const history = initializeProjectDirectory(project, "/tmp");
+        const history = initializeProjectDirectory(project, "/tmp", "/tmp/@my-scope-2/my-project");
         expect(history.success).to.equal(true);
         expect(getShell().ls('/tmp/@my-scope-2/my-project').toString().includes('package.json')).to.equal(true);
         const expectedPackageFile = Helpers.toJsonString(project.toJsObject())
@@ -100,7 +100,7 @@ describe("m30pm-lib-fs initializeProjectDirectory() with scoped projects tests",
         getShell().mkdir("-p",'@my-scope-3/my-project')
         getShell().touch('@my-scope-3/my-project/foo')
         const project = new ProjectConfiguration("@my-scope-3/my-project", "0.0.0", "My New m30ml Project", "Mach 30", "CC-BY-4.0", "npm", "git", "gradle")
-        const history = initializeProjectDirectory(project, "/tmp");
+        const history = initializeProjectDirectory(project, "/tmp", "/tmp/@my-scope-3/my-project");
         expect(history.success).to.equal(false);
         getShell().rm('-rf', '/tmp/@my-scope-3');
     })
@@ -110,7 +110,7 @@ describe("m30pm-lib-fs initializeProjectDirectory() with scoped projects tests",
         getShell().mkdir("-p",'@my-scope-4/my-project')
         getShell().touch('@my-scope-4/my-project/.foo')
         const project = new ProjectConfiguration("@my-scope-4/my-project", "0.0.0", "My New m30ml Project", "Mach 30", "CC-BY-4.0", "npm", "git", "gradle")
-        const history = initializeProjectDirectory(project, "/tmp");
+        const history = initializeProjectDirectory(project, "/tmp", "/tmp/@my-scope-4/my-project");
         expect(history.success).to.equal(false);
         getShell().rm('-rf', '/tmp/@my-scope-4');
     })
@@ -119,7 +119,7 @@ describe("m30pm-lib-fs initializeProjectDirectory() with scoped projects tests",
         getShell().cd('/tmp/')
         getShell().mkdir("-p",'@my-scope-5/foo')
         const project = new ProjectConfiguration("@my-scope-5/my-project", "0.0.0", "My New m30ml Project", "Mach 30", "CC-BY-4.0", "npm", "git", "gradle")
-        const history = initializeProjectDirectory(project, "/tmp");
+        const history = initializeProjectDirectory(project, "/tmp", "/tmp/@my-scope-5/my-project");
         expect(history.success).to.equal(true);
         expect(getShell().ls('/tmp/@my-scope-5').toString().includes('my-project')).to.equal(true);
         getShell().rm('-rf', '/tmp/@my-scope-5');

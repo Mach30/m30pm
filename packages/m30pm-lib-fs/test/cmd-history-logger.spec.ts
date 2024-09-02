@@ -80,13 +80,22 @@ describe("Test CommandHistoryLogger class", () => {
         getShell().rm("-rf", "/tmp/log-project-1")
     })
 
-    it('should create .logs/ dir as part of writeLog', () => {
+    it('should create .logs/ dir as part of writeLog when not loggingLevel = "error"', () => {
         getShell().cd("/tmp")
         getShell().mkdir("log-project-2")
         let logger = new CommandHistoryLogger(LogLevels.INFO, "/tmp/log-project-2", new FunctionInfo("Foo"))
         logger.writeLog()
         expect(getShell().ls('-al', '/tmp/log-project-2').stdout).include(".logs")
         getShell().rm('-rf', "/tmp/log-project-2")
+    })
+
+    it('should not create .logs/ dir as part of writeLog when loggingLevel = "error"', () => {
+        getShell().cd("/tmp")
+        getShell().mkdir("log-project-3")
+        let logger = new CommandHistoryLogger(LogLevels.ERROR, "/tmp/log-project-3", new FunctionInfo("Foo"))
+        logger.writeLog()
+        expect(getShell().ls('-al', '/tmp/log-project-3').stdout).not.include(".logs")
+        getShell().rm('-rf', "/tmp/log-project-3")
     })
 })
 
@@ -104,7 +113,7 @@ describe("Test CommandHistoryLogger query", () => {
         query.addParameter("loggingLevel", "none")
         let queryResults = query.runQuery()
 
-        let expectedQueryResults = "---\n{}\n..."
+        let expectedQueryResults = "---\n{}\n...\n"
         expect(queryResults).to.equal(expectedQueryResults)
     })
 
@@ -121,7 +130,7 @@ describe("Test CommandHistoryLogger query", () => {
         query.addParameter("loggingLevel", "none")
         let queryResults = query.runQuery()
 
-        let expectedQueryResults = "---\n{}\n..."
+        let expectedQueryResults = "---\n{}\n...\n"
         expect(queryResults).to.equal(expectedQueryResults)
     })
 
@@ -138,7 +147,7 @@ describe("Test CommandHistoryLogger query", () => {
         query.addParameter("loggingLevel", "error")
         let queryResults = query.runQuery()
 
-        let expectedQueryResults = "---\n{}\n..."
+        let expectedQueryResults = "---\n{}\n...\n"
         expect(queryResults).to.equal(expectedQueryResults)
     })
 
@@ -196,7 +205,7 @@ describe("Test CommandHistoryLogger query", () => {
         expectedQueryResults += "        stdout: ''\n"
         expectedQueryResults += "        stderr: |\n"
         expectedQueryResults += "          /bin/sh: 1: cd: can't cd to /root\n"
-        expectedQueryResults += "..."
+        expectedQueryResults += "...\n"
 
         expect(queryResults).to.equal(expectedQueryResults)
     })
@@ -244,7 +253,7 @@ describe("Test CommandHistoryLogger query", () => {
         expectedQueryResults += "    executedCommands:\n"
         expectedQueryResults += "      - description: pwd\n"
         expectedQueryResults += "      - description: pwd\n"
-        expectedQueryResults += "..."
+        expectedQueryResults += "...\n"
 
         expect(queryResults).to.equal(expectedQueryResults)
     })
@@ -309,7 +318,7 @@ describe("Test CommandHistoryLogger query", () => {
         expectedQueryResults += "        stdout: ''\n"
         expectedQueryResults += "        stderr: |\n"
         expectedQueryResults += "          /bin/sh: 1: cd: can't cd to /root\n"
-        expectedQueryResults += "..."
+        expectedQueryResults += "...\n"
 
         expect(queryResults).to.equal(expectedQueryResults)
     })
@@ -397,7 +406,7 @@ describe("Test CommandHistoryLogger query", () => {
         expectedQueryResults += "        foo: bar\n"
         expectedQueryResults += "        x: z\n"
         expectedQueryResults += "commandHistoryList: []\n"
-        expectedQueryResults += "..."
+        expectedQueryResults += "...\n"
 
         expect(queryResults).to.equal(expectedQueryResults)
     })
@@ -422,7 +431,7 @@ describe("Test CommandHistoryLogger query", () => {
         expectedQueryResults += "        - 2\n"
         expectedQueryResults += "        - 3\n"
         expectedQueryResults += "commandHistoryList: []\n"
-        expectedQueryResults += "..."
+        expectedQueryResults += "...\n"
 
         expect(queryResults).to.equal(expectedQueryResults)
     })

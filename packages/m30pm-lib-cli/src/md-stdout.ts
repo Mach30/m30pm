@@ -3,6 +3,7 @@ import chalk from 'chalk';
 import { CardinalOptions } from 'cardinal';
 import colors from 'ansicolors';
 import TerminalRenderer from 'marked-terminal';
+import { FormattedMessageType, NotifyUserFunction } from 'm30pm-lib-common'
 
 const defaultMarkedTerminalOptions = {
     blockquote: chalk.visible,
@@ -15,7 +16,7 @@ const defaultMarkedTerminalOptions = {
     href: chalk.blueBright.underline,
     unescape: true,
     emoji: false,
-    width: 80,
+    width: 120,
     showSectionPrefix: false,
     reflowText: true,
     tab: 4,
@@ -59,4 +60,20 @@ export class mdStdout {
         console.log(marked.parse(mdString))
     }
 
+    public static notifyUserOnConsole: NotifyUserFunction = function(mdFormattedMessage: string, messageType: FormattedMessageType) {
+        switch(messageType) {
+            case FormattedMessageType.NORMAL: {
+                mdStdout.log(mdFormattedMessage)
+                break
+            }
+            case FormattedMessageType.WARNING: {
+                mdStdout.logWarn(mdFormattedMessage)
+                break
+            }
+            case FormattedMessageType.ERROR: {
+                mdStdout.logError(mdFormattedMessage)
+                break
+            }
+        }
+    }
 }
