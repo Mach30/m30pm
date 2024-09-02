@@ -8,3 +8,4 @@ oclif.manifest.json
 oclif.lock
 **.DS_Store
 .idea
+*.tsbuildinfo
