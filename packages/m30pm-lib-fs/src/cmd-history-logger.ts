@@ -1,6 +1,9 @@
 import { LogLevels } from "m30pm-lib-common";
 import { CommandHistory } from "./cmd-history";
 import { getShell } from "./shell-cmd";
+import { QueryRunner, BuiltinViews, Helpers } from "m30pm-lib-common";
+import * as yaml from 'js-yaml';
+const moment = require('moment');
 
 export class FunctionArgument {
     private _name: string;
@@ -50,6 +53,10 @@ export class FunctionInfo {
         
         return jsObject;
     }
+
+    public get name() : string {
+        return this._name
+    }
 }
 
 export class CommandHistoryLogger {
@@ -58,13 +65,16 @@ export class CommandHistoryLogger {
     private _encounteredError: Boolean;
     private _functionInfo: FunctionInfo;
     private _commandHistoryList: Array<CommandHistory>;
+    private _logFileName: string;
 
     constructor(loggingLevel: LogLevels, projectPath: string, functionInfo: FunctionInfo) {
         this._loggingLevel = loggingLevel;
         this._projectPath = projectPath;
         this._encounteredError = false;         
         this._functionInfo = functionInfo;
-        this._commandHistoryList = new Array<CommandHistory>();   
+        this._commandHistoryList = new Array<CommandHistory>();  
+        
+        this._logFileName = `${moment().format('YYYYMMDD-HHmm')}-${this._functionInfo.name}-${this._loggingLevel.toString()}`
     }
 
     public addCommandHistory(cmdHistory: CommandHistory) {
@@ -83,7 +93,25 @@ export class CommandHistoryLogger {
         return jsObject;
     }
 
+    public get logFileName () {
+        return this._logFileName
+    }
+
+    public get logFileDirectory() {
+        return `${this._projectPath}/.logs`
+    }
+
     public writeLog() {
-        getShell().mkdir("-p", `${this._projectPath}/.logs`)
+        let query = new QueryRunner(BuiltinViews.getCommandHistoryLogQuery(), this.toJsObject())
+        query.addParameter("loggingLevel", this._loggingLevel.toString())
+        let queryResults = query.runQuery()
+        let queryResultsObject = yaml.load(queryResults) as Object;
+
+        if (Helpers.toJsonString(queryResultsObject) === "{}")
+            return
+
+        getShell().mkdir("-p", this.logFileDirectory)
+        let yamlLogFile = getShell().ShellString(queryResults)
+        yamlLogFile.to(`${this.logFileDirectory}/${this.logFileName}.yaml`)
     }
 }
