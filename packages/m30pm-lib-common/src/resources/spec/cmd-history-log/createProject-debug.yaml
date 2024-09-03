@@ -1,0 +1,504 @@
+---
+encounteredError: false
+functionInfo:
+  name: createProject
+  arguments:
+    - name: project
+      value:
+        name: my-project
+        version: 0.0.0
+        description: My New m30ml Project
+        author: Mach 30
+        license: CC-BY-4.0
+        packageManager: npm
+        workspaces:
+          - ./packages/*
+          - ./packages/@*/*
+        m30pm:
+          versionControlTool: git
+          buildTool: gradle
+          loggingLevel: error
+commandHistoryList:
+  - description: Verify Tool Info for "npm"
+    success: true
+    executedCommands:
+      - description: Find Tool
+        executedStatus: Command has been executed
+        workingDirectory: ''
+        command: which
+        commandLine: npm
+        additionalOptions: ''
+        successExitCode: 0
+        success: true
+        exitCode: 0
+        stdout: /var/lib/nvm/versions/node/v20.15.1/bin/npm
+        stderr: ''
+      - description: Get Current Working Directory
+        executedStatus: Command has been executed
+        workingDirectory: ''
+        command: pwd
+        commandLine: ''
+        additionalOptions: ''
+        successExitCode: 0
+        success: true
+        exitCode: 0
+        stdout: /home/kasm-user/repos/m30pm
+        stderr: ''
+      - description: Get Tool Version
+        executedStatus: Command has been executed
+        workingDirectory: /home/kasm-user/repos/m30pm
+        command: exec
+        commandLine: /var/lib/nvm/versions/node/v20.15.1/bin/npm --version
+        additionalOptions: ''
+        successExitCode: 0
+        success: true
+        exitCode: 0
+        stdout: |
+          10.7.0
+        stderr: ''
+  - description: Verify Tool Info for "gradle"
+    success: true
+    executedCommands:
+      - description: Find Tool
+        executedStatus: Command has been executed
+        workingDirectory: ''
+        command: which
+        commandLine: gradle
+        additionalOptions: ''
+        successExitCode: 0
+        success: true
+        exitCode: 0
+        stdout: /usr/local/bin/gradle
+        stderr: ''
+      - description: Get Current Working Directory
+        executedStatus: Command has been executed
+        workingDirectory: ''
+        command: pwd
+        commandLine: ''
+        additionalOptions: ''
+        successExitCode: 0
+        success: true
+        exitCode: 0
+        stdout: /home/kasm-user/repos/m30pm
+        stderr: ''
+      - description: Get Tool Version
+        executedStatus: Command has been executed
+        workingDirectory: /home/kasm-user/repos/m30pm
+        command: exec
+        commandLine: /usr/local/bin/gradle --version
+        additionalOptions: ''
+        successExitCode: 0
+        success: true
+        exitCode: 0
+        stdout: >+
+
+          ------------------------------------------------------------
+
+          Gradle 8.7
+
+          ------------------------------------------------------------
+
+
+          Build time:   2024-03-22 15:52:46 UTC
+
+          Revision:     650af14d7653aa949fce5e886e685efc9cf97c10
+
+
+          Kotlin:       1.9.22
+
+          Groovy:       3.0.17
+
+          Ant:          Apache Ant(TM) version 1.10.13 compiled on January 4
+          2023
+
+          JVM:          11.0.24 (Ubuntu 11.0.24+8-post-Ubuntu-1ubuntu320.04)
+
+          OS:           Linux 5.15.0-117-generic amd64
+
+        stderr: ''
+  - description: Verify Tool Info for "git"
+    success: true
+    executedCommands:
+      - description: Find Tool
+        executedStatus: Command has been executed
+        workingDirectory: ''
+        command: which
+        commandLine: git
+        additionalOptions: ''
+        successExitCode: 0
+        success: true
+        exitCode: 0
+        stdout: /usr/bin/git
+        stderr: ''
+      - description: Get Current Working Directory
+        executedStatus: Command has been executed
+        workingDirectory: ''
+        command: pwd
+        commandLine: ''
+        additionalOptions: ''
+        successExitCode: 0
+        success: true
+        exitCode: 0
+        stdout: /home/kasm-user/repos/m30pm
+        stderr: ''
+      - description: Get Tool Version
+        executedStatus: Command has been executed
+        workingDirectory: /home/kasm-user/repos/m30pm
+        command: exec
+        commandLine: /usr/bin/git --version
+        additionalOptions: ''
+        successExitCode: 0
+        success: true
+        exitCode: 0
+        stdout: |
+          git version 2.46.0
+        stderr: ''
+  - description: Initialze Project Directory for my-project
+    success: true
+    executedCommands:
+      - description: Create Project Directory /home/kasm-user/repos/m30pm/my-project
+        executedStatus: Command has been executed
+        workingDirectory: /home/kasm-user/repos/m30pm
+        command: mkdir
+        commandLine: my-project
+        additionalOptions: ''
+        successExitCode: 0
+        success: true
+        exitCode: 0
+        stdout: ''
+        stderr: ''
+      - description: Create package.json File
+        executedStatus: Command has been executed
+        workingDirectory: /home/kasm-user/repos/m30pm/my-project
+        command: toFile
+        commandLine: |-
+          {
+            "name": "my-project",
+            "version": "0.0.0",
+            "description": "My New m30ml Project",
+            "author": "Mach 30",
+            "license": "CC-BY-4.0",
+            "packageManager": "npm",
+            "workspaces": [
+              "./packages/*",
+              "./packages/@*/*"
+            ],
+            "m30pm": {
+              "versionControlTool": "git",
+              "buildTool": "gradle",
+              "loggingLevel": "error"
+            }
+          }
+        additionalOptions: package.json
+        successExitCode: 0
+        success: true
+        exitCode: 0
+        stdout: |-
+          {
+            "name": "my-project",
+            "version": "0.0.0",
+            "description": "My New m30ml Project",
+            "author": "Mach 30",
+            "license": "CC-BY-4.0",
+            "packageManager": "npm",
+            "workspaces": [
+              "./packages/*",
+              "./packages/@*/*"
+            ],
+            "m30pm": {
+              "versionControlTool": "git",
+              "buildTool": "gradle",
+              "loggingLevel": "error"
+            }
+          }
+        stderr: ''
+      - description: Create model/ Directory
+        executedStatus: Command has been executed
+        workingDirectory: /home/kasm-user/repos/m30pm/my-project
+        command: mkdir
+        commandLine: model
+        additionalOptions: ''
+        successExitCode: 0
+        success: true
+        exitCode: 0
+        stdout: ''
+        stderr: ''
+      - description: Create Dot File for model/ Directory
+        executedStatus: Command has been executed
+        workingDirectory: /home/kasm-user/repos/m30pm/my-project/model
+        command: toFile
+        commandLine: |
+          Directory to store top-level model source code
+        additionalOptions: .description
+        successExitCode: 0
+        success: true
+        exitCode: 0
+        stdout: |
+          Directory to store top-level model source code
+        stderr: ''
+      - description: Create views/queries/ Directories
+        executedStatus: Command has been executed
+        workingDirectory: /home/kasm-user/repos/m30pm/my-project
+        command: mkdir
+        commandLine: views/queries
+        additionalOptions: '-p'
+        successExitCode: 0
+        success: true
+        exitCode: 0
+        stdout: ''
+        stderr: ''
+      - description: Create Dot File for views/ Directory
+        executedStatus: Command has been executed
+        workingDirectory: /home/kasm-user/repos/m30pm/my-project/views
+        command: toFile
+        commandLine: |
+          Directory to store views source code
+        additionalOptions: .description
+        successExitCode: 0
+        success: true
+        exitCode: 0
+        stdout: |
+          Directory to store views source code
+        stderr: ''
+      - description: Create Dot File for views/queries/ Directory
+        executedStatus: Command has been executed
+        workingDirectory: /home/kasm-user/repos/m30pm/my-project/views/queries
+        command: toFile
+        commandLine: |
+          Directory to store queries source code
+        additionalOptions: .description
+        successExitCode: 0
+        success: true
+        exitCode: 0
+        stdout: |
+          Directory to store queries source code
+        stderr: ''
+      - description: Create default README Query File
+        executedStatus: Command has been executed
+        workingDirectory: /home/kasm-user/repos/m30pm/my-project/views/queries
+        command: toFile
+        commandLine: |-
+          {#- TBD - Will specify the query needed to render README.md.njk -#}
+          {}
+        additionalOptions: README.query.njk
+        successExitCode: 0
+        success: true
+        exitCode: 0
+        stdout: |-
+          {#- TBD - Will specify the query needed to render README.md.njk -#}
+          {}
+        stderr: ''
+      - description: Create default README View File
+        executedStatus: Command has been executed
+        workingDirectory: /home/kasm-user/repos/m30pm/my-project/views
+        command: toFile
+        commandLine: |-
+          # Project README File
+
+          TBD from template.
+        additionalOptions: README.md.njk
+        successExitCode: 0
+        success: true
+        exitCode: 0
+        stdout: |-
+          # Project README File
+
+          TBD from template.
+        stderr: ''
+      - description: Save Generated README.md File
+        executedStatus: Command has been executed
+        workingDirectory: /home/kasm-user/repos/m30pm/my-project
+        command: toFile
+        commandLine: |-
+          # Project README File
+
+          TBD from template.
+        additionalOptions: README.md
+        successExitCode: 0
+        success: true
+        exitCode: 0
+        stdout: |-
+          # Project README File
+
+          TBD from template.
+        stderr: ''
+  - description: Generate Package Manager Scaffolding for my-project
+    success: true
+    executedCommands:
+      - description: Create packages Directory
+        executedStatus: Command has been executed
+        workingDirectory: /home/kasm-user/repos/m30pm/my-project
+        command: mkdir
+        commandLine: packages
+        additionalOptions: ''
+        successExitCode: 0
+        success: true
+        exitCode: 0
+        stdout: ''
+        stderr: ''
+      - description: Create Dot File for packages/ Directory
+        executedStatus: Command has been executed
+        workingDirectory: /home/kasm-user/repos/m30pm/my-project/packages
+        command: toFile
+        commandLine: |
+          Directory to store sub-projects within
+        additionalOptions: .description
+        successExitCode: 0
+        success: true
+        exitCode: 0
+        stdout: |
+          Directory to store sub-projects within
+        stderr: ''
+      - description: Save RC File .npmrc
+        executedStatus: Command has been executed
+        workingDirectory: /home/kasm-user/repos/m30pm/my-project
+        command: toFile
+        commandLine: sign-git-tag=true
+        additionalOptions: .npmrc
+        successExitCode: 0
+        success: true
+        exitCode: 0
+        stdout: sign-git-tag=true
+        stderr: ''
+  - description: Initialize Build Tool for my-project
+    success: true
+    executedCommands:
+      - description: Run gradle init
+        executedStatus: Command has been executed
+        workingDirectory: /home/kasm-user/repos/m30pm/my-project
+        command: exec
+        commandLine: >-
+          /usr/local/bin/gradle init --type basic --dsl groovy --project-name
+          my-project --no-incubating
+        additionalOptions: ''
+        successExitCode: 0
+        success: true
+        exitCode: 0
+        stdout: >
+
+          > Task :init
+
+          To learn more about Gradle by exploring our Samples at
+          https://docs.gradle.org/8.7/samples
+
+
+          BUILD SUCCESSFUL in 708ms
+
+          1 actionable task: 1 executed
+        stderr: ''
+      - description: Create default build.gradle Query File
+        executedStatus: Command has been executed
+        workingDirectory: /home/kasm-user/repos/m30pm/my-project/views/queries
+        command: toFile
+        commandLine: |-
+          {#- TBD - Will specify the query needed to render build.gradle.njk -#}
+          {}
+        additionalOptions: build.query.njk
+        successExitCode: 0
+        success: true
+        exitCode: 0
+        stdout: |-
+          {#- TBD - Will specify the query needed to render build.gradle.njk -#}
+          {}
+        stderr: ''
+      - description: Create default build.gradle View File
+        executedStatus: Command has been executed
+        workingDirectory: /home/kasm-user/repos/m30pm/my-project/views
+        command: toFile
+        commandLine: |
+          /*
+           * This file was generated by the Gradle 'init' task.
+           *
+           * This is a general purpose Gradle build.
+           * To learn more about Gradle by exploring our Samples at https://docs.gradle.org/8.7/samples
+           *
+           * Generated by m30pm during project creation.
+           */
+        additionalOptions: build.gradle.njk
+        successExitCode: 0
+        success: true
+        exitCode: 0
+        stdout: |
+          /*
+           * This file was generated by the Gradle 'init' task.
+           *
+           * This is a general purpose Gradle build.
+           * To learn more about Gradle by exploring our Samples at https://docs.gradle.org/8.7/samples
+           *
+           * Generated by m30pm during project creation.
+           */
+        stderr: ''
+      - description: Save Generated build.gradle File
+        executedStatus: Command has been executed
+        workingDirectory: /home/kasm-user/repos/m30pm/my-project
+        command: toFile
+        commandLine: |
+          /*
+           * This file was generated by the Gradle 'init' task.
+           *
+           * This is a general purpose Gradle build.
+           * To learn more about Gradle by exploring our Samples at https://docs.gradle.org/8.7/samples
+           *
+           * Generated by m30pm during project creation.
+           */
+        additionalOptions: build.gradle
+        successExitCode: 0
+        success: true
+        exitCode: 0
+        stdout: |
+          /*
+           * This file was generated by the Gradle 'init' task.
+           *
+           * This is a general purpose Gradle build.
+           * To learn more about Gradle by exploring our Samples at https://docs.gradle.org/8.7/samples
+           *
+           * Generated by m30pm during project creation.
+           */
+        stderr: ''
+  - description: Initialize Version Control Tool for my-project
+    success: true
+    executedCommands:
+      - description: Initialize git Repository
+        executedStatus: Command has been executed
+        workingDirectory: /home/kasm-user/repos/m30pm/my-project
+        command: exec
+        commandLine: /usr/bin/git init --initial-branch=main
+        additionalOptions: ''
+        successExitCode: 0
+        success: true
+        exitCode: 0
+        stdout: >
+          Initialized empty Git repository in
+          /home/kasm-user/repos/m30pm/my-project/.git/
+        stderr: ''
+      - description: Create m30pm .gitignore File
+        executedStatus: Command has been executed
+        workingDirectory: /home/kasm-user/repos/m30pm/my-project
+        command: toFile
+        commandLine: |
+          # m30pm .gitignore
+          dist/
+          node_modules/
+          .logs/
+        additionalOptions: .gitignore
+        successExitCode: 0
+        success: true
+        exitCode: 0
+        stdout: |
+          # m30pm .gitignore
+          dist/
+          node_modules/
+          .logs/
+        stderr: ''
+      - description: Add New Project Content to Commit
+        executedStatus: Command has been executed
+        workingDirectory: /home/kasm-user/repos/m30pm/my-project
+        command: exec
+        commandLine: /usr/bin/git add .
+        additionalOptions: ''
+        successExitCode: 0
+        success: true
+        exitCode: 0
+        stdout: ''
+        stderr: ''
+...
