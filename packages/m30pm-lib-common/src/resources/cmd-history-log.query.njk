@@ -26,12 +26,12 @@ functionInfo:
 commandHistoryList:
   {%- for cmdHistory in data.commandHistoryList %} 
   {%- if parameters.loggingLevel == "info" or (parameters.loggingLevel == "error" and not cmdHistory.success) %}
-  - description: {{ cmdHistory.description }}
+  - description: {{ cmdHistory.description | safe }}
     success: {{ cmdHistory.success }}
     executedCommands:
     {%- for executedCmd in cmdHistory.executedCommands %}
     {%- if parameters.loggingLevel == "info" and executedCmd.success %}
-    - description: {{ executedCmd.description }} 
+    - description: {{ executedCmd.description | safe }}
     {%- elseif not executedCmd.success %}
     - {{ executedCmd | dump | safe }}
     {%- endif %}
