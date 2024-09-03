@@ -91,6 +91,7 @@ export class ProjectConfiguration {
         jsObject["packageManager"] = this._packageManager
         jsObject["workspaces"] = [] // TODO: make this conditional for root projects vs subprojects
         jsObject["workspaces"][0] = `./${DefaultWorkspacePath}/*` // TODO: make this conditional for root projects vs subprojects
+        jsObject["workspaces"][1] = `./${DefaultWorkspacePath}/@*/*` // TODO: make this conditional for root projects vs subprojects
         jsObject["m30pm"] = {}
         jsObject["m30pm"]["versionControlTool"] = this._versionControlTool
         jsObject["m30pm"]["buildTool"] = this._buildTool

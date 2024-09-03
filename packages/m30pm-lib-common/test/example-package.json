@@ -6,7 +6,8 @@
   "license": "CC-BY-4.0",
   "packageManager": "npm",
   "workspaces": [
-    "./packages/*"
+    "./packages/*",
+    "./packages/@*/*"
   ],
   "m30pm": {
     "versionControlTool": "git",
