@@ -394,7 +394,7 @@ function formatInitializationMessage(initializationCommands: CommandHistory, log
         message += `Complete\n`
     } else {
         message += `# Cannot ${initializationCommands.description}\n`
-        message += `See logs for details\n-\`${logFileName}.md\`\n-\`${logFileName}.yaml\`\n`
+        message += `See logs for details\n- \`${logFileName}.md\`\n- \`${logFileName}.yaml\`\n`
     }
 
     return message
