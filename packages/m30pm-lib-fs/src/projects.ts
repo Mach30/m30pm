@@ -18,6 +18,7 @@ export function initializeProjectDirectory(project: ProjectConfiguration, workin
     
     let lsCmd = new ShellCommand(`Determine if Project Directory ${projectDirectory} Exists`, workingDirectory, CommandToRun.LS, projectName, "-d")
     lsCmd.execute();
+    cmdHistory.addExecutedCommand(lsCmd)
     let projectDirectoryFound = lsCmd.success;
     let projectDirectoryCanBeUsed = true;
 
