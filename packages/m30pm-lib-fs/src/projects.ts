@@ -14,7 +14,7 @@ const gitIgnoreContents = "# m30pm .gitignore\ndist/\nnode_modules/\n.logs/\n"
 // if directory exists and is not empty, return with error stating non-empty directory)
 export function initializeProjectDirectory(project: ProjectConfiguration, workingDirectory : string, projectDirectory: string) : CommandHistory {
     const projectName = project.name;
-    let cmdHistory = new CommandHistory(`Initialze Project Directory for ${projectName}`)
+    let cmdHistory = new CommandHistory(`Initialize Project Directory for ${projectName}`)
     
     let lsCmd = new ShellCommand(`Determine if Project Directory ${projectDirectory} Exists`, workingDirectory, CommandToRun.LS, projectName, "-d")
     lsCmd.execute();
