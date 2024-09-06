@@ -153,7 +153,7 @@ commandHistoryList:
         stdout: |
           git version 2.46.0
         stderr: ''
-  - description: Initialze Project Directory for my-project
+  - description: Initialize Project Directory for my-project
     success: true
     executedCommands:
       - description: Create Project Directory /home/kasm-user/repos/m30pm/my-project
