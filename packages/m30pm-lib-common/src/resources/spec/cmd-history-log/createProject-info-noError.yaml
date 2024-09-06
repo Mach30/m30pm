@@ -21,7 +21,7 @@ commandHistoryList:
       - description: Find Tool
       - description: Get Current Working Directory
       - description: Get Tool Version
-  - description: Initialze Project Directory for my-project
+  - description: Initialize Project Directory for my-project
     success: true
     executedCommands:
       - description: Create Project Directory /home/kasm-user/repos/m30pm/my-project
