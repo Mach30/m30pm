@@ -3,6 +3,7 @@
 ## Arguments
 
 ### project:
+
 ```json
 {
   "name": "my-project",
@@ -28,6 +29,7 @@
 ### Initialize Build Tool for my-project | *Failure*
 
 #### Run gradle init | *Error*
+
 |Command Property | Value |
 |-----------------|-------|
 | executedStatus  | Command has been executed |
@@ -39,11 +41,13 @@
 | exitCode | 1 |
 
 ##### stdout
+
 ```
 null
 ```
 
 ##### stderr
+
 ```
 
           FAILURE: Build failed with an exception.
