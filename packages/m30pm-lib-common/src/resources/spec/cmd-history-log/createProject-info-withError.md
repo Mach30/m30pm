@@ -87,18 +87,18 @@ null
 
 ```
 
-          FAILURE: Build failed with an exception.
+FAILURE: Build failed with an exception.
 
-          * What went wrong:
-          Problem configuring task :init from command line.
-          > Unknown command-line option '--typ'.
+* What went wrong:
+Problem configuring task :init from command line.
+> Unknown command-line option '--typ'.
 
-          * Try:
-          > Run gradle help --task :init to get task usage details.
-          > Run with --stacktrace option to get the stack trace.
-          > Run with --info or --debug option to get more log output.
-          > Run with --scan to get full insights.
-          > Get more help at https://help.gradle.org.
+* Try:
+> Run gradle help --task :init to get task usage details.
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
 
-          BUILD FAILED in 1s
+BUILD FAILED in 1s
 ```
