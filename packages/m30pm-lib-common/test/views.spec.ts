@@ -1,5 +1,9 @@
 import { expect } from "@oclif/test";
-import { ViewRenderer } from "../src/views";
+import { ViewRenderer, BuiltinViews } from "../src/views";
+import fs from 'fs'
+import path from 'path'
+import * as yaml from 'js-yaml';
+import { QueryRunner } from "../dist";
 import exp from "constants";
 
 const template = 'Hello {{ username }}!';
@@ -59,5 +63,17 @@ describe("ViewRenderer Tests", () => {
         let myObject = new MyClassWithFunction();
         const result = ViewRenderer.render(template, myObject.toJsObject());
         expect(result).to.equal("Hello function!");
+    })
+})
+
+describe("CommandHistoryLog View Tests", () => {
+    it('should return createProject-debug-noError.md for createProject-debug-noError.yaml', () => {
+        let specObjectYaml = fs.readFileSync(path.resolve(__dirname, "../src/resources/spec/cmd-history-log/createProject-debug-noError.yaml"), "utf8").toString();
+        let specObject = yaml.load(specObjectYaml) as Object;
+        let viewContext : any = {};
+        viewContext["data"] = specObject;
+        let view = ViewRenderer.render(BuiltinViews.getCommandHistoryLogMdView(), viewContext);
+        let expectedView = fs.readFileSync(path.resolve(__dirname, "../src/resources/spec/cmd-history-log/createProject-debug-noError.md"), "utf8").toString();
+        expect(view).to.equal(expectedView);
     })
 })

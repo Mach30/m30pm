@@ -12,6 +12,10 @@ export enum FormattedMessageType {
 export type NotifyUserFunction = (mdFormattedMessage: string, messageType: FormattedMessageType) => void;
 
 export class BuiltinViews {
+    public static getCommandHistoryLogMdView(): string {
+        return BuiltinViews.readResourceSync("cmd-history-log.md.njk");
+    }
+
     public static getCommandHistoryLogQuery(): string {
         return BuiltinViews.readResourceSync("cmd-history-log.query.njk");
     }
