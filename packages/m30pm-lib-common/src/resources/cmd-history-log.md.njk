@@ -31,23 +31,23 @@
 |Command Property | Value |
 |-----------------|-------|
 | executedStatus  | {{ executedCommand.executedStatus }} |
-| workingDirectory | `{{ executedCommand.workingDirectory }}` |
+| workingDirectory | {{ "`" + executedCommand.workingDirectory + "`" if executedCommand.workingDirectory else "" }} |
 | command | {{ executedCommand.command }} |
-| commandLine | `{{ executedCommand.commandLine }}` |
-| additionalOptions | `{{ executedCommand.additionalOptions }}` |
+| commandLine | {{ "`" + executedCommand.commandLine + "`" if executedCommand.commandLine else "" }} |
+| additionalOptions | {{ "`" + executedCommand.additionalOptions + "`" if executedCommand.additionalOptions else "" }} |
 | successExitCode | {{ executedCommand.successExitCode }} |
 | exitCode | {{ executedCommand.exitCode }} |
 
 ##### stdout
 
 ```
-{{ executedCommand.stdout }}
+{{ executedCommand.stdout if executedCommand.stdout else "null" | safe }}
 ```
 
 ##### stderr
 
 ```
-{{ executedCommand.stderr }}
+{{ executedCommand.stderr if executedCommand.stderr else "null" | safe }}
 ```
 
         {%- endfor %}
