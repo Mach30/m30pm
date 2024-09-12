@@ -113,7 +113,7 @@ commandHistoryList:
 
           JVM:          11.0.24 (Ubuntu 11.0.24+8-post-Ubuntu-1ubuntu320.04)
 
-          OS:           Linux 5.15.153.1-microsoft-standard-WSL2 amd64
+          OS:           Linux 5.15.0-117-generic amd64
 
         stderr: ''
   - description: Verify Tool Info for "git"
