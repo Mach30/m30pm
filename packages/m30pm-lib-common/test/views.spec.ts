@@ -77,6 +77,16 @@ describe("CommandHistoryLog View Tests", () => {
         expect(view).to.equal(expectedView);
     })
 
+    it('should return createProject-error-withError.md for createProject-error-withError.yaml', () => {
+        let specObjectYaml = fs.readFileSync(path.resolve(__dirname, "../src/resources/spec/cmd-history-log/createProject-error-withError.yaml"), "utf8").toString();
+        let specObject = yaml.load(specObjectYaml) as Object;
+        let viewContext : any = {};
+        viewContext["data"] = specObject;
+        let view = ViewRenderer.render(BuiltinViews.getCommandHistoryLogMdView(), viewContext);
+        let expectedView = fs.readFileSync(path.resolve(__dirname, "../src/resources/spec/cmd-history-log/createProject-error-withError.md"), "utf8").toString();
+        expect(view).to.equal(expectedView);
+    })
+
     it('should return createProject-info-noError.md for createProject-info-noError.yaml', () => {
         let specObjectYaml = fs.readFileSync(path.resolve(__dirname, "../src/resources/spec/cmd-history-log/createProject-info-noError.yaml"), "utf8").toString();
         let specObject = yaml.load(specObjectYaml) as Object;
@@ -87,13 +97,13 @@ describe("CommandHistoryLog View Tests", () => {
         expect(view).to.equal(expectedView);
     })
 
-    it('should return createProject-error-withError.md for createProject-error-withError.yaml', () => {
-        let specObjectYaml = fs.readFileSync(path.resolve(__dirname, "../src/resources/spec/cmd-history-log/createProject-error-withError.yaml"), "utf8").toString();
+    it('should return createProject-info-withError.md for createProject-info-withError.yaml', () => {
+        let specObjectYaml = fs.readFileSync(path.resolve(__dirname, "../src/resources/spec/cmd-history-log/createProject-info-withError.yaml"), "utf8").toString();
         let specObject = yaml.load(specObjectYaml) as Object;
         let viewContext : any = {};
         viewContext["data"] = specObject;
         let view = ViewRenderer.render(BuiltinViews.getCommandHistoryLogMdView(), viewContext);
-        let expectedView = fs.readFileSync(path.resolve(__dirname, "../src/resources/spec/cmd-history-log/createProject-error-withError.md"), "utf8").toString();
+        let expectedView = fs.readFileSync(path.resolve(__dirname, "../src/resources/spec/cmd-history-log/createProject-info-withError.md"), "utf8").toString();
         expect(view).to.equal(expectedView);
     })
 })
