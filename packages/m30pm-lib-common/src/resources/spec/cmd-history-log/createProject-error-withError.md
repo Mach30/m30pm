@@ -49,7 +49,6 @@ null
 ##### stderr
 
 ```
-
 FAILURE: Build failed with an exception.
 
 * What went wrong:
