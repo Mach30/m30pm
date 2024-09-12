@@ -1,0 +1,56 @@
+---
+encounteredError: false
+functionInfo:
+  name: createProject
+commandHistoryList:
+  - description: Verify Tool Info for "npm"
+    success: true
+    executedCommands:
+      - description: Find Tool
+      - description: Get Current Working Directory
+      - description: Get Tool Version
+  - description: Verify Tool Info for "gradle"
+    success: true
+    executedCommands:
+      - description: Find Tool
+      - description: Get Current Working Directory
+      - description: Get Tool Version
+  - description: Verify Tool Info for "git"
+    success: true
+    executedCommands:
+      - description: Find Tool
+      - description: Get Current Working Directory
+      - description: Get Tool Version
+  - description: Initialize Project Directory for my-project
+    success: true
+    executedCommands:
+      - description: Create Project Directory /home/kasm-user/repos/m30pm/my-project
+      - description: Create package.json File
+      - description: Create model/ Directory
+      - description: Create Dot File for model/ Directory
+      - description: Create views/queries/ Directories
+      - description: Create Dot File for views/ Directory
+      - description: Create Dot File for views/queries/ Directory
+      - description: Create default README Query File
+      - description: Create default README View File
+      - description: Save Generated README.md File
+  - description: Generate Package Manager Scaffolding for my-project
+    success: true
+    executedCommands:
+      - description: Create packages Directory
+      - description: Create Dot File for packages/ Directory
+      - description: Save RC File .npmrc
+  - description: Initialize Build Tool for my-project
+    success: true
+    executedCommands:
+      - description: Run gradle init
+      - description: Create default build.gradle Query File
+      - description: Create default build.gradle View File
+      - description: Save Generated build.gradle File
+  - description: Initialize Version Control Tool for my-project
+    success: true
+    executedCommands:
+      - description: Initialize git Repository
+      - description: Create m30pm .gitignore File
+      - description: Add New Project Content to Commit
+...

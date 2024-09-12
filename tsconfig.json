@@ -1,11 +1,17 @@
 {
   "compilerOptions": {
     "declaration": true,
-    "module": "commonjs",
+    "skipLibCheck": true,
+    "module": "Node16",
+    "moduleResolution": "node16",
     "outDir": "dist",
     "rootDir": "src",
     "strict": true,
-    "target": "es2022"
+    "target": "es2022",
+    "composite": true
+  },
+  "ts-node": {
+    "esm": true
   },
   "include": ["src/**/*"]
 }

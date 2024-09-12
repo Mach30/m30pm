@@ -1,0 +1,51 @@
+---
+encounteredError: true
+functionInfo:
+  name: Foo
+  arguments:
+    - name: a
+      value: 1
+    - name: b
+      value: bar
+commandHistoryList:
+  - description: Successful Command
+    success: true
+    executedCommands:
+      - description: pwd
+        executedStatus: Command has been executed
+        workingDirectory: ''
+        command: pwd
+        commandLine: ''
+        additionalOptions: ''
+        successExitCode: 0
+        success: true
+        exitCode: 0
+        stdout: /tmp
+        stderr: ''
+  - description: Successful Command and Failed Command
+    success: false
+    executedCommands:
+      - description: pwd
+        executedStatus: Command has been executed
+        workingDirectory: ''
+        command: pwd
+        commandLine: ''
+        additionalOptions: ''
+        successExitCode: 0
+        success: true
+        exitCode: 0
+        stdout: /tmp
+        stderr: ''
+      - description: cd /root
+        executedStatus: Command has been executed
+        workingDirectory: ''
+        command: exec
+        commandLine: cd /root
+        additionalOptions: ''
+        successExitCode: 0
+        success: false
+        exitCode: 2
+        stdout: ''
+        stderr: |
+          /bin/sh: 1: cd: can't cd to /root
+...

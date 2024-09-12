@@ -1,0 +1,72 @@
+{#- name: Command History Log Markdown View -#}
+{#- description: Render command history log query results in human-readable Markdown view -#}
+{#- dataType: CommandHistoryLogQueryResults -#}
+{#- returnFileType: Markdown -#}
+# {{ data.functionInfo.name }} Log
+
+{%- if (data.functionInfo.arguments) %}
+
+## Arguments
+    {%- for argument in data.functionInfo.arguments %}
+
+### {{ argument.name }}:
+
+```json
+{{ argument.value | dump(2) | safe }}
+```
+    {%- endfor %}
+{%- endif %}
+
+## Processed Commands
+{%- for cmdHistory in data.commandHistoryList %}
+
+### {{ cmdHistory.description | safe }} | *{{ "Success" if cmdHistory.success else "Failure" }}*
+
+    {%- if (cmdHistory.executedCommands[0].command) %}
+
+        {%- for executedCommand in cmdHistory.executedCommands %}
+
+#### {{ executedCommand.description | safe }}{{ "" if (executedCommand.success) else " | *Error*" }}
+
+|Command Property | Value |
+|-----------------|-------|
+| executedStatus  | {{ executedCommand.executedStatus }} |
+| workingDirectory | {{ "`" + executedCommand.workingDirectory + "`" if executedCommand.workingDirectory else "" }} |
+| command | {{ executedCommand.command }} |
+{%- if executedCommand.command != "toFile" %}
+| commandLine | {{ "`" + executedCommand.commandLine + "`" if executedCommand.commandLine else "" }} |
+{%- else %}
+| commandLine | *File Contents* |
+{%- endif %}
+| additionalOptions | {{ "`" + executedCommand.additionalOptions + "`" if executedCommand.additionalOptions else "" }} |
+| successExitCode | {{ executedCommand.successExitCode }} |
+| exitCode | {{ executedCommand.exitCode }} |
+
+{%- if executedCommand.command == "toFile" %}
+
+##### File Contents
+
+```
+{{ executedCommand.commandLine | trim | safe }}
+```
+{%- endif %}
+
+##### stdout
+
+```
+{{ executedCommand.stdout | trim | safe if executedCommand.stdout else "null" }}
+```
+
+##### stderr
+
+```
+{{ executedCommand.stderr | trim | safe if executedCommand.stderr else "null" }}
+```
+
+        {%- endfor %}
+    {%- else %}
+{% for executedCommand in cmdHistory.executedCommands %}
+- {{ executedCommand.description | safe }}
+{%- endfor %}
+    {%- endif %}
+{%- endfor %}

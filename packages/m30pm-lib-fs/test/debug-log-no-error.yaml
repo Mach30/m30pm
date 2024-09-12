@@ -1,0 +1,50 @@
+---
+encounteredError: false
+functionInfo:
+  name: Foo
+  arguments:
+    - name: a
+      value: 1
+    - name: b
+      value: bar
+commandHistoryList:
+  - description: Successful Command
+    success: true
+    executedCommands:
+      - description: pwd
+        executedStatus: Command has been executed
+        workingDirectory: ''
+        command: pwd
+        commandLine: ''
+        additionalOptions: ''
+        successExitCode: 0
+        success: true
+        exitCode: 0
+        stdout: /tmp
+        stderr: ''
+  - description: Two Successful Commands
+    success: true
+    executedCommands:
+      - description: pwd
+        executedStatus: Command has been executed
+        workingDirectory: ''
+        command: pwd
+        commandLine: ''
+        additionalOptions: ''
+        successExitCode: 0
+        success: true
+        exitCode: 0
+        stdout: /tmp
+        stderr: ''
+      - description: pwd
+        executedStatus: Command has been executed
+        workingDirectory: ''
+        command: pwd
+        commandLine: ''
+        additionalOptions: ''
+        successExitCode: 0
+        success: true
+        exitCode: 0
+        stdout: /tmp
+        stderr: ''
+...

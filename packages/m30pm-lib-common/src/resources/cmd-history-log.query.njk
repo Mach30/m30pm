@@ -1,0 +1,42 @@
+{#- name: Command History Log Query -#}
+{#- description: Filter command history log data by logging level -#}
+{#- parameters: -#}
+{#- - name: loggingLevel -#}
+{#-   type: string -#}
+{#-   description: one of the following values [none, error, info, debug] -#}
+{#- dataType: CommandHistoryLog -#}
+{#- returnDataType: <linkml schema definition of dataType> -#}
+{%- set returnEmptyResults = parameters.loggingLevel == "none" or (parameters.loggingLevel == "error" and not data.encounteredError) -%}
+---
+{%- if parameters.loggingLevel == "debug" %}
+{{ data | dump | safe }}
+{%- elseif returnEmptyResults %}
+{}
+{%- else %}
+encounteredError: {{ data.encounteredError }}
+functionInfo:
+  name: {{ data.functionInfo.name }}
+  {%- if data.encounteredError %}
+  arguments:
+    {%- for argument in data.functionInfo.arguments %}
+    - name: {{ argument.name }}
+      value: {{ argument.value | dump | safe }}
+    {%- endfor %}
+  {%- endif %}
+commandHistoryList:
+  {%- for cmdHistory in data.commandHistoryList %} 
+  {%- if parameters.loggingLevel == "info" or (parameters.loggingLevel == "error" and not cmdHistory.success) %}
+  - description: {{ cmdHistory.description | safe }}
+    success: {{ cmdHistory.success }}
+    executedCommands:
+    {%- for executedCmd in cmdHistory.executedCommands %}
+    {%- if parameters.loggingLevel == "info" and executedCmd.success %}
+    - description: {{ executedCmd.description | safe }}
+    {%- elseif not executedCmd.success %}
+    - {{ executedCmd | dump | safe }}
+    {%- endif %}
+    {%- endfor %}
+  {%- endif %}
+  {%- endfor %}
+{%- endif %}
+...

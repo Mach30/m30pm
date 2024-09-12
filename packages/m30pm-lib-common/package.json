@@ -1,0 +1,35 @@
+{
+  "name": "m30pm-lib-common",
+  "version": "0.0.2",
+  "description": "Mach 30 PM common functions library",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "/dist"
+  ],
+  "scripts": {
+    "build": "shx rm -rf dist/ && tsc -b && shx cp -r src/resources/ dist/",
+    "test": "nyc mocha --forbid-only"
+  },
+  "author": "Mach 30",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "@oclif/test": "^3",
+    "@types/chai": "^4",
+    "@types/mocha": "^10",
+    "@types/node": "^18",
+    "chai": "^4",
+    "mocha": "^10",
+    "nyc": "^15.1.0",
+    "shx": "^0.3.4",
+    "ts-node": "^10.9.2",
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "@types/nunjucks": "^3.2.6",
+    "@types/semver": "^7.5.8",
+    "nunjucks": "^3.2.4",
+    "semver": "^7.6.0",
+    "uuid": "^10.0.0"
+  }
+}

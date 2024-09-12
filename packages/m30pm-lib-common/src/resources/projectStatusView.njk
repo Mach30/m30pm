@@ -1,0 +1,12 @@
+# {{ "Valid Project Configuration" if isValid else "INVALID PROJECT CONFIGURATION" }}
+
+| Project Property | Value |
+|---------|-------|
+| Name | {% if projectConfiguration.name !== "" %} `{{ projectConfiguration.name }}` {% else %} **`{{ providedValues.name }}` [INVALID FORMAT]** {% endif %} |
+| Version String | {% if projectConfiguration.version !== "" %} `{{ projectConfiguration.version }}` {% else %} **`{{ providedValues.version }}` [INVALID FORMAT]** {% endif %} |
+| Description | `{{ projectConfiguration.description }}` |
+| Author | `{{ projectConfiguration.author }}` |
+| License | `{{ projectConfiguration.license }}` |
+| Package Manager | `{{ projectConfiguration.packageManager }}` |
+| Version Control Tool | `{{ projectConfiguration.m30pm.versionControlTool }}` |
+| Build Tool | `{{ projectConfiguration.m30pm.buildTool }}` |

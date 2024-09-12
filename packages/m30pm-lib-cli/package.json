@@ -1,0 +1,37 @@
+{
+  "name": "m30pm-lib-cli",
+  "version": "0.0.0",
+  "description": "Common functions for m30pm CLI application",
+  "type": "module",
+  "main": "",
+  "exports": "./dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "/dist"
+  ],
+  "scripts": {
+    "build": "shx rm -rf dist/ && tsc -b",
+    "test": "nyc mocha --forbid-only"
+  },
+  "author": "Mach 30",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "@oclif/test": "^3",
+    "@types/ansicolors": "^0.0.37",
+    "@types/chai": "^4",
+    "@types/mocha": "^10",
+    "@types/node": "^18",
+    "chai": "^4",
+    "mocha": "^10",
+    "nyc": "^15.1.0",
+    "shx": "^0.3.4",
+    "ts-node": "^10.9.2",
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "@types/marked-terminal": "^6.1.1",
+    "ansicolors": "^0.3.2",
+    "chalk": "^5.3.0",
+    "marked-terminal": "^6.2.0"
+  }
+}
