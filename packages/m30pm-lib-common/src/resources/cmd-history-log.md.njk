@@ -65,6 +65,8 @@
 
         {%- endfor %}
     {%- else %}
-
+{% for executedCommand in cmdHistory.executedCommands %}
+- {{ executedCommand.description | safe }}
+{%- endfor %}
     {%- endif %}
 {%- endfor %}

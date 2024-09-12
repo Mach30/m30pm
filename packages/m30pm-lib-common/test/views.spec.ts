@@ -76,4 +76,13 @@ describe("CommandHistoryLog View Tests", () => {
         let expectedView = fs.readFileSync(path.resolve(__dirname, "../src/resources/spec/cmd-history-log/createProject-debug-noError.md"), "utf8").toString();
         expect(view).to.equal(expectedView);
     })
+    it('should return createProject-info-noError.md for createProject-info-noError.yaml', () => {
+        let specObjectYaml = fs.readFileSync(path.resolve(__dirname, "../src/resources/spec/cmd-history-log/createProject-info-noError.yaml"), "utf8").toString();
+        let specObject = yaml.load(specObjectYaml) as Object;
+        let viewContext : any = {};
+        viewContext["data"] = specObject;
+        let view = ViewRenderer.render(BuiltinViews.getCommandHistoryLogMdView(), viewContext);
+        let expectedView = fs.readFileSync(path.resolve(__dirname, "../src/resources/spec/cmd-history-log/createProject-info-noError.md"), "utf8").toString();
+        expect(view).to.equal(expectedView);
+   })
 })
