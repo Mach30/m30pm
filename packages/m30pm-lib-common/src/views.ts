@@ -55,8 +55,12 @@ export class BuiltinViews {
 
 export class ViewRenderer {
 
-    public static render(template: string, context: object) : string {
-        return nunjucks.renderString(template, context)
+    public static render(template: string, context: object, debug: Boolean = false) : string {
+        let renderedView = nunjucks.renderString(template, context)
+        if (debug) {
+            console.log(renderedView)
+        }
+        return renderedView
     }
 }
 
