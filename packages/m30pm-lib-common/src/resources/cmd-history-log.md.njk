@@ -47,20 +47,20 @@
 ##### File Contents
 
 ```
-{{ executedCommand.commandLine | safe }}
+{{ executedCommand.commandLine | trim | safe }}
 ```
 {%- endif %}
 
 ##### stdout
 
 ```
-{{ executedCommand.stdout | safe if executedCommand.stdout else "null" }}
+{{ executedCommand.stdout | trim | safe if executedCommand.stdout else "null" }}
 ```
 
 ##### stderr
 
 ```
-{{ executedCommand.stderr | safe if executedCommand.stderr else "null" }}
+{{ executedCommand.stderr | trim | safe if executedCommand.stderr else "null" }}
 ```
 
         {%- endfor %}
