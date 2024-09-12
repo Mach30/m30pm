@@ -270,7 +270,7 @@ describe("Test CommandHistoryLogger query", () => {
         
         let cmdHistory1 = new CommandHistory("Successful Command")
         getShell().cd("/tmp")
-        let pwdCommand = new ShellCommand("pwd", "", CommandToRun.PWD)
+        let pwdCommand = new ShellCommand('Verify Tool Info for "npm"', "", CommandToRun.PWD)
         pwdCommand.execute()
         cmdHistory1.addExecutedCommand(pwdCommand)
         logger.addCommandHistory(cmdHistory1)
@@ -301,7 +301,7 @@ describe("Test CommandHistoryLogger query", () => {
         expectedQueryResults += "  - description: Successful Command\n"
         expectedQueryResults += "    success: true\n"
         expectedQueryResults += "    executedCommands:\n"
-        expectedQueryResults += "      - description: pwd\n"
+        expectedQueryResults += "      - description: Verify Tool Info for \"npm\"\n"
         expectedQueryResults += "  - description: Successful Command and Failed Command\n"
         expectedQueryResults += "    success: false\n"
         expectedQueryResults += "    executedCommands:\n"
