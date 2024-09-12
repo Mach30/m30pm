@@ -33,10 +33,23 @@
 | executedStatus  | {{ executedCommand.executedStatus }} |
 | workingDirectory | {{ "`" + executedCommand.workingDirectory + "`" if executedCommand.workingDirectory else "" }} |
 | command | {{ executedCommand.command }} |
+{%- if executedCommand.command != "toFile" %}
 | commandLine | {{ "`" + executedCommand.commandLine + "`" if executedCommand.commandLine else "" }} |
+{%- else %}
+| commandLine | *File Contents* |
+{%- endif %}
 | additionalOptions | {{ "`" + executedCommand.additionalOptions + "`" if executedCommand.additionalOptions else "" }} |
 | successExitCode | {{ executedCommand.successExitCode }} |
 | exitCode | {{ executedCommand.exitCode }} |
+
+{%- if executedCommand.command == "toFile" %}
+
+##### File Contents
+
+```
+{{ executedCommand.commandLine | safe }}
+```
+{%- endif %}
 
 ##### stdout
 
