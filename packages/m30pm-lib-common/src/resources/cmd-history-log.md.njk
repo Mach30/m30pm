@@ -41,13 +41,13 @@
 ##### stdout
 
 ```
-{{ executedCommand.stdout if executedCommand.stdout else "null" | safe }}
+{{ executedCommand.stdout | safe if executedCommand.stdout else "null" }}
 ```
 
 ##### stderr
 
 ```
-{{ executedCommand.stderr if executedCommand.stderr else "null" | safe }}
+{{ executedCommand.stderr | safe if executedCommand.stderr else "null" }}
 ```
 
         {%- endfor %}
