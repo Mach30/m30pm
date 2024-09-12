@@ -1,7 +1,7 @@
 import { LogLevels } from "m30pm-lib-common";
 import { CommandHistory } from "./cmd-history";
 import { getShell } from "./shell-cmd";
-import { QueryRunner, BuiltinViews, Helpers } from "m30pm-lib-common";
+import { ViewRenderer, QueryRunner, BuiltinViews, Helpers } from "m30pm-lib-common";
 import * as yaml from 'js-yaml';
 const moment = require('moment');
 
@@ -113,5 +113,11 @@ export class CommandHistoryLogger {
         getShell().mkdir("-p", this.logFileDirectory)
         let yamlLogFile = getShell().ShellString(queryResults)
         yamlLogFile.to(`${this.logFileDirectory}/${this.logFileName}.yaml`)
+
+        let logViewContext : any = {};
+        logViewContext["data"] = queryResultsObject;
+        let logViewString = ViewRenderer.render(BuiltinViews.getCommandHistoryLogMdView(), logViewContext);
+        let logViewFile = getShell().ShellString(logViewString)
+        logViewFile.to(`${this.logFileDirectory}/${this.logFileName}.md`)
     }
 }
