@@ -10,7 +10,8 @@
     "/dist"
   ],
   "scripts": {
-    "build": "shx rm -rf dist/ && tsc -b",
+    "clean": "shx rm -rf dist",
+    "build": "npm run clean && tsc -b --force",
     "test": "nyc mocha --forbid-only"
   },
   "author": "Mach 30",
