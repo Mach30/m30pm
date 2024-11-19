@@ -41,7 +41,8 @@
   "files": [
     "/bin",
     "/dist",
-    "/oclif.manifest.json"
+    "/oclif.manifest.json",
+    "/packages"
   ],
   "homepage": "https://github.com/Mach30/m30pm",
   "license": "Apache-2.0",
@@ -71,7 +72,7 @@
     "lint": "eslint . --ext .ts",
     "postpack": "shx rm -f oclif.manifest.json",
     "posttest": "npm run lint",
-    "prepack": "npm run build && oclif manifest && oclif readme",
+    "prepack": "npm run buildAll && oclif manifest && oclif readme",
     "test": "nyc mocha --require ts-node/register --forbid-only \"test/**/*.test.ts\"",
     "version": "oclif readme && git add README.md"
   },
