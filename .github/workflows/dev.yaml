@@ -1,6 +1,6 @@
-# This workflow publishes m30pm build artifacts as tarballs
+# This workflow builds m30pm tarballs
 
-name: Publish build artifacts as tarballs
+name: Development Build (on branch or pull request)
 
 # Controls when the workflow will run
 on:
