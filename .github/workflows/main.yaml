@@ -1,0 +1,69 @@
+# This workflow builds or publishes m30pm to npmjs.org as an npm package
+
+name: Build / Publish (on main branch)
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the develop branch
+  push:
+    paths-ignore:
+      - '.gitignore'
+      - 'LICENSE'
+    branches: [ main ]
+    tags: [ "*" ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    if: "!contains(github.event.head_commit.message, 'skip ci')"
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - name: Checkout github repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install nodejs & npm
+        run: sudo apt install nodejs && sudo apt install npm
+
+      - name: Install oclif (globally)
+        run: sudo npm install -g oclif
+
+      - name: Build or Publish # as per https://stackoverflow.com/questions/59882715/use-environment-variable-in-github-action-if
+        env:
+          auth_token: ${{ secrets.NPM_AUTH_TOKEN }}
+        run: | # login with authToken as per https://stackoverflow.com/a/58271202
+          GIT_REF_COMMIT=$(git rev-list -n 1 $GITHUB_REF)
+          GIT_MAIN_COMMIT=$(git rev-list -n 1 refs/remotes/origin/main)
+          BASENAME=$(basename "$GITHUB_REF") # The only line you need
+          echo "This basename is: ($BASENAME)"
+          SEMVER_REGEX="v[0-9]+.[0-9]+.[0-9]+*"
+          echo "Building m30pm..."
+          npm i
+          npm run buildAll
+          if [[ $BASENAME =~ $SEMVER_REGEX ]]; then
+            if [[ $GIT_REF_COMMIT == $GIT_MAIN_COMMIT ]]; then
+              echo "Publishing $BASENAME to npmjs.org"
+              npm set "//registry.npmjs.org/:_authToken=$auth_token"
+              npm publish --access public
+            fi
+          fi
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: m30pm
+          path: |
+            ./bin
+            ./dist
+            ./oclif.manifest.json
+            ./packages
+            ./package.json
