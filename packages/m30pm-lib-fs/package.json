@@ -1,6 +1,6 @@
 {
   "name": "m30pm-lib-fs",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Mach 30 PM filesystem implementation library",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -17,7 +17,7 @@
   "dependencies": {
     "@types/shelljs": "^0.8.15",
     "js-yaml": "^4.1.0",
-    "m30pm-lib-common": "^0.0.2",
+    "m30pm-lib-common": "^0.1.0",
     "moment": "^2.30.1",
     "semver": "^7.6.0",
     "shelljs": "^0.8.5"

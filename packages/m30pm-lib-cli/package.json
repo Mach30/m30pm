@@ -1,6 +1,6 @@
 {
   "name": "m30pm-lib-cli",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Common functions for m30pm CLI application",
   "type": "module",
   "main": "",
