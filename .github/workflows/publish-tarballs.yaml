@@ -9,7 +9,13 @@ on:
     paths-ignore:
       - '.gitignore'
       - 'LICENSE'
-      - 'README.md'
+    branches-ignore: [ main ]
+    tags-ignore: [ '*' ]
+  pull_request:
+    branches: [ main ]
+    paths-ignore:
+      - '.gitignore'
+      - 'LICENSE'
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
