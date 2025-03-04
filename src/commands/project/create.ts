@@ -1,11 +1,11 @@
 import {Args, Command, Flags} from '@oclif/core'
 //import {Metadata, MetadataFlag} from '@oclif/core/lib/interfaces/parser'
-import {PackageManagers, ProjectConfiguration, DefaultVersion, DefaultLicense, ViewRenderer, BuiltinViews} from 'm30pm-lib-common'
+import {PackageManagers, ProjectConfiguration, DefaultVersion, DefaultLicense, ViewRenderer, BuiltinViews} from '@mach30/m30pm-lib-common'
 import input from '@inquirer/input'
 import select from '@inquirer/select'
 import confirm from '@inquirer/confirm'
-import { Projects } from 'm30pm-lib-fs'
-import { mdStdout } from 'm30pm-lib-cli'
+import { Projects } from '@mach30/m30pm-lib-fs'
+import { mdStdout } from '@mach30/m30pm-lib-cli'
 
 export default class ProjectCreate extends Command {
   static description = 'Create a new m30ml project'

@@ -11,9 +11,9 @@
     "@oclif/plugin-help": "^6",
     "@types/inquirer": "^9.0.7",
     "inquirer": "^9.2.14",
-    "m30pm-lib-cli": "^0.1.0",
-    "m30pm-lib-common": "^0.1.0",
-    "m30pm-lib-fs": "^0.1.0"
+    "@mach30/m30pm-lib-cli": "^0.1.0",
+    "@mach30/m30pm-lib-common": "^0.1.0",
+    "@mach30/m30pm-lib-fs": "^0.1.0"
   },
   "description": "Mach 30 package manager for m30ml projects",
   "devDependencies": {
@@ -48,7 +48,7 @@
   "license": "Apache-2.0",
   "name": "m30pm",
   "workspaces": [
-    "./packages/*"
+    "./packages/**"
   ],
   "oclif": {
     "bin": "m30pm",
@@ -68,7 +68,7 @@
   "scripts": {
     "clean": "shx rm -rf dist",
     "build": "npm run clean && tsc -b --force",
-    "buildAll": "npm run build -w packages/m30pm-lib-common && npm run build -w packages/m30pm-lib-fs && npm run build -w packages/m30pm-lib-cli && npm run build",
+    "buildAll": "npm run build -w packages/@mach30/m30pm-lib-common && npm run build -w packages/@mach30/m30pm-lib-fs && npm run build -w packages/@mach30/m30pm-lib-cli && npm run build",
     "lint": "eslint . --ext .ts",
     "postpack": "shx rm -f oclif.manifest.json",
     "posttest": "npm run lint",

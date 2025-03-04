@@ -1,9 +1,9 @@
-import { ProjectConfiguration, PackageManagers, ViewRenderer, BuiltinViews, BuildTools, VersionControlTools, Helpers, LogLevels } from "m30pm-lib-common";
+import { ProjectConfiguration, PackageManagers, ViewRenderer, BuiltinViews, BuildTools, VersionControlTools, Helpers, LogLevels } from "@mach30/m30pm-lib-common";
 import { ToolInfo } from "./tool-info";
 import { ShellCommand, CommandToRun, getShell } from "./shell-cmd";
 import { CommandHistory } from "./cmd-history";
 import { CommandHistoryLogger, FunctionArgument, FunctionInfo } from "./cmd-history-logger";
-import { FormattedMessageType, NotifyUserFunction } from "m30pm-lib-common";
+import { FormattedMessageType, NotifyUserFunction } from "@mach30/m30pm-lib-common";
 import * as yaml from 'js-yaml';
 
 const minGradleVersion = "8.2.0"
