@@ -16,7 +16,7 @@ $ npm install -g m30pm
 $ m30pm COMMAND
 running command...
 $ m30pm (--version)
-m30pm/0.0.0 linux-x64 node-v20.15.1
+m30pm/0.1.0-alpha.1 linux-x64 node-v23.8.0
 $ m30pm --help [COMMAND]
 USAGE
   $ m30pm COMMAND
@@ -86,5 +86,5 @@ EXAMPLES
     $ m30pm project create my-project -V "0.0.0" -d "My New m30ml Project" -a "Mach 30" -l "CC-BY-4.0" -p "npm"
 ```
 
-_See code: [src/commands/project/create.ts](https://github.com/Mach30/m30pm/blob/v0.0.0/src/commands/project/create.ts)_
+_See code: [src/commands/project/create.ts](https://github.com/Mach30/m30pm/blob/v0.1.0-alpha.1/src/commands/project/create.ts)_
 <!-- commandsstop -->
