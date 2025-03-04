@@ -54,6 +54,13 @@ jobs:
             if [[ $GIT_REF_COMMIT == $GIT_MAIN_COMMIT ]]; then
               echo "Publishing $BASENAME to npmjs.org"
               npm set "//registry.npmjs.org/:_authToken=$auth_token"
+              cd packages/@mach30/m30pm-lib-common
+              npm publish --access public
+              cd ../m30pm-lib-fs
+              npm publish --access public
+              cd ../m30pm-lib-cli
+              npm publish --access public
+              cd ../..
               npm publish --access public
             fi
           else
