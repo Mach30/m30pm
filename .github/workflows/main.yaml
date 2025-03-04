@@ -35,6 +35,9 @@ jobs:
       - name: Install nodejs & npm
         run: sudo apt install nodejs && sudo apt install npm
 
+      - name: Install yq # as per https://github.com/mikefarah/yq#plain-binary
+        run: sudo wget https://github.com/mikefarah/yq/releases/download/v4.35.1/yq_linux_amd64 -O /usr/bin/yq && sudo chmod +x /usr/bin/yq
+
       - name: Install oclif (globally)
         run: sudo npm install -g oclif
 
@@ -55,11 +58,17 @@ jobs:
               echo "Publishing $BASENAME to npmjs.org"
               npm set "//registry.npmjs.org/:_authToken=$auth_token"
               cd packages/@mach30/m30pm-lib-common
-              npm publish --access public
+              if [[ npm view @mach30/m30pm-lib-common --json | yq -r '.dist-tags.latest' != cat package.json | yq -r '.version' ]]; then
+                npm publish --access public
+              fi
               cd ../m30pm-lib-fs
-              npm publish --access public
+              if [[ npm view @mach30/m30pm-lib-fs --json | yq -r '.dist-tags.latest' != cat package.json | yq -r '.version' ]]; then
+                npm publish --access public
+              fi
               cd ../m30pm-lib-cli
-              npm publish --access public
+              if [[ npm view @mach30/m30pm-lib-cli --json | yq -r '.dist-tags.latest' != cat package.json | yq -r '.version' ]]; then
+                npm publish --access public
+              fi
               cd ../../..
               npm publish --access public
             fi
