@@ -58,15 +58,15 @@ jobs:
               echo "Publishing $BASENAME to npmjs.org"
               npm set "//registry.npmjs.org/:_authToken=$auth_token"
               cd packages/@mach30/m30pm-lib-common
-              if [[ npm view @mach30/m30pm-lib-common --json | yq -r '.dist-tags.latest' != cat package.json | yq -r '.version' ]]; then
+              if [[ $(npm view @mach30/m30pm-lib-common --json | yq -r '.dist-tags.latest') != $(cat package.json | yq -r '.version') ]]; then
                 npm publish --access public
               fi
               cd ../m30pm-lib-fs
-              if [[ npm view @mach30/m30pm-lib-fs --json | yq -r '.dist-tags.latest' != cat package.json | yq -r '.version' ]]; then
+              if [[ $(npm view @mach30/m30pm-lib-fs --json | yq -r '.dist-tags.latest') != $(cat package.json | yq -r '.version') ]]; then
                 npm publish --access public
               fi
               cd ../m30pm-lib-cli
-              if [[ npm view @mach30/m30pm-lib-cli --json | yq -r '.dist-tags.latest' != cat package.json | yq -r '.version' ]]; then
+              if [[ $(npm view @mach30/m30pm-lib-cli --json | yq -r '.dist-tags.latest') != $(cat package.json | yq -r '.version') ]]; then
                 npm publish --access public
               fi
               cd ../../..
