@@ -3,7 +3,7 @@ import chalk from 'chalk';
 import { CardinalOptions } from 'cardinal';
 import colors from 'ansicolors';
 import TerminalRenderer from 'marked-terminal';
-import { FormattedMessageType, NotifyUserFunction } from 'm30pm-lib-common'
+import { FormattedMessageType, NotifyUserFunction } from '@mach30/m30pm-lib-common'
 
 const defaultMarkedTerminalOptions = {
     blockquote: chalk.visible,

@@ -1,7 +1,7 @@
-import { LogLevels } from "m30pm-lib-common";
+import { LogLevels } from "@mach30/m30pm-lib-common";
 import { CommandHistory } from "./cmd-history";
 import { getShell } from "./shell-cmd";
-import { ViewRenderer, QueryRunner, BuiltinViews, Helpers } from "m30pm-lib-common";
+import { ViewRenderer, QueryRunner, BuiltinViews, Helpers } from "@mach30/m30pm-lib-common";
 import * as yaml from 'js-yaml';
 const moment = require('moment');
 
