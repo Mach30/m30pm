@@ -60,7 +60,7 @@ jobs:
               npm publish --access public
               cd ../m30pm-lib-cli
               npm publish --access public
-              cd ../..
+              cd ../../..
               npm publish --access public
             fi
           else
