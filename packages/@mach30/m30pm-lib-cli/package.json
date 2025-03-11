@@ -1,6 +1,6 @@
 {
   "name": "@mach30/m30pm-lib-cli",
-  "version": "0.1.1-alpha.1",
+  "version": "0.1.1-alpha.2",
   "description": "Common functions for m30pm CLI application",
   "type": "module",
   "main": "",
@@ -18,7 +18,11 @@
   "author": "Mach 30",
   "homepage": "https://github.com/Mach30/m30pm/tree/main/packages/@mach30/m30pm-lib-cli",
   "license": "Apache-2.0",
-  "repository": "https://github.com/Mach30/m30pm/tree/main/packages/@mach30/m30pm-lib-cli",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Mach30/m30pm.git",
+    "directory": "packages/@mach30/m30pm-lib-cli"
+  },
   "devDependencies": {
     "@oclif/test": "^3",
     "@types/ansicolors": "^0.0.37",
