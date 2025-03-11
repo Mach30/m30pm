@@ -1,6 +1,6 @@
 {
   "name": "@mach30/m30pm-lib-common",
-  "version": "0.1.0",
+  "version": "0.1.1-alpha.1",
   "description": "Mach 30 PM common functions library",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
