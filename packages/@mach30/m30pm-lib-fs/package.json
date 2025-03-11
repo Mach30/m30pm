@@ -14,7 +14,9 @@
     "tsdoc": "tsdoc --src=./src/*"
   },
   "author": "Mach 30",
+  "homepage": "https://github.com/Mach30/m30pm/tree/main/packages/@mach30/m30pm-lib-fs",
   "license": "Apache-2.0",
+  "repository": "https://github.com/Mach30/m30pm/tree/main/packages/@mach30/m30pm-lib-fs",
   "dependencies": {
     "@mach30/m30pm-lib-common": "^0.1.0",
     "@types/shelljs": "^0.8.15",
