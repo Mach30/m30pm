@@ -10,10 +10,13 @@
   "scripts": {
     "clean": "shx rm -rf dist",
     "build": "npm run clean && tsc -b --force && shx cp -r src/resources/ dist/",
-    "test": "nyc mocha --forbid-only"
+    "test": "nyc mocha --forbid-only",
+    "tsdoc": "tsdoc --src=./src/*"
   },
   "author": "Mach 30",
+  "homepage": "https://github.com/Mach30/m30pm/tree/main/packages/@mach30/m30pm-lib-common",
   "license": "Apache-2.0",
+  "repository": "https://github.com/Mach30/m30pm/tree/main/packages/@mach30/m30pm-lib-common",
   "devDependencies": {
     "@oclif/test": "^3",
     "@types/chai": "^4",
