@@ -10,14 +10,15 @@
   "scripts": {
     "clean": "shx rm -rf dist",
     "build": "npm run clean && tsc -b --force",
-    "test": "nyc mocha --timeout 10000 --forbid-only"
+    "test": "nyc mocha --timeout 10000 --forbid-only",
+    "tsdoc": "tsdoc --src=./src/*"
   },
   "author": "Mach 30",
   "license": "Apache-2.0",
   "dependencies": {
+    "@mach30/m30pm-lib-common": "^0.1.0",
     "@types/shelljs": "^0.8.15",
     "js-yaml": "^4.1.0",
-    "@mach30/m30pm-lib-common": "^0.1.0",
     "moment": "^2.30.1",
     "semver": "^7.6.0",
     "shelljs": "^0.8.5"
@@ -33,6 +34,7 @@
     "nyc": "^15.1.0",
     "shx": "^0.3.4",
     "ts-node": "^10.9.2",
+    "tsdoc-markdown": "^1.1.1",
     "typescript": "^5"
   }
 }
