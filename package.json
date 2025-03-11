@@ -11,9 +11,9 @@
     "@oclif/plugin-help": "^6",
     "@types/inquirer": "^9.0.7",
     "inquirer": "^9.2.14",
-    "@mach30/m30pm-lib-cli": "^0.1.0",
-    "@mach30/m30pm-lib-common": "^0.1.0",
-    "@mach30/m30pm-lib-fs": "^0.1.0"
+    "@mach30/m30pm-lib-cli": "^0.1.1-alpha.1",
+    "@mach30/m30pm-lib-common": "^0.1.1-alpha.1",
+    "@mach30/m30pm-lib-fs": "^0.1.1-alpha.1"
   },
   "description": "Mach 30 package manager for m30ml projects",
   "devDependencies": {

@@ -18,7 +18,7 @@
   "license": "Apache-2.0",
   "repository": "https://github.com/Mach30/m30pm/tree/main/packages/@mach30/m30pm-lib-fs",
   "dependencies": {
-    "@mach30/m30pm-lib-common": "^0.1.0",
+    "@mach30/m30pm-lib-common": "^0.1.1-alpha.1",
     "@types/shelljs": "^0.8.15",
     "js-yaml": "^4.1.0",
     "moment": "^2.30.1",
