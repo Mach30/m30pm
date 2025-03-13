@@ -77,7 +77,7 @@
     "version": "npm run buildAll && oclif readme && git add README.md",
     "postversion": "git push && git push --tags"
   },
-  "version": "0.1.0-alpha.8",
+  "version": "0.1.0-rc.1",
   "bugs": "https://github.com/Mach30/m30pm/issues",
   "keywords": [
     "oclif"
